@@ -1,0 +1,30 @@
+.background {
+  background-image: url('/assets/back_1.png');
+  background-color: transparent;
+  position: absolute;
+  z-index: 0;
+  width: 100vw;
+  height: 105vh;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+ion-toolbar,
+ion-item {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+}
+
+ion-select {
+  color: var(--ion-color-light);
+}
+
+ion-tab-bar {
+  --background: transparent;
+  --border: 1px solid var(--ion-color-light);
+  --color: var(--ion-color-light);
+}

@@ -1,0 +1,74 @@
+.background {
+  background-image: url('/assets/back_menu.png'), url('/assets/back_2.png');
+  background-color: transparent;
+  position: absolute;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  // pointer-events: none;
+  background-size: cover, 100% 100%;
+  background-position: center bottom, center;
+}
+
+ion-toolbar,
+ion-item {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+}
+
+ion-select {
+  color: var(--ion-color-light);
+}
+
+ion-fab-button {
+  --background: transparent;
+  --box-shadow: 0;
+  --padding-bottom: 40px;
+  --border-width: 2px;
+  --border-color: var(--ion-color-light);
+  --border-style: solid;
+}
+
+.menu-buttons {
+  position: absolute;
+  bottom: 5%;
+  left: 0;
+  width: 100vw;
+  text-align: center;
+}
+
+/* .home-button {
+  width: 100%;
+  border-radius: 5px;
+  text-align: center;
+  color: var(--ion-color-light);
+  background-color: var(--ion-color-primary);
+} */
+
+ion-icon.icon-large {
+  font-size: 64px;
+}
+
+ion-button {
+  --border-radius: 20px !important;
+  border-radius: 20px;
+}
+
+ion-button.home-button {
+  height: 100%;
+
+  div {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    margin: 10%;
+
+    ion-icon {
+      margin-bottom: 10px;
+      font-size: 72px;
+    }
+  }
+}

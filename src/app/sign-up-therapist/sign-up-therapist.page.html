@@ -1,0 +1,177 @@
+<ion-content fullscreen>
+  <div class="background"></div>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="welcome"
+                       color="light"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h1>Crear cuenta</h1>
+    </ion-text>
+  </ion-item>
+
+
+  <ion-item class="ion-padding-horizontal ion-text-center">
+    <ion-text color="light">
+      Para empezar a usar Mind<sup>2</sup>,
+      <br>
+      confirma tu cuenta en el mail que registraste.
+    </ion-text>
+  </ion-item>
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h4>Datos personales</h4>
+    </ion-text>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Nombre</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Apellido</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Fecha de nacimiento</ion-label>
+    <ion-datetime displayFormat="MMMM DD YYYY"
+                  min="1950-01-01"
+                  max="1998-12-31"
+                  color="light"></ion-datetime>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Pais</ion-label>
+    <ion-select [(ngModel)]="country"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      México, Colombia, Ecuador, Chile, Perú, Argentina
+      <ion-select-option value="México">México</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Estado</ion-label>
+    <ion-select okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option value="Aguascalientes">Aguascalientes</ion-select-option>
+      <ion-select-option value="Baja California">Baja California</ion-select-option>
+      <ion-select-option value="Baja California Sur">Baja California Sur</ion-select-option>
+      <ion-select-option value="Campeche">Campeche</ion-select-option>
+      <ion-select-option value="Chiapas">Chiapas</ion-select-option>
+      <ion-select-option value="Chihuahua">Chihuahua</ion-select-option>
+      <ion-select-option value="CDMX">Ciudad de México</ion-select-option>
+      <ion-select-option value="Coahuila">Coahuila</ion-select-option>
+      <ion-select-option value="Colima">Colima</ion-select-option>
+      <ion-select-option value="Durango">Durango</ion-select-option>
+      <ion-select-option value="Estado de México">Estado de México</ion-select-option>
+      <ion-select-option value="Guanajuato">Guanajuato</ion-select-option>
+      <ion-select-option value="Guerrero">Guerrero</ion-select-option>
+      <ion-select-option value="Hidalgo">Hidalgo</ion-select-option>
+      <ion-select-option value="Jalisco">Jalisco</ion-select-option>
+      <ion-select-option value="Michoacán">Michoacán</ion-select-option>
+      <ion-select-option value="Morelos">Morelos</ion-select-option>
+      <ion-select-option value="Nayarit">Nayarit</ion-select-option>
+      <ion-select-option value="Nuevo León">Nuevo León</ion-select-option>
+      <ion-select-option value="Oaxaca">Oaxaca</ion-select-option>
+      <ion-select-option value="Puebla">Puebla</ion-select-option>
+      <ion-select-option value="Querétaro">Querétaro</ion-select-option>
+      <ion-select-option value="Quintana Roo">Quintana Roo</ion-select-option>
+      <ion-select-option value="San Luis Potosí">San Luis Potosí</ion-select-option>
+      <ion-select-option value="Sinaloa">Sinaloa</ion-select-option>
+      <ion-select-option value="Sonora">Sonora</ion-select-option>
+      <ion-select-option value="Tabasco">Tabasco</ion-select-option>
+      <ion-select-option value="Tamaulipas">Tamaulipas</ion-select-option>
+      <ion-select-option value="Tlaxcala">Tlaxcala</ion-select-option>
+      <ion-select-option value="Veracruz">Veracruz</ion-select-option>
+      <ion-select-option value="Yucatán">Yucatán</ion-select-option>
+      <ion-select-option value="Zacatecas">Zacatecas</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Celular</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Dirección (calle y número)</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Código Postal</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <br>
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h4>Datos profesionales</h4>
+    </ion-text>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Cédula profesional</ion-label>
+    <ion-input color="light"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Especialidades</ion-label>
+    <ion-select [(ngModel)]="country"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option value="México">México</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Años dando terapia</ion-label>
+    <ion-select [(ngModel)]="country"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option value="México">México</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Años dando supervisión</ion-label>
+    <ion-select [(ngModel)]="country"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option value="México">México</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <br>
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h4>Accesos</h4>
+    </ion-text>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Contraseña</ion-label>
+    <ion-input color="light"
+               type="password"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Confirmar Contraseña</ion-label>
+    <ion-input color="light"
+               type="password"></ion-input>
+  </ion-item>
+
+</ion-content>

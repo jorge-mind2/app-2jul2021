@@ -1,0 +1,35 @@
+<ion-content padding>
+  <div class="background"></div>
+  <ion-img style="max-width: 55%; margin: auto; position: relative;"
+           src="assets/logo_white.png"></ion-img>
+  <ion-button expand="full"
+              (click)="goToLoginPage('patient')"
+              size="large"
+              shape="round"
+              style="text-transform:none">
+    Entrar
+  </ion-button>
+  <ion-button expand="full"
+              size="large"
+              fill="outline"
+              color="light"
+              shape="round"
+              (click)="gotoSignUpPage()"
+              style="text-transform:none">
+    Registrarse
+  </ion-button>
+
+  <br>
+  <br>
+  <br>
+
+  <ion-button expand="full"
+              (click)="goToLoginPage('therapist')"
+              size="large"
+              fill="outline"
+              color="light"
+              shape="round"
+              style="text-transform:none">
+    Zona de psicoterapeutas
+  </ion-button>
+</ion-content>
