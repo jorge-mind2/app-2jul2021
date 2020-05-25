@@ -11,3 +11,4 @@ plugins
 *.swo
 *.log
 *.DS_Store
+package-lock.json

@@ -1,26 +1,26 @@
 import { Component } from '@angular/core';
 
-import { Platform, ToastController } from '@ionic/angular';
+import { Platform, ToastController, NavController, AlertController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Zoom } from '@ionic-native/zoom/ngx';
 import { CometChat } from "@cometchat-pro/cordova-ionic-chat"
+
+import { COMETCHAT } from "./keys";
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  SDK_KEY = 'J8CXCoyt9nPZa237BVL02Cex4qZAoJAiQ6Vb';
-  SDK_SECRET = 'fVqWIB2P1z5Nq3kAMGONrDQSALIcumhYj1o8';
   rootPage: any;
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private toastCtrl: ToastController,
-    private zoomService: Zoom
+    private navCtrl: NavController,
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController
   ) {
     this.initializeApp();
   }
@@ -30,33 +30,16 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.rootPage = 'login';
-
+      // this.presentCallAlert('sessionID')
       console.log('Platform ready');
-
-      this.zoomService.initialize(this.SDK_KEY, this.SDK_SECRET)
-        .then((success) => {
-          console.log(success);
-          this.presentToast(success);
-        })
-        .catch((error) => {
-          console.log(error);
-          this.presentToast(error);
-        });
     });
-    var appID = "186830759069939";
-    var region = "US";
-    var appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(region).build();
+    const appID = COMETCHAT.APPID;
+    const region = "US";
+    const appSetting = new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(region).build();
     CometChat.init(appID, appSetting).then(
       () => {
         console.log("CometChat Initialization completed successfully");
         // You can now call login function.
-        let apiKey = "b9f367608e4ae2b256b4432201db38803b1d040f";
-        var uid = "user3";
-        var name = "Dan";
-
-        var user = new CometChat.User(uid);
-
-        user.setName(name);
 
         /* CometChat.createUser(user, apiKey).then(
           user => {
@@ -66,15 +49,6 @@ export class AppComponent {
           }
         ) */
 
-        CometChat.login(uid, apiKey).then(
-          user => {
-            console.log("Login Successful:", { user });
-            console.log("Login Successful:", JSON.stringify(user));
-          },
-          error => {
-            console.log("Login failed with exception:", { error });
-          }
-        );
       },
       error => {
         console.log("Initialization failed with error:", error);
@@ -82,85 +56,43 @@ export class AppComponent {
       }
     );
 
-    var listnerID = "user3";
+    const listnerID = "therapist01";
+    const __self = this;
     CometChat.addCallListener(
       listnerID,
       new CometChat.CallListener({
-        onIncomingCallReceived(call) {
+        async onIncomingCallReceived(call) {
           console.log("Incoming call:", call);
-          console.log("Incoming call:", JSON.stringify(call));
+          // console.log("Incoming call:", JSON.stringify(call));
           // Handle incoming call
+          const sessionID = call.sessionId;
+          console.log(sessionID);
 
-          var sessionID = call.sessionId;
+          // this.presentCallAlert(sessionID)
+          const alert = await __self.alertCtrl.create({
+            header: 'Llamada entrante',
+            message: 'Tu terapeuta está llamando.',
+            backdropDismiss: false,
+            buttons: [{
+              text: 'Contestar',
+              cssClass: 'secondary',
+              handler: () => __self.acceptCall(sessionID)
+            }]
+          });
 
-          CometChat.acceptCall(sessionID).then(
-            call => {
-              console.log("Call accepted successfully:", call);
-              console.log("Call accepted successfully:", JSON.stringify(call));
-              // start the call using the startCall() method
-              CometChat.startCall(
-                sessionID,
-                document.getElementById("callScreen"),
-                new CometChat.OngoingCallListener({
-                  onUserJoined: user => {
-                    /* Notification received here if another user joins the call. */
-                    console.log("User joined call:", user);
-                    console.log("User joined call:", JSON.stringify(user));
-                    /* this method can be use to display message or perform any actions if someone joining the call */
-                  },
-                  onUserLeft: user => {
-                    /* Notification received here if another user left the call. */
-                    console.log("User left call:", user);
-                    console.log("User left call:", JSON.stringify(user));
-                    /* this method can be use to display message or perform any actions if someone leaving the call */
-                  },
-                  onCallEnded: call => {
-                    /* Notification received here if current ongoing call is ended. */
-                    console.log("Call ended:", call);
-                    console.log("Call ended:", JSON.stringify(call));
-                    /* hiding/closing the call screen can be done here. */
-                  }
-                })
-              );
-            },
-            error => {
-              console.log("Call acceptance failed with error", error);
-              console.log("Call acceptance failed with error", JSON.stringify(error));
-              // handle exception
-            }
-          );
+          console.log(alert);
+
+          alert.present();
+
         },
-        onOutgoingCallAccepted(call) {
+        async onOutgoingCallAccepted(call) {
           console.log("Outgoing call accepted:", call);
           console.log("Outgoing call accepted:", JSON.stringify(call));
           // Outgoing Call Accepted
 
           var sessionID = call.sessionId;
           // start the call using the startCall() method
-          CometChat.startCall(
-            sessionID,
-            document.getElementById("callScreen"),
-            new CometChat.OngoingCallListener({
-              onUserJoined: user => {
-                /* Notification received here if another user joins the call. */
-                console.log("User joined call:", user);
-                console.log("User joined call:", JSON.stringify(user));
-                /* this method can be use to display message or perform any actions if someone joining the call */
-              },
-              onUserLeft: user => {
-                /* Notification received here if another user left the call. */
-                console.log("User left call:", user);
-                console.log("User left call:", JSON.stringify(user));
-                /* this method can be use to display message or perform any actions if someone leaving the call */
-              },
-              onCallEnded: call => {
-                /* Notification received here if current ongoing call is ended. */
-                console.log("Call ended:", call);
-                console.log("Call ended:", JSON.stringify(call));
-                /* hiding/closing the call screen can be done here. */
-              }
-            })
-          );
+          await __self.startCall(sessionID);
 
 
         },
@@ -177,6 +109,44 @@ export class AppComponent {
     );
 
   }
+
+  private acceptCall(sessionID) {
+    CometChat.acceptCall(sessionID).then(
+      call => {
+        console.log("Call accepted successfully:", call);
+        console.log("Call accepted successfully:", JSON.stringify(call));
+        // start the call using the startCall() method
+        this.startCall(sessionID)
+      },
+      error => {
+        console.log("Call acceptance failed with error", error);
+        console.log("Call acceptance failed with error", JSON.stringify(error));
+        // handle exception
+      }
+    );
+  }
+
+  private startCall(sessionID) {
+    this.navCtrl.navigateForward('video-call', { queryParams: { sessionID } })
+  }
+
+  async presentCallAlert(sessionID) {
+    console.log(sessionID);
+
+    const alert = await this.alertCtrl.create({
+      header: 'Llamada entrante',
+      message: 'Tu terapeuta está llamando.',
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Contestar',
+        cssClass: 'secondary',
+        handler: () => this.acceptCall(sessionID)
+      }]
+    });
+
+    alert.present();
+  }
+
   async presentToast(text) {
     return console.log(text)
     const toast = await this.toastCtrl.create({

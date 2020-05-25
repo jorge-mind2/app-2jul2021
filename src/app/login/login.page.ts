@@ -1,28 +1,42 @@
-import { Component } from '@angular/core';
-import { ToastController } from '@ionic/angular';
-import { Zoom } from '@ionic-native/zoom/ngx';
+import { Component, OnInit } from '@angular/core';
+import { ToastController, NavController } from '@ionic/angular';
+import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
+import { Route, ActivatedRoute } from '@angular/router';
+
+import { COMETCHAT } from "../keys";
 
 @Component({
   selector: 'page-login',
   templateUrl: 'login.page.html',
   styleUrls: ['login.page.scss']
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   // Login variables
   userName = '';
   password = '';
   loggedIn = false;
 
-  // Meeting variables
-  meetingNumber = null;
-  meetingPassword = '';
-  displayName = 'Zoom Ionic';
+  cChatApiKey = COMETCHAT.APIKEY;
+  uid = '';
+  loginType = '';
 
   constructor(
     private toastCtrl: ToastController,
-    private zoomService: Zoom,
+    private route: ActivatedRoute,
+    private navCtrl: NavController
   ) {
+    this.route.queryParams.subscribe(params => {
+      console.log(params);
+      this.loginType = params.type;
+      this.uid = this.loginType == 'therapist' ? 'therapista01' : 'patient01';
+    });
+  }
 
+  ngOnInit() {
+  }
+
+  public loginUser() {
+    this.cometChatLogin();
   }
 
   async presentToast(text) {
@@ -34,36 +48,22 @@ export class LoginPage {
     toast.present();
   }
 
-  /**
-   * Log user in with Zoom username and password.
-   */
-  login() {
-    console.log('Going to login');
-    this.zoomService.login(this.userName, this.password).then((success) => {
-      console.log(success.message);
-      this.presentToast(success.message);
-      this.loggedIn = true;
-      this.userName = '';
-      this.password = '';
-    }).catch((error) => {
-      console.log(error);
-      this.presentToast(error.message);
-    });
-  }
 
-  /**
-   * Log user out.
-   */
-  logout() {
-    console.log('Going to logout');
-    this.zoomService.logout().then((success) => {
-      console.log(success.message);
-      this.presentToast(success.message);
-      this.loggedIn = false;
-    }).catch((error) => {
-      this.presentToast(error.message);
-      console.log(error);
-    });
+  private cometChatLogin() {
+    console.log(this.uid);
+    console.log(this.cChatApiKey);
+
+    CometChat.login(this.uid, this.cChatApiKey).then(
+      loggedUser => {
+        console.log('Login Successful:', { loggedUser });
+        // console.log('Login Successful:', JSON.stringify(user));
+        let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
+        this.navCtrl.navigateForward(nextPage);
+      },
+      error => {
+        console.log('Login failed with exception:', { error });
+      }
+    );
   }
 
 }

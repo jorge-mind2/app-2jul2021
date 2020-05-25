@@ -1,9 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>home-therapist</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-
+<ion-content fullscreen>
+  <ion-fab vertical="center"
+           horizontal="center"
+           slot="fixed">
+    <ion-fab-button color="secondary"
+                    (click)="goToSessionPage('therapist')">
+      <ion-icon name="chatboxes"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

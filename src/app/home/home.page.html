@@ -10,9 +10,10 @@
     <ion-row>
       <ion-col size="4">
         <ion-button class="home-button"
-                    expand="full">
+                    expand="full"
+                    (click)="goToSessionPage('patient')">
           <div>
-            <ion-icon src="/assets/espacio_tera.svg"></ion-icon>
+            <ion-icon name="chatboxes"></ion-icon>
             Mi Sesión <br> &nbsp;
           </div>
         </ion-button>
@@ -21,7 +22,7 @@
         <ion-button class="home-button"
                     expand="full">
           <div>
-            <ion-icon src="/assets/espacio_tera.svg"></ion-icon>
+            <ion-icon name="headset"></ion-icon>
             Chat de <br>Servicio
           </div>
         </ion-button>
@@ -30,7 +31,7 @@
         <ion-button class="home-button"
                     expand="full">
           <div>
-            <ion-icon src="/assets/espacio_tera.svg"></ion-icon>
+            <ion-icon name="card"></ion-icon>
             Pagar <br> &nbsp;
           </div>
         </ion-button>

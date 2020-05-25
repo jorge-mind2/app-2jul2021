@@ -19,7 +19,8 @@ const routes: Routes = [
   { path: 'add-card', loadChildren: './add-card/add-card.module#AddCardPageModule' },
   { path: 'plans', loadChildren: './plans/plans.module#PlansPageModule' },
   { path: 'my-patients', loadChildren: './my-patients/my-patients.module#MyPatientsPageModule' },
-  { path: 'chat', loadChildren: './chat/chat.module#ChatPageModule' }
+  { path: 'chat', loadChildren: './chat/chat.module#ChatPageModule' },
+  { path: 'video-call', loadChildren: './video-call/video-call.module#VideoCallPageModule' }
 ];
 @NgModule({
   imports: [

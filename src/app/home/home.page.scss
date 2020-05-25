@@ -52,13 +52,10 @@ ion-icon.icon-large {
   font-size: 64px;
 }
 
-ion-button {
-  --border-radius: 20px !important;
-  border-radius: 20px;
-}
-
-ion-button.home-button {
+.home-button {
+  border-radius: 10px;
   height: 100%;
+  overflow: hidden;
 
   div {
     display: flex;
