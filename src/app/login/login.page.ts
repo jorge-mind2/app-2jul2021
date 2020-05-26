@@ -3,6 +3,8 @@ import { ToastController, NavController } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Route, ActivatedRoute } from '@angular/router';
 
+import { ApiService } from "../api.service";
+
 import { COMETCHAT } from "../keys";
 
 @Component({
@@ -12,7 +14,7 @@ import { COMETCHAT } from "../keys";
 })
 export class LoginPage implements OnInit {
   // Login variables
-  userName = '';
+  username = '';
   password = '';
   loggedIn = false;
 
@@ -23,7 +25,8 @@ export class LoginPage implements OnInit {
   constructor(
     private toastCtrl: ToastController,
     private route: ActivatedRoute,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private api: ApiService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -35,8 +38,14 @@ export class LoginPage implements OnInit {
   ngOnInit() {
   }
 
-  public loginUser() {
-    this.cometChatLogin();
+  public async loginUser() {
+    try {
+      let newSession = await this.api.loginUser({ email: this.username, password: this.password })
+      console.log(newSession)
+      this.cometChatLogin(newSession.user);
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   async presentToast(text) {
@@ -49,11 +58,11 @@ export class LoginPage implements OnInit {
   }
 
 
-  private cometChatLogin() {
-    console.log(this.uid);
+  private cometChatLogin(loggedUser) {
+    console.log(loggedUser.cometChatId);
     console.log(this.cChatApiKey);
 
-    CometChat.login(this.uid, this.cChatApiKey).then(
+    CometChat.login(loggedUser.cometChatId, this.cChatApiKey).then(
       loggedUser => {
         console.log('Login Successful:', { loggedUser });
         // console.log('Login Successful:', JSON.stringify(user));

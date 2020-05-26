@@ -19,6 +19,7 @@
     <ion-label position="floating"
                color="light">Correo electrónico</ion-label>
     <ion-input color="light"
+               [(ngModel)]="username"
                rounded></ion-input>
   </ion-item>
   <ion-item color="light"
@@ -26,7 +27,8 @@
     <ion-label position="floating"
                color="light">Contraseña</ion-label>
     <ion-input color="light"
-               type="password"></ion-input>
+               type="password"
+               [(ngModel)]="password"></ion-input>
   </ion-item>
   <br>
   <ion-button color="light"
