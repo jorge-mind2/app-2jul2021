@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import * as c from "./constants.local";
 import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
@@ -9,7 +8,6 @@ import { AuthService } from "./auth.service";
 })
 export class ApiService {
 
-  API_BASE_URL = c.API_BASE_URL
   caller;
 
   constructor(
@@ -23,7 +21,7 @@ export class ApiService {
   }
 
   public async loginUser(data) {
-    let loggedUser = await this.caller.post(`${this.API_BASE_URL}/auth/signin`, data, {
+    let loggedUser = await this.caller.post(`/auth/signin`, data, {
       'Content-Type': 'Application/json'
     }).toPromise()
     await this.auth.setAuthHeader(loggedUser.accessToken)
@@ -31,12 +29,12 @@ export class ApiService {
   }
 
   public async signupUser(user) {
-    return await this.caller.post(`${this.API_BASE_URL}/auth/signup`, user, {
+    return await this.caller.post(`/auth/signup`, user, {
       'Content-Type': 'Application/json'
     }).toPromise()
   }
 
   public async getSpecilaities() {
-    return await this.caller.get(`${this.API_BASE_URL}/specialty`).toPromise()
+    return await this.caller.get(`/specialty`).toPromise()
   }
 }

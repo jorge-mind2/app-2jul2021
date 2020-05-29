@@ -13,7 +13,7 @@
   <ion-item text-center
             lines="none">
     <ion-label color="light"
-               style="font-size: 1.5em; padding-top: 50px;">Bienvenido Usuario</ion-label>
+               style="font-size: 1.5em; padding-top: 30px;">Bienvenido Usuario</ion-label>
   </ion-item>
   <!-- <ion-grid style="margin-top: 50px;">
     <ion-row>
@@ -48,22 +48,28 @@
     </ion-row>
   </ion-grid> -->
 
-  <ion-card color="light">
+  <ion-card color="light"
+            margin
+            class="ion-activatable ripple-parent"
+            *ngFor="let i of [1,2,3,4,5,6,7,8,9,0,11,22,33,44,55,66]">
     <ion-card-content>
       <ion-item lines="none"
-                detail>
+                detail
+                no-padding>
+        <ion-icon slot="start"
+                  size="large"
+                  color="dark"
+                  src="/assets/chat_dark.svg"></ion-icon>
         <ion-avatar slot="start">
           <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
         </ion-avatar>
-        <ion-label>Item Avatar</ion-label>
-        <!-- <ion-button slot="end"
-                    fill="clear"
-                    color="dark">
-          <ion-icon name="arrow-forward"
-                    size="large"></ion-icon>
-        </ion-button> -->
+        <ion-label>
+          <h3>Panchito Dominguez</h3>
+          <p class="text-muted">46 años</p>
+        </ion-label>
       </ion-item>
     </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
 
   <div class="menu-buttons">

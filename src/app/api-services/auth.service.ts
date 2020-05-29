@@ -17,4 +17,8 @@ export class AuthService {
   public getAuthHeader() {
     return this.headers;
   }
+
+  public getToken() {
+    return false;
+  }
 }

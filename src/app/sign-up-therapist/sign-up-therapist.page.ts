@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../api.service';
+import { ApiService } from '../api-services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
 import { CometChatService } from '../comet-chat.service';
