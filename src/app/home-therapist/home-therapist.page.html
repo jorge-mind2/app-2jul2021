@@ -1,4 +1,6 @@
 <ion-content fullscreen>
+  <div class="background"></div>
+
   <ion-fab vertical="center"
            horizontal="center"
            slot="fixed">
@@ -7,4 +9,80 @@
       <ion-icon name="chatboxes"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <ion-item text-center
+            lines="none">
+    <ion-label color="light"
+               style="font-size: 1.5em; padding-top: 50px;">Bienvenido Usuario</ion-label>
+  </ion-item>
+  <!-- <ion-grid style="margin-top: 50px;">
+    <ion-row>
+      <ion-col size="4">
+        <ion-button class="home-button"
+                    expand="full"
+                    (click)="goToSessionPage('patient')">
+          <div>
+            <ion-icon name="chatboxes"></ion-icon>
+            Mi Sesión <br> &nbsp;
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col size="4">
+        <ion-button class="home-button"
+                    expand="full">
+          <div>
+            <ion-icon name="headset"></ion-icon>
+            Chat de <br>Servicio
+          </div>
+        </ion-button>
+      </ion-col>
+      <ion-col size="4">
+        <ion-button class="home-button"
+                    expand="full">
+          <div>
+            <ion-icon name="card"></ion-icon>
+            Pagar <br> &nbsp;
+          </div>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+
+  <ion-card color="light">
+    <ion-card-content>
+      <ion-item lines="none"
+                detail>
+        <ion-avatar slot="start">
+          <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+        </ion-avatar>
+        <ion-label>Item Avatar</ion-label>
+        <!-- <ion-button slot="end"
+                    fill="clear"
+                    color="dark">
+          <ion-icon name="arrow-forward"
+                    size="large"></ion-icon>
+        </ion-button> -->
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="menu-buttons">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-fab-button style="margin: auto;">
+            <ion-icon src="/assets/perfil.svg"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+        <ion-col>
+
+        </ion-col>
+        <ion-col>
+          <ion-fab-button style="margin: auto;">
+            <ion-icon src="/assets/home.svg"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

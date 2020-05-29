@@ -12,7 +12,7 @@ import { CometChatService } from '../comet-chat.service';
 export class SignUpTherapistPage implements OnInit {
   years: any = Array.from(Array(51).keys())
   form: FormGroup = new FormGroup({})
-  specialities: [Object]
+  specialties: [Object]
   constructor(
     private fb: FormBuilder,
     private navCtrl: NavController,
@@ -26,6 +26,7 @@ export class SignUpTherapistPage implements OnInit {
       name: ['', Validators.required],
       last_name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      cel: ['', Validators.required],
       country: ['', Validators.required],
       state: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
@@ -36,7 +37,7 @@ export class SignUpTherapistPage implements OnInit {
         supervising_years: [null, Validators.required],
         address: ['', Validators.required],
         zipcode: ['', Validators.required],
-        specialities: [[], [Validators.required]]
+        specialties: [[], [Validators.required]]
       })
     })
     /**  birthdate:string;
@@ -49,8 +50,8 @@ export class SignUpTherapistPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.specialities = await this.api.getSpecilaities()
-    console.log(this.specialities);
+    this.specialties = await this.api.getSpecilaities()
+    console.log(this.specialties);
     console.log(this.form)
 
   }
@@ -73,7 +74,7 @@ export class SignUpTherapistPage implements OnInit {
     this.cometChat.createCCUser(newUser, 'therapist').then(
       async (user) => {
         console.log("CometChat user created", user)
-        // this.loadingCtrl.dismiss()
+        this.loadingCtrl.dismiss()
         const alert = await this.alertCtrl.create({
           header: 'Registro con éxito',
           message: 'Verifica tu email por favor.',

@@ -4,7 +4,7 @@ import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-home-therapist',
   templateUrl: './home-therapist.page.html',
-  styleUrls: ['./home-therapist.page.scss'],
+  styleUrls: ['../home/home.page.scss', './home-therapist.page.scss'],
 })
 export class HomeTherapistPage implements OnInit {
 

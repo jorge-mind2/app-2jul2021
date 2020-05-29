@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController, NavController } from '@ionic/angular';
+import { ToastController, NavController, LoadingController, AlertController } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Route, ActivatedRoute } from '@angular/router';
 
@@ -21,9 +21,12 @@ export class LoginPage implements OnInit {
   cChatApiKey = COMETCHAT.APIKEY;
   uid = '';
   loginType = '';
+  therapistCode = '';
 
   constructor(
     private toastCtrl: ToastController,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private api: ApiService
@@ -39,12 +42,15 @@ export class LoginPage implements OnInit {
   }
 
   public async loginUser() {
+    await this.presentLoading();
     try {
-      let newSession = await this.api.loginUser({ email: this.username, password: this.password })
+      let loginData = { email: this.username, password: this.password, code: this.therapistCode }
+      const newSession = await this.api.loginUser(loginData)
       console.log(newSession)
       this.cometChatLogin(newSession.user);
-    } catch (error) {
-      console.log('error', error);
+    } catch (e) {
+      this.presentErrorAlert(e.error.message[0])
+      this.loadingCtrl.dismiss()
     }
   }
 
@@ -57,6 +63,29 @@ export class LoginPage implements OnInit {
     toast.present();
   }
 
+  async presentErrorAlert(message) {
+
+    const alert = await this.alertCtrl.create({
+      header: 'Algo salió mal',
+      message,
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Aceptar',
+        cssClass: 'secondary'
+      }]
+    });
+
+    alert.present();
+  }
+
+  async presentLoading() {
+    const loading = await this.loadingCtrl.create({
+      cssClass: 'custom-loading',
+      message: 'Cargando...'
+    })
+    await loading.present();
+  }
+
 
   private cometChatLogin(loggedUser) {
     console.log(loggedUser.cometChatId);
@@ -65,6 +94,8 @@ export class LoginPage implements OnInit {
     CometChat.login(loggedUser.cometChatId, this.cChatApiKey).then(
       loggedUser => {
         console.log('Login Successful:', { loggedUser });
+        this.loadingCtrl.dismiss()
+        this.presentToast('¡Bienvenido a Mind2!');
         // console.log('Login Successful:', JSON.stringify(user));
         let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
         this.navCtrl.navigateForward(nextPage);

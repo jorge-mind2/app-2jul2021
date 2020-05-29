@@ -30,10 +30,20 @@
                type="password"
                [(ngModel)]="password"></ion-input>
   </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal"
+            *ngIf="loginType=='therapist'">
+    <ion-label position="floating"
+               color="light">Código de Terapeuta</ion-label>
+    <ion-input color="light"
+               type="test"
+               [(ngModel)]="therapistCode"></ion-input>
+  </ion-item>
   <br>
   <ion-button color="light"
               fill="clear"
               expand="full"
+              [routerLink]="['/password-recovery']"
               type="button">Olvidé mi contraseña</ion-button>
   <br><br>
   <ion-button expand="full"
@@ -42,4 +52,10 @@
               (click)="loginUser()">
     Ingresar
   </ion-button>
+  <ion-button color="light"
+              fill="clear"
+              expand="full"
+              margin
+              *ngIf="loginType=='patient'"
+              (click)="loginType='therapist'">Soy Terapeuta</ion-button>
 </ion-content>

@@ -66,7 +66,7 @@ export class SignUpPatientPage implements OnInit {
     this.cometChat.createCCUser(newUser, 'patient').then(
       async (user) => {
         console.log("CometChat user created", user)
-        // this.loadingCtrl.dismiss()
+        this.loadingCtrl.dismiss()
         const alert = await this.alertCtrl.create({
           header: 'Registro con éxito',
           message: 'Verifica tu email por favor.',

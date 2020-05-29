@@ -33,7 +33,8 @@
               class="ion-padding-horizontal">
       <ion-label position="stacked"
                  color="light">Apellido</ion-label>
-      <ion-input color="light"></ion-input>
+      <ion-input color="light"
+                 formControlName="last_name"></ion-input>
     </ion-item>
     <ion-item color="light"
               class="ion-padding-horizontal"
@@ -137,11 +138,11 @@
               class="ion-padding-horizontal"
               formGroupName="detail">
       <ion-label color="light">Especialidades</ion-label>
-      <ion-select formControlName="specialities"
+      <ion-select formControlName="specialties"
                   okText="Aceptar"
                   cancelText="Cancelar"
                   multiple>
-        <ion-select-option *ngFor="let sp of specialities"
+        <ion-select-option *ngFor="let sp of specialties"
                            [value]="sp.id">{{sp.name}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -179,7 +180,7 @@
                  color="light">Email</ion-label>
       <ion-input color="light"
                  type="email"
-                 fomControlName="email"></ion-input>
+                 formControlName="email"></ion-input>
     </ion-item>
     <ion-item color="light"
               class="ion-padding-horizontal">
