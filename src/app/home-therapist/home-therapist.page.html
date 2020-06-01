@@ -1,14 +1,14 @@
 <ion-content fullscreen>
   <div class="background"></div>
 
-  <ion-fab vertical="center"
+  <!-- <ion-fab vertical="center"
            horizontal="center"
            slot="fixed">
     <ion-fab-button color="secondary"
                     (click)="goToSessionPage('therapist')">
       <ion-icon name="chatboxes"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
 
   <ion-item text-center
             lines="none">
@@ -51,7 +51,8 @@
   <ion-card color="light"
             margin
             class="ion-activatable ripple-parent"
-            *ngFor="let i of [1,2,3,4,5,6,7,8,9,0,11,22,33,44,55,66]">
+            *ngFor="let patient of patients"
+            (click)="goToSessionPage('therapist', patient.cometChatId)">
     <ion-card-content>
       <ion-item lines="none"
                 detail
@@ -61,11 +62,11 @@
                   color="dark"
                   src="/assets/chat_dark.svg"></ion-icon>
         <ion-avatar slot="start">
-          <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+          <img src="assets/patient.png">
         </ion-avatar>
         <ion-label>
-          <h3>Panchito Dominguez</h3>
-          <p class="text-muted">46 años</p>
+          <h3>{{patient.name}} {{patient.last_name}}</h3>
+          <p class="text-muted">{{patient.state}}, {{patient.country}}</p>
         </ion-label>
       </ion-item>
     </ion-card-content>
@@ -81,7 +82,11 @@
           </ion-fab-button>
         </ion-col>
         <ion-col>
-
+          <ion-fab-button style="margin: auto;"
+                          color="danger"
+                          (click)="logout()">
+            <ion-icon name="close"></ion-icon>
+          </ion-fab-button>
         </ion-col>
         <ion-col>
           <ion-fab-button style="margin: auto;">

@@ -6,13 +6,14 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { CometChat } from "@cometchat-pro/cordova-ionic-chat"
 
 import { COMETCHAT } from "./keys";
+import { AuthService } from './api-services/auth.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  rootPage: any;
+  private rootPage: string = 'welcome';
 
   constructor(
     private platform: Platform,
@@ -20,7 +21,8 @@ export class AppComponent {
     private statusBar: StatusBar,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private auth: AuthService
   ) {
     this.initializeApp();
   }
@@ -29,8 +31,19 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.rootPage = 'login';
       // this.presentCallAlert('sessionID')
+      this.auth.authenticationState.subscribe(state => {
+        let userType = this.auth.getUserType();
+        console.log(state);
+
+        if (!state) {
+          this.navCtrl.navigateRoot(this.rootPage)
+        }
+        else {
+          this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
+          this.navCtrl.navigateRoot(this.rootPage);
+        }
+      })
       console.log('Platform ready');
     });
     const appID = COMETCHAT.APPID;

@@ -4,7 +4,7 @@
   <ion-item text-center
             lines="none">
     <ion-label color="light"
-               style="font-size: 1.5em; padding-top: 50px;">Bienvenido Usuario</ion-label>
+               style="font-size: 1.5em; padding-top: 50px;">Bienvenido {{user.name}}</ion-label>
   </ion-item>
   <ion-grid style="margin-top: 50px;">
     <ion-row>
@@ -47,7 +47,11 @@
           </ion-fab-button>
         </ion-col>
         <ion-col>
-
+          <ion-fab-button style="margin: auto;"
+                          color="danger"
+                          (click)="logout()">
+            <ion-icon name="close"></ion-icon>
+          </ion-fab-button>
         </ion-col>
         <ion-col>
           <ion-fab-button style="margin: auto;">

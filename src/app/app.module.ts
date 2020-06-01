@@ -6,7 +6,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
-import { IonicStorageModule } from '@ionic/storage';
+import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { Device } from '@ionic-native/device/ngx';
@@ -15,6 +15,17 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HTTP } from '@ionic-native/http/ngx'
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
+import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { environment } from "../environments/environment";
+
+export function jwtOptionsFactory(storage) {
+  return {
+    tokenGetter: () => {
+      return storage.get('accessToken');
+    },
+    whitelistedDomains: [environment.API_BASE_URL]
+  }
+}
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,7 +39,14 @@ import { ApiInterceptor } from './interceptors/api.interceptor';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    JwtModule.forRoot({
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: jwtOptionsFactory,
+        deps: [Storage],
+      }
+    })
   ],
   providers: [
     AndroidPermissions,

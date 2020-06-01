@@ -46,7 +46,7 @@ export class ApiInterceptor implements HttpInterceptor {
         console.log('ERROR', error);
 
         let data = {
-          reason: error && error.error && error.error.message ? error.error.message[0] : 'Error al conectar al servidor',
+          reason: error && error.error && error.error.message ? error.error.message : 'Error al conectar al servidor',
           status: error.status
         };
         this.presentErrorAlert(data.reason);

@@ -5,7 +5,7 @@
  * Pasar permisos de cámara y mic a video-call componen
  * En video-call component:
  *  manejar eventos de conexión a llamada
- *  Poner cron que inicie cuando se conecte el paciente
+ *  Poner timer que inicie cuando se conecte el paciente
  *
  *
  *
@@ -23,18 +23,11 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 })
 export class ChatPage implements OnInit {
 
-  conversation = [
-    /* { text: 'Right, it totally blew my mind', sender: 1, image: 'assets/sg1.jpg', read: true, delivered: true, sent: true },
-    { text: 'Hey, that\'s an awesome chat UI', sender: 0, image: 'assets/sg2.jpg' },
-    { text: 'Yes, totally free', sender: 1, image: 'assets/sg1.jpg', read: true, delivered: true, sent: true },
-    { text: 'And it is free ?', sender: 0, image: 'assets/sg2.jpg' },
-    { text: 'Wow, that\'s so cool', sender: 0, image: 'assets/sg2.jpg' } */
-
-  ]
-  phone_model = 'iPhone';
-  input = '';
-  loginType = '';
-  receiverUID = '';
+  conversation: any[] = [];
+  phone_model: string = 'iPhone';
+  input: string = '';
+  loginType: string = '';
+  receiverUID: string = '';
   ccUser;
 
   constructor(
@@ -45,7 +38,8 @@ export class ChatPage implements OnInit {
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
-      this.receiverUID = this.loginType == 'therapist' ? 'patient01' : 'therapista01';
+      // this.receiverUID = this.loginType == 'therapist' ? 'patient01' : 'therapista01';
+      this.receiverUID = params.receiverId.toLowerCase();
     })
   }
 
@@ -57,26 +51,18 @@ export class ChatPage implements OnInit {
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
       );
 
-      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT).then(
-        result => console.log('Has permission?', result.hasPermission),
-        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
-      );
-
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
         result => console.log('Has permission?', result.hasPermission),
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
       );
 
-      this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT, this.androidPermissions.PERMISSION.RECORD_AUDIO]);
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT).then(
+        result => console.log('Has permission?', result.hasPermission),
+        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
+      );
+
+      /* this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT, this.androidPermissions.PERMISSION.RECORD_AUDIO]); */
     }
-
-
-
-
-
-
-
-    /** Aquí se debe obtener el terapeuta relacionado al paciente o viceversa para obtener su cometChatId y setearlo como receptor  */
 
     // get cometchat logged user
     this.ccUser = await CometChat.getLoggedinUser();
@@ -90,7 +76,7 @@ export class ChatPage implements OnInit {
         onTextMessageReceived: message => {
           console.log("Message received successfully:", message);
           // Handle text message
-          this.conversation.push({ text: message.text, sender: 0, image: this.loginType == 'therapist' ? 'assets/patient.png' : 'assets/therapist.png' });
+          this.conversation.push({ text: message.text, senderType: 0, sender: message.getSender(), image: this.loginType == 'therapist' ? 'assets/patient.png' : 'assets/therapist.png' });
           this.input = '';
           setTimeout(() => {
             this.scrollToBottom()
@@ -110,10 +96,13 @@ export class ChatPage implements OnInit {
   }
 
   private getLastConversation() {
-    let messagesRequest = new CometChat.MessagesRequestBuilder()
+    const messagesRequest = new CometChat.MessagesRequestBuilder()
       .setLimit(50)
       .setUID(this.receiverUID)
       .build();
+
+    console.log(this.receiverUID);
+    CometChat.getLoggedinUser().then(usr => console.log(usr))
 
     messagesRequest.fetchPrevious().then(
       (messages: any[]) => {
@@ -123,7 +112,8 @@ export class ChatPage implements OnInit {
           // let isLocal = (this.ccUser.role == 'therapist' && this.loginType == 'therapist' && msg.) || (this.ccUser.role == 'patient' && this.loginType == 'patient')
           return {
             text: msg.text,
-            sender: this.ccUser.uid == msg.sender.uid ? 1 : 0,
+            senderType: this.ccUser.uid == msg.sender.uid ? 1 : 0,
+            sender: msg.sender,
             image: `assets/${msg.sender.role}.png`
           }
         })
@@ -138,7 +128,7 @@ export class ChatPage implements OnInit {
 
   send() {
     if (this.input != '') {
-      this.conversation.push({ text: this.input, sender: 1, image: 'assets/sg1.jpg' });
+      this.conversation.push({ text: this.input, senderType: 1, image: 'assets/sg1.jpg' });
       this.input = '';
       setTimeout(() => {
         this.scrollToBottom()
@@ -147,6 +137,7 @@ export class ChatPage implements OnInit {
   }
 
   sendChatMessage() {
+    if (this.input.length <= 0) return
     const receiverID = this.receiverUID;
     const messageText = this.input;
     const receiverType = CometChat.RECEIVER_TYPE.USER;
@@ -157,7 +148,7 @@ export class ChatPage implements OnInit {
       message => {
         console.log("Message sent successfully:", message);
         // Do something with message
-        this.conversation.push({ text: this.input, sender: 1, image: this.loginType == 'therapist' ? 'assets/therapist.png' : 'assets/patient.png' });
+        this.conversation.push({ text: this.input, senderType: 1, sender: message.getSender(), image: this.loginType == 'therapist' ? 'assets/therapist.png' : 'assets/patient.png' });
         this.input = '';
         setTimeout(() => {
           this.scrollToBottom()

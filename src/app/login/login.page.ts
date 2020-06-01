@@ -3,9 +3,8 @@ import { ToastController, NavController, LoadingController, AlertController } fr
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Route, ActivatedRoute } from '@angular/router';
 
-import { ApiService } from "../api-services/api.service";
-
 import { COMETCHAT } from "../keys";
+import { AuthService } from '../api-services/auth.service';
 
 @Component({
   selector: 'page-login',
@@ -29,7 +28,7 @@ export class LoginPage implements OnInit {
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private navCtrl: NavController,
-    private api: ApiService
+    private auth: AuthService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -43,9 +42,9 @@ export class LoginPage implements OnInit {
 
   public async loginUser() {
     try {
-      let loginData = { email: this.username, password: this.password }
+      let loginData: any = { email: this.username, password: this.password }
       if (this.loginType == 'therapist') loginData = { email: this.username, password: this.password, code: this.therapistCode }
-      const newSession = await this.api.loginUser(loginData)
+      const newSession = await this.auth.loginUser(loginData)
       this.cometChatLogin(newSession.user);
     } catch (e) {
       console.log(e);

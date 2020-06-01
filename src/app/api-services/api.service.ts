@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 
 @Injectable({
@@ -20,14 +20,6 @@ export class ApiService {
     this.caller = this.a_http;
   }
 
-  public async loginUser(data) {
-    let loggedUser = await this.caller.post(`/auth/signin`, data, {
-      'Content-Type': 'Application/json'
-    }).toPromise()
-    await this.auth.setAuthHeader(loggedUser.accessToken)
-    return loggedUser
-  }
-
   public async signupUser(user) {
     return await this.caller.post(`/auth/signup`, user, {
       'Content-Type': 'Application/json'
@@ -37,4 +29,17 @@ export class ApiService {
   public async getSpecilaities() {
     return await this.caller.get(`/specialty`).toPromise()
   }
+
+  public async getMyPacients(id) {
+    const opts = { params: new HttpParams({ fromString: "join=patients" }) };
+    let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
+    return userWhitPatient.patients;
+  }
+
+  public async getMyTherapist(id) {
+    const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
+    let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
+    return userWhitPatient.therapist;
+  }
+
 }
