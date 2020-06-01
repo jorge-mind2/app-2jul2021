@@ -5,25 +5,19 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HomeTherapistPage } from './home-therapist.page';
-import { MenuComponentModule } from '../menu/menu.module';
+import { MenuComponent } from './menu.component';
 
-const routes: Routes = [
-  {
-    path: '',
-    component: HomeTherapistPage
-  }
-];
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MenuComponentModule,
-    RouterModule.forChild(routes)
+    RouterModule
   ],
-  declarations: [HomeTherapistPage],
+  declarations: [MenuComponent],
+  exports: [MenuComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class HomeTherapistPageModule { }
+export class MenuComponentModule { }

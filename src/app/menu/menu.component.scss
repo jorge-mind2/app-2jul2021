@@ -1,0 +1,32 @@
+.background-menu-component {
+  background-image: url('/assets/back_menu.png');
+  background-color: transparent;
+  position: fixed;
+  z-index: 0;
+  width: 100vw;
+  height: 25%;
+  top: 75%;
+  left: 0;
+  background-repeat: no-repeat;
+  // pointer-events: none;
+  background-size: cover;
+  background-position: center bottom;
+
+  .menu-buttons {
+    position: absolute;
+    bottom: 20%;
+    left: 0;
+    width: 100vw;
+    text-align: center;
+  }
+}
+
+
+ion-fab-button {
+  --background: transparent;
+  --box-shadow: 0;
+  --padding-bottom: 40px;
+  --border-width: 2px;
+  --border-color: var(--ion-color-light);
+  --border-style: solid;
+}

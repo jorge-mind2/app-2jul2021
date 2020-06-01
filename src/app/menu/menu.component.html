@@ -1,0 +1,27 @@
+<div class="background-menu-component">
+  <div class="menu-buttons">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-fab-button style="margin: auto;"
+                          [routerLink]="['/profile']">
+            <ion-icon src="/assets/perfil.svg"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+        <ion-col>
+          <ion-fab-button style="margin: auto;"
+                          color="danger"
+                          (click)="presentLogoutAlert()">
+            <ion-icon name="close"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+        <ion-col>
+          <ion-fab-button style="margin: auto;"
+                          [routerLink]="['/']">
+            <ion-icon src="/assets/home.svg"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</div>

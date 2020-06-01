@@ -1,52 +1,10 @@
 <ion-content fullscreen>
   <div class="background"></div>
-
-  <!-- <ion-fab vertical="center"
-           horizontal="center"
-           slot="fixed">
-    <ion-fab-button color="secondary"
-                    (click)="goToSessionPage('therapist')">
-      <ion-icon name="chatboxes"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
-
   <ion-item text-center
             lines="none">
     <ion-label color="light"
                style="font-size: 1.5em; padding-top: 30px;">Bienvenido Usuario</ion-label>
   </ion-item>
-  <!-- <ion-grid style="margin-top: 50px;">
-    <ion-row>
-      <ion-col size="4">
-        <ion-button class="home-button"
-                    expand="full"
-                    (click)="goToSessionPage('patient')">
-          <div>
-            <ion-icon name="chatboxes"></ion-icon>
-            Mi Sesión <br> &nbsp;
-          </div>
-        </ion-button>
-      </ion-col>
-      <ion-col size="4">
-        <ion-button class="home-button"
-                    expand="full">
-          <div>
-            <ion-icon name="headset"></ion-icon>
-            Chat de <br>Servicio
-          </div>
-        </ion-button>
-      </ion-col>
-      <ion-col size="4">
-        <ion-button class="home-button"
-                    expand="full">
-          <div>
-            <ion-icon name="card"></ion-icon>
-            Pagar <br> &nbsp;
-          </div>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid> -->
 
   <ion-card color="light"
             margin
@@ -58,7 +16,6 @@
                 detail
                 no-padding>
         <ion-icon slot="start"
-                  size="large"
                   color="dark"
                   src="/assets/chat_dark.svg"></ion-icon>
         <ion-avatar slot="start">
@@ -73,27 +30,32 @@
     <ion-ripple-effect></ion-ripple-effect>
   </ion-card>
 
-  <div class="menu-buttons">
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <ion-fab-button style="margin: auto;">
-            <ion-icon src="/assets/perfil.svg"></ion-icon>
-          </ion-fab-button>
-        </ion-col>
-        <ion-col>
-          <ion-fab-button style="margin: auto;"
-                          color="danger"
-                          (click)="logout()">
-            <ion-icon name="close"></ion-icon>
-          </ion-fab-button>
-        </ion-col>
-        <ion-col>
-          <ion-fab-button style="margin: auto;">
-            <ion-icon src="/assets/home.svg"></ion-icon>
-          </ion-fab-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+  <!-- <ion-card color="light"
+            margin
+            class="ion-activatable ripple-parent"
+            *ngFor="let patient of [1,2,3,4,5,6,7]">
+    <ion-card-content>
+      <ion-item lines="none"
+                detail
+                no-padding>
+        <ion-icon slot="start"
+                  color="dark"
+                  src="/assets/chat_dark.svg"></ion-icon>
+        <ion-avatar slot="start">
+          <img src="assets/therapist.png">
+        </ion-avatar>
+        <ion-label>
+          <h3>A</h3>
+          <p class="text-muted">B</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+    <ion-ripple-effect></ion-ripple-effect>
+  </ion-card> -->
+
+  <div style="width: 100%; height: 22%; background: transparent; pointer-events: none;">
+    &nbsp;
   </div>
+
+  <app-menu></app-menu>
 </ion-content>

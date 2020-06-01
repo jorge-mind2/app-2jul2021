@@ -47,12 +47,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  public logout() {
-    this.auth.logout();
-    this.auth.authenticationState.unsubscribe();
-    this.navCtrl.navigateRoot('welcome')
-  }
-
   async presentErrorAlert(header, message) {
     const alert = await this.alertCtrl.create({
       header,

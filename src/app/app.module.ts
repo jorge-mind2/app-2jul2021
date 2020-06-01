@@ -17,6 +17,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { environment } from "../environments/environment";
+import { MenuComponent } from './menu/menu.component';
 
 export function jwtOptionsFactory(storage) {
   return {
