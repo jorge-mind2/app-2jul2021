@@ -5,12 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AddCardPage } from './add-card.page';
+import { CheckoutPage } from './checkout.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: AddCardPage
+    component: CheckoutPage
   }
 ];
 
@@ -22,6 +22,6 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [AddCardPage]
+  declarations: [CheckoutPage]
 })
-export class AddCardPageModule { }
+export class CheckoutPageModule { }

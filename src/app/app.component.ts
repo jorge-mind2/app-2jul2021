@@ -32,19 +32,22 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       // this.presentCallAlert('sessionID')
+      console.log('Platform ready');
       this.auth.authenticationState.subscribe(state => {
         let userType = this.auth.getUserType();
         console.log(state);
 
-        if (!state) {
-          this.navCtrl.navigateRoot(this.rootPage)
-        }
-        else {
-          this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
-          this.navCtrl.navigateRoot(this.rootPage);
+        if (userType) {
+          if (!state) {
+            this.navCtrl.navigateRoot(this.rootPage)
+          }
+          else {
+            return true;
+            this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
+            this.navCtrl.navigateRoot(this.rootPage);
+          }
         }
       })
-      console.log('Platform ready');
     });
     const appID = COMETCHAT.APPID;
     const region = "US";

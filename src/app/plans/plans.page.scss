@@ -1,0 +1,13 @@
+ion-content,
+.plan-backgroud {
+  background: rgb(47, 9, 70);
+  background: linear-gradient(0deg, rgba(47, 9, 70, 1) 0%, rgba(77, 28, 107, 1) 35%, rgba(119, 27, 177, 1) 100%);
+  --background: linear-gradient(0deg, rgba(47, 9, 70, 1) 0%, rgba(77, 28, 107, 1) 35%, rgba(119, 27, 177, 1) 100%);
+}
+
+
+ion-toolbar,
+ion-item {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+}

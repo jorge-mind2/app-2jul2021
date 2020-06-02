@@ -16,8 +16,6 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('sí carga');
-
   }
 
   public logout() {

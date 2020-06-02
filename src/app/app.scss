@@ -4,3 +4,18 @@
 // styles are for the entire app and not just one component. Additionally, this
 // file can hold Sass mixins, functions, and placeholder classes to be imported
 // and used throughout the application.
+
+.background-1 {
+  background-image: url('/assets/back_2.png');
+  background-color: transparent;
+  position: fixed;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  // pointer-events: none;
+  background-size: 100% 100%;
+  background-position: center;
+}

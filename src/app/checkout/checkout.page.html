@@ -1,0 +1,88 @@
+<ion-content fullscreen>
+  <div class="background-1"></div>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="plans"
+                       color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button defaultHref="plans"
+                  [routerLink]="['/add-card']"
+                  color="light"
+                  iconOnly
+                  *ngIf="view == 'card'">
+        <ion-icon name="add"
+                  size="large"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment (ionChange)="setView($event)"
+                 color="light"
+                 mode="md"
+                 value="card">
+      <ion-segment-button value="card">
+        <ion-label>
+          <ion-icon name="card"></ion-icon> Tarjeta
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="store">
+        <ion-label>
+          <ion-icon name="cash"></ion-icon> OXXO
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+       *ngIf="view == 'card'">
+    <ion-card color="dark"
+              class="ion-margin-vertical"
+              margin>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <h2 style="font-size: 1.2em;; margin-top: 15;"
+                  class="ion-padding-horizontal">Tarjeta</h2>
+              <h2
+                  style="font-size: 1.2em; margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: space-around;">
+                <span>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                </span> <span>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                </span> <span>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                  <ion-icon name="medical"></ion-icon>
+                </span>
+                <b>1233</b>
+              </h2>
+              <h2 style="font-size: 1.2em; margin-bottom: 15px;"
+                  class="ion-padding-horizontal">Nombre en la Tarjeta de Crédito</h2>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+    <ion-button expand="full"
+                size="large"
+                shape="round"
+                type="submit">PAGAR</ion-button>
+  </div>
+  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+       *ngIf="view == 'store'">
+    <ion-button expand="full"
+                color="secondary"
+                size="large"
+                shape="round">Obtener recibo de pago</ion-button>
+  </div>
+
+</ion-content>

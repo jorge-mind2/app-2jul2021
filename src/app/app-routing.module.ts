@@ -21,7 +21,8 @@ const routes: Routes = [
   { path: 'my-patients', loadChildren: './my-patients/my-patients.module#MyPatientsPageModule' },
   { path: 'chat', loadChildren: './chat/chat.module#ChatPageModule' },
   { path: 'video-call', loadChildren: './video-call/video-call.module#VideoCallPageModule' },
-  { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule' }
+  { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule' },
+  { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule' }
 ];
 @NgModule({
   imports: [

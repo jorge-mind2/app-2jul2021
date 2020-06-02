@@ -1,27 +1,36 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Headers } from "@angular/http";
 
 import { Storage } from '@ionic/storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
 
 const TOKEN_KEY = 'accessToken';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnInit {
   private headers
   public token: string
   public userType: string
-  authenticationState = new BehaviorSubject(false)
+  authenticationState
   constructor(
     private storage: Storage,
     private http: HttpClient,
+    private platform: Platform,
     private helper: JwtHelperService
   ) {
-    this.checkToken();
+    this.platform.ready().then(() => {
+      this.authenticationState = new BehaviorSubject(false)
+      this.checkToken();
+    })
+  }
+
+  ngOnInit() {
+
   }
 
   checkToken() {
@@ -29,11 +38,13 @@ export class AuthService {
       if (token) {
         // let decoded = this.helper.decodeToken(token);
         let isExpired = this.helper.isTokenExpired(token);
+        console.log('token expired', isExpired);
 
         if (!isExpired) {
           this.storage.get('userType').then(userType => {
             this.token = token;
             this.userType = userType;
+
             this.authenticationState.next(true);
           })
         } else {

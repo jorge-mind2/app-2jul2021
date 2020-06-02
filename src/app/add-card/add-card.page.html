@@ -1,9 +1,106 @@
-<ion-header>
+<ion-content fullscreen>
+  <div class="background-1"></div>
   <ion-toolbar>
-    <ion-title>add-card</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="checkout"
+                       color="light"></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
-</ion-header>
 
-<ion-content>
+  <ion-item class="ion-padding-horizontal"
+            lines="none">
+    <ion-text color="light">
+      <h1>Agregar Tarjeta</h1>
+    </ion-text>
+  </ion-item>
+
+  <hr>
+
+  <form [formGroup]="cardForm"
+        (ngSubmit)="addCard()">
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="floating"
+                 color="light">Nombre de Tarjetahabiente</ion-label>
+      <ion-input color="light"
+                 formControlName="holder_name"
+                 rounded></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="floating"
+                 color="light">Número de Tarjeta</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="number"></ion-input>
+    </ion-item>
+    <!-- <ion-item color="light"
+              lines="none"
+              class="ion-padding-horizontal">
+      <ion-text position="floating"
+                color="light">Fecha Vencimiento</ion-text>
+    </ion-item> -->
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal">
+            <ion-label color="light"
+                       position="floating">Mes</ion-label>
+            <ion-select formControlName="exp_month"
+                        okText="Aceptar"
+                        cancelText="Cancelar">
+              <ion-select-option *ngFor="let month of months"
+                                 [value]="month.value">{{month.value}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+        </ion-col>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal">
+            <ion-label color="light"
+                       position="floating">Año</ion-label>
+            <ion-select formControlName="exp_year"
+                        okText="Aceptar"
+                        cancelText="Cancelar">
+              <ion-select-option *ngFor="let year of years"
+                                 [value]="year">{{year}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal">
+            <ion-label color="light"
+                       position="floating">CVV</ion-label>
+            <ion-input formControlName="cvv"
+                       type="text"
+                       color="light">
+            </ion-input>
+            <ion-input type="hidden"
+                       name="tokenInput"
+                       id="tokenInput"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <br>
+    <ion-item class="ion-text-center">
+      <ion-text color="light">
+        Se hará un cargo por $10.00 MXN para verificar tu método de pago el cual será reembolsado.
+      </ion-text>
+    </ion-item>
+    <br><br>
+    <ion-button expand="full"
+                size="large"
+                shape="round"
+                type="submit">
+      Registrar
+    </ion-button>
+  </form>
+
 
 </ion-content>
