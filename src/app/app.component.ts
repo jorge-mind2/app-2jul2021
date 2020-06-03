@@ -36,13 +36,12 @@ export class AppComponent {
       this.auth.authenticationState.subscribe(state => {
         let userType = this.auth.getUserType();
         console.log(state);
-
         if (userType) {
           if (!state) {
             this.navCtrl.navigateRoot(this.rootPage)
           }
           else {
-            return true;
+            // return true;
             this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
             this.navCtrl.navigateRoot(this.rootPage);
           }

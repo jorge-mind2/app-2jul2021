@@ -39,10 +39,4 @@ export class HomeTherapistPage implements OnInit {
     this.patients = patients
   }
 
-  public logout() {
-    this.auth.logout();
-    this.auth.authenticationState.unsubscribe();
-    this.navCtrl.navigateRoot('welcome')
-  }
-
 }

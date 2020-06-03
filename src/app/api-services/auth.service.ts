@@ -6,6 +6,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Platform } from '@ionic/angular';
+import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 
 const TOKEN_KEY = 'accessToken';
 
@@ -104,7 +105,8 @@ export class AuthService implements OnInit {
 
   public logout() {
     this.storage.clear().then(() => {
-      this.authenticationState.next(false);
+      CometChat.logout()
+      // this.authenticationState.next(false);
     });
   }
 

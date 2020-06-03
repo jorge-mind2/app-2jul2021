@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PasswordRecoveryPage implements OnInit {
 
+  email: string
   constructor() { }
 
   ngOnInit() {
+  }
+
+  private recoveryPassword() {
+    console.log(this.email);
+
   }
 
 }

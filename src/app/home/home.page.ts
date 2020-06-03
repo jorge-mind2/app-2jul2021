@@ -25,7 +25,8 @@ export class HomePage implements OnInit {
 
   private getUser() {
     this.auth.getCurrentUser().then(async (user: any) => {
-      console.log(user);
+      console.log('currentUser', user);
+      if (!user) return await this.auth.logout()
       await this.getTherapist(user.id);
       this.user = user;
     });
@@ -34,7 +35,7 @@ export class HomePage implements OnInit {
 
   public async getTherapist(id) {
     let therapist = await this.api.getMyTherapist(id);
-    console.log(therapist);
+    console.log('user Therapist', therapist);
     this.therapist = therapist;
   }
 

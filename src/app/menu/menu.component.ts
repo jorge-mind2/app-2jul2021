@@ -20,7 +20,7 @@ export class MenuComponent implements OnInit {
 
   public logout() {
     this.auth.logout();
-    this.auth.authenticationState.unsubscribe();
+    // this.auth.authenticationState.unsubscribe();
     this.navCtrl.navigateRoot('welcome')
   }
 

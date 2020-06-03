@@ -5,13 +5,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../api-services/api.service';
 import { CometChatService } from "../comet-chat.service";
 
+import { appConstants } from "../constants.local";
+
 @Component({
   selector: 'app-sign-up-patient',
   templateUrl: './sign-up-patient.page.html',
   styleUrls: ['../sign-up/sign-up.page.scss', './sign-up-patient.page.scss'],
 })
 export class SignUpPatientPage implements OnInit {
-  form: FormGroup = new FormGroup({});
+  form: FormGroup = new FormGroup({})
+  countries: any[] = appConstants.COUNTRIES
+  states: any[]
   constructor(
     private fb: FormBuilder,
     private modalCtrl: ModalController,
@@ -34,6 +38,12 @@ export class SignUpPatientPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  private onCountrySelect(c) {
+    this.form.controls.state.setValue('')
+    const selected = c.value
+    this.states = this.countries.find(c => c.name == selected).states
   }
 
   async presentModal() {
