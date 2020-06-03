@@ -32,7 +32,7 @@ export class ChatPage implements OnInit {
 
   constructor(
     private platform: Platform,
-    public alertController: AlertController,
+    private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private androidPermissions: AndroidPermissions
   ) {
@@ -126,7 +126,7 @@ export class ChatPage implements OnInit {
     );
   }
 
-  send() {
+  private send() {
     if (this.input != '') {
       this.conversation.push({ text: this.input, senderType: 1, image: 'assets/sg1.jpg' });
       this.input = '';
@@ -136,8 +136,8 @@ export class ChatPage implements OnInit {
     }
   }
 
-  sendChatMessage() {
-    if (this.input.length <= 0) return
+  private sendChatMessage() {
+    if (this.input.replace(/\s/g, '').length <= 0) return
     const receiverID = this.receiverUID;
     const messageText = this.input;
     const receiverType = CometChat.RECEIVER_TYPE.USER;
@@ -165,7 +165,7 @@ export class ChatPage implements OnInit {
   /**
    * Init CometChat video Call
   */
-  initVideoCall() {
+  private initVideoCall() {
     var callType = CometChat.CALL_TYPE.VIDEO;
     var receiverType = CometChat.RECEIVER_TYPE.USER;
 
@@ -182,7 +182,7 @@ export class ChatPage implements OnInit {
     );
   }
 
-  scrollToBottom() {
+  private scrollToBottom() {
     let content = document.getElementById("chat-container");
     let parent = document.getElementById("chat-parent");
     let scrollOptions = {
@@ -191,6 +191,24 @@ export class ChatPage implements OnInit {
     }
 
     parent.scrollTo(scrollOptions)
+  }
+
+  private async presentCallAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Iniciar llamada',
+      message: '¿Deseas iniciar la videollamada con tu paciente?',
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Cancelar',
+        cssClass: 'text-danger'
+      }, {
+        text: 'Aceptar',
+        cssClass: 'text-tertiary',
+        handler: () => this.initVideoCall()
+      },]
+    })
+
+    alert.present();
   }
 
 }

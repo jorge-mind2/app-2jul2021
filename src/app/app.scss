@@ -33,3 +33,19 @@
   pointer-events: none;
   background-size: cover;
 }
+
+.text-primary {
+  color: var(--ion-color-primary) !important;
+}
+
+.text-secondary {
+  color: var(--ion-color-secondary) !important;
+}
+
+.text-tertiary {
+  color: var(--ion-color-tertiary) !important;
+}
+
+.text-danger {
+  color: var(--ion-color-danger) !important;
+}

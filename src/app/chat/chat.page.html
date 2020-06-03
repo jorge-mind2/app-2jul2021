@@ -25,10 +25,21 @@
             edge
             slot="fixed"
             *ngIf="loginType=='therapist'">
-     <ion-fab-button color="secondary"
-                     (click)="initVideoCall()">
-       <ion-icon name="call"></ion-icon>
+     <ion-fab-button color="secondary">
+       <ion-icon name="add"></ion-icon>
      </ion-fab-button>
+     <ion-fab-list side="bottom">
+       <ion-fab-button color="tertiary"
+                       (click)="presentCallAlert()">
+         <ion-icon name="call"></ion-icon>
+       </ion-fab-button>
+       <ion-fab-button color="tertiary">
+         <ion-icon name="calendar"></ion-icon>
+       </ion-fab-button>
+       <ion-fab-button color="tertiary">
+         <ion-icon name="cash"></ion-icon>
+       </ion-fab-button>
+     </ion-fab-list>
    </ion-fab>
    <div id="chat-parent"
         class="bg-image"
