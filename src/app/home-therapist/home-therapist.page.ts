@@ -27,7 +27,8 @@ export class HomeTherapistPage implements OnInit {
 
   public getCurrrentUSer() {
     this.auth.getCurrentUser().then((user: any) => {
-      console.log(user);
+      console.log('Mind2 user logged', user);
+      if (!user) return this.auth.logout()
       this.getPacients(user.id);
       this.user = user;
     });

@@ -6,6 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { SignUpTherapistPage } from './sign-up-therapist.page';
+import { TermsPage } from '../terms/terms.page';
+import { TermsPageModule } from '../terms/terms.module';
 
 const routes: Routes = [
   {
@@ -20,8 +22,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    TermsPageModule
   ],
+  entryComponents: [TermsPage],
   declarations: [SignUpTherapistPage]
 })
 export class SignUpTherapistPageModule { }

@@ -3,6 +3,8 @@ import { ApiService } from '../api-services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
 import { CometChatService } from '../comet-chat.service';
+import { appConstants } from '../constants.local';
+import { TermsPage } from '../terms/terms.page';
 
 @Component({
   selector: 'app-sign-up-therapist',
@@ -13,6 +15,8 @@ export class SignUpTherapistPage implements OnInit {
   years: any = Array.from(Array(51).keys())
   form: FormGroup = new FormGroup({})
   specialties: [Object]
+  countries: any[] = appConstants.COUNTRIES
+  states: any[]
   constructor(
     private fb: FormBuilder,
     private navCtrl: NavController,
@@ -30,6 +34,7 @@ export class SignUpTherapistPage implements OnInit {
       country: ['', Validators.required],
       state: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      terms: [false, Validators.required],
       detail: this.fb.group({
         professional_id: ['', Validators.required],
         birthdate: [null, Validators.required],
@@ -51,9 +56,23 @@ export class SignUpTherapistPage implements OnInit {
 
   async ngOnInit() {
     this.specialties = await this.api.getSpecilaities()
-    console.log(this.specialties);
-    console.log(this.form)
+  }
 
+  private onCountrySelect(c) {
+    this.form.controls.state.setValue('')
+    const selected = c.value
+    this.states = this.countries.find(c => c.name == selected).states
+  }
+
+  async presentModal() {
+    const modal = await this.modalCtrl.create({
+      component: TermsPage
+    });
+    return await modal.present()
+  }
+
+  private showTerms() {
+    this.presentModal()
   }
 
   private async signUpUser() {
@@ -61,7 +80,7 @@ export class SignUpTherapistPage implements OnInit {
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }
       let newUser = await this.api.signupUser(data)
-      console.log(newUser);
+      // console.log(newUser);
       this.createCometChatUser(newUser)
     } catch (e) {
       console.log(e)
