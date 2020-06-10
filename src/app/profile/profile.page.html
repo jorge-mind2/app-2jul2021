@@ -1,9 +1,70 @@
-<ion-header>
+<ion-content fullscreen>
+  <div class="background-1"></div>
   <ion-toolbar>
-    <ion-title>Profile</ion-title>
+    <ion-buttons slot="start">
+      <ion-button defaultHref="home"
+                  [routerLink]="['/edit-profile']"
+                  color="light"
+                  iconOnly>
+        <ion-icon name="cog"
+                  size="large"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLogoutAlert()"
+                  color="light"
+                  iconOnly>
+        <ion-icon name="power"
+                  size="large"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-</ion-header>
 
-<ion-content>
+  <ion-grid style="margin-top: 1em;">
+    <ion-row>
+      <ion-col>
+      </ion-col>
+      <ion-col size="6">
+        <ion-avatar style="margin: auto; width: 80px; height: 80px; border: 3px solid white;">
+          <img src="https://api.adorable.io/avatars/120/abo@adorable.png">
+        </ion-avatar>
+        <ion-label color="light"
+                   style="font-size: 1.2em; text-align: center; padding-top: .5em; display: block; width: 100%;">
+          {{user.name}} {{user.last_name}}</ion-label>
+
+        <ion-label color="light"
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%;"><span
+                *ngFor="let sp of user.detail?.specialties">{{sp.name}}, </span></ion-label>
+
+        <ion-label color="light"
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%;">Cédula Proesional:
+          {{user.detail?.professional_id}}</ion-label>
+
+        <ion-label color="light"
+                   style="font-size: .8em; text-align: center; margin-top: 1em; padding-top: .5em; display: block; width: 100%;">
+          Código</ion-label>
+        <ion-button shape="round"
+                    fill="outline"
+                    color="light"
+                    expand="full">
+          <p>{{user.detail?.code}}</p>
+        </ion-button>
+      </ion-col>
+      <ion-col>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-item lines="none">
+    <ion-label color="light"
+               style="font-size: 1.2em; padding-top: .5em; display: block; width: 100%;">Biografía
+    </ion-label>
+  </ion-item>
+  <ion-item lines="none">
+    <ion-text color="light">
+      <span *ngIf="user.detail?.bio">{{user.detail?.bio}}</span>
+      <i *ngIf="!user.detail?.bio">No hay biografía</i>
+    </ion-text>
+  </ion-item>
+  <app-menu></app-menu>
 
 </ion-content>

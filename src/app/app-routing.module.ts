@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   { path: '', loadChildren: './welcome/welcome.module#WelcomePageModule' },
-  { path: 'login', loadChildren: './login/login.module#LoginModule' },
-  { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' },
+  { path: 'login', loadChildren: './login/login.module#LoginModule', },
+  { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule', canActivate: [AuthGuard] },
   { path: 'home', loadChildren: './home/home.module#HomePageModule' },
   { path: 'support', loadChildren: './support/support.module#SupportPageModule' },
   { path: 'sign-up', loadChildren: './sign-up/sign-up.module#SignUpPageModule' },
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'chat', loadChildren: './chat/chat.module#ChatPageModule' },
   { path: 'video-call', loadChildren: './video-call/video-call.module#VideoCallPageModule' },
   { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule' },
-  { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule' }
+  { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule' },
+  { path: 'edit-profile', loadChildren: './edit-profile/edit-profile.module#EditProfilePageModule' }
 ];
 @NgModule({
   imports: [

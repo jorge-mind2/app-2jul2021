@@ -1,0 +1,99 @@
+<ion-content fullscreen
+             color="dark">
+  <div class="background-1 opacity-6"></div>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="profile"
+                       color="light"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h1 style="margin: 0;">Mi cuenta</h1>
+    </ion-text>
+  </ion-item>
+
+  <hr>
+
+  <!-- <form (ngSubmit)="signUpUser()"> -->
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Celular</ion-label>
+    <ion-input color="light"
+               [(ngModel)]="cel"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Dirección (calle y número)</ion-label>
+    <ion-input color="light"
+               [(ngModel)]="address"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Código Postal</ion-label>
+    <ion-input color="light"
+               [(ngModel)]="zipcode"></ion-input>
+  </ion-item>
+  <br>
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h4>Datos profesionales</h4>
+    </ion-text>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Años dando terapia</ion-label>
+    <ion-select [(ngModel)]="therapy_years"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option *ngFor="let y of years"
+                         [value]="y">{{y}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label color="light">Años dando supervisión</ion-label>
+    <ion-select [(ngModel)]="supervising_years"
+                okText="Aceptar"
+                cancelText="Cancelar">
+      <ion-select-option *ngFor="let y of years"
+                         [value]="y">{{y}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <br>
+  <ion-item class="ion-padding-horizontal">
+    <ion-text color="light">
+      <h4>Accesos</h4>
+    </ion-text>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Email</ion-label>
+    <ion-input color="light"
+               type="email"
+               [(ngModel)]="email"></ion-input>
+  </ion-item>
+  <ion-item color="light"
+            class="ion-padding-horizontal">
+    <ion-label position="stacked"
+               color="light">Contraseña</ion-label>
+    <ion-input color="light"
+               type="password"
+               [(ngModel)]="password"></ion-input>
+  </ion-item>
+
+  <br><br>
+  <ion-button expand="full"
+              size="large"
+              shape="round"
+              type="submit">
+    Guardar
+  </ion-button>
+  <!-- </form> -->
+
+</ion-content>
