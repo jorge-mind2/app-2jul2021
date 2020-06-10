@@ -11,10 +11,11 @@
  *
  *  */
 import { Component, OnInit } from '@angular/core';
-import { Platform, AlertController } from '@ionic/angular';
+import { Platform, AlertController, ModalController } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { ChooseDateComponent } from '../choose-date/choose-date.component';
 
 @Component({
   selector: 'app-chat',
@@ -34,6 +35,7 @@ export class ChatPage implements OnInit {
     private platform: Platform,
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
+    private modalCtrl: ModalController,
     private androidPermissions: AndroidPermissions
   ) {
     this.route.queryParams.subscribe(params => {
@@ -209,6 +211,13 @@ export class ChatPage implements OnInit {
     })
 
     alert.present();
+  }
+
+  async presentModal() {
+    const modal = await this.modalCtrl.create({
+      component: ChooseDateComponent
+    });
+    return await modal.present()
   }
 
 }
