@@ -41,7 +41,7 @@ export class AppComponent {
             this.navCtrl.navigateRoot(this.rootPage)
           }
           else {
-            // return true;
+            return true;
             this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
             this.navCtrl.navigateRoot(this.rootPage);
           }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
+import { AuthService } from '../api-services/auth.service';
 
 @Component({
   selector: 'app-welcome',
@@ -9,10 +10,17 @@ import { NavController } from '@ionic/angular';
 export class WelcomePage implements OnInit {
 
   constructor(
-    public navCtrl: NavController
+    private navCtrl: NavController,
+    private auth: AuthService
   ) { }
 
   ngOnInit() {
+    this.auth.getCurrentUser().then(async user => {
+      if (user) {
+        let userHome = user.role.name == 'therapist' ? 'home-therapist' : 'home'
+        this.navCtrl.navigateRoot(userHome)
+      }
+    })
   }
 
   public gotoSignUpPage() {

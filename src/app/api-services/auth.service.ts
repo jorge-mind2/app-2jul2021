@@ -24,8 +24,8 @@ export class AuthService implements OnInit {
     private platform: Platform,
     private helper: JwtHelperService
   ) {
+    this.authenticationState = new BehaviorSubject(false)
     this.platform.ready().then(() => {
-      this.authenticationState = new BehaviorSubject(false)
       this.checkToken();
     })
   }
@@ -42,10 +42,10 @@ export class AuthService implements OnInit {
         console.log('token expired', isExpired);
 
         if (!isExpired) {
-          this.storage.get('userType').then(userType => {
+          console.log('Token', token);
+          this.storage.get('userType').then(async userType => {
             this.token = token;
             this.userType = userType;
-
             this.authenticationState.next(true);
           })
         } else {
@@ -104,9 +104,11 @@ export class AuthService implements OnInit {
   }
 
   public logout() {
-    this.storage.clear().then(() => {
-      CometChat.logout()
-      // this.authenticationState.next(false);
+    this.storage.clear().then(async () => {
+      let ccuser = await CometChat.getLoggedinUser()
+      if (ccuser) CometChat.logout()
+      this.userType = 'logged'
+      this.authenticationState.next(false);
     });
   }
 

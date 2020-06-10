@@ -30,6 +30,11 @@ export class ApiService {
     return await this.caller.get(`/specialty`).toPromise()
   }
 
+  public async getTherapistProfile(id) {
+    const opts = { params: new HttpParams({ fromString: "join=detail&join=detail.specialties" }) }
+    return await this.caller.get(`/users/${id}`, opts).toPromise()
+  }
+
   public async getMyPacients(id) {
     const opts = { params: new HttpParams({ fromString: "join=patients" }) };
     let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
