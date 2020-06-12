@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { SupportPage } from './support.page';
 
+import { CalendarModule } from 'ion2-calendar'
+
 const routes: Routes = [
   {
     path: '',
@@ -19,8 +21,9 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    CalendarModule,
     RouterModule.forChild(routes)
   ],
   declarations: [SupportPage]
 })
-export class SupportPageModule {}
+export class SupportPageModule { }

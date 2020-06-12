@@ -48,6 +48,12 @@ export class HomePage implements OnInit {
     }
   }
 
+  public goToSupportChat() {
+    // obtener el usuario asignado com sporte y mandar su receiverId
+    const receiverId = this.therapist.cometChatId;
+    this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
+  }
+
   async presentErrorAlert(header, message) {
     const alert = await this.alertCtrl.create({
       header,

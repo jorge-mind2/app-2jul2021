@@ -1,9 +1,119 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Support</ion-title>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="home"
+                         color="light"></ion-back-button>
+      </ion-buttons>
+    </ion-buttons>
+    <ion-title>
+      <div class="title-block">
+        <ion-icon name="headset"
+                  color="light"
+                  class="title-icon"></ion-icon>
+        <ion-text color="light"
+                  class="title-text">Chat de servicio</ion-text>
+      </div>
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content padding-vertical
+             fullscreen>
+  <ion-fab vertical="top"
+           horizontal="end"
+           edge
+           slot="fixed"
+           *ngIf="loginType=='therapist'">
+    <ion-fab-button color="secondary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="bottom">
+      <ion-fab-button color="tertiary"
+                      (click)="presentCallAlert()">
+        <ion-icon name="call"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="tertiary"
+                      (click)="presentModal()">
+        <ion-icon name="calendar"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="tertiary">
+        <ion-icon name="cash"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+  <div id="chat-parent"
+       class="bg-image"
+       [ngClass]="{ 'bg-image-X': phone_model=='iPhone X'}">
+    <div id="chat-container">
+      <ion-row *ngFor="let conv of conversation; let i = index;"
+               class="full no-padding">
+        <ion-col class="no-padding chat-row"
+                 [ngClass]="{ 'reverse': conv.senderType}">
+          <div class="avatar-parent">
+            <div class="avatar-border"></div>
+            <img [src]="conv.image"
+                 class="avatar">
+          </div>
+          <div [ngClass]="{ 'name-row-parent-right': conv.senderType,'name-row-parent-left': !conv.senderType}">
+            <div class="no-padding"
+                 [ngClass]="{ 'name-row-right': conv.senderType,'name-row-left': !conv.senderType}">
+              {{conv.sender.name}}
+              <div [ngClass]="{ 'timer-right': conv.senderType,'timer-left': !conv.senderType}">{{i+5}} mins ago
+                <ion-icon *ngIf="conv.senderType && conv.sent"
+                          name="checkmark"
+                          [color]="conv.read ? 'primary': 'light'"
+                          class="first-tick"></ion-icon>
+                <ion-icon *ngIf="conv.senderType && conv.delivered"
+                          name="checkmark"
+                          [color]="conv.read ? 'primary': 'light'"
+                          class="second-tick"></ion-icon>
+              </div>
+              <div [ngClass]="{ 'reverse-arc-right': conv.senderType,'reverse-arc-left': !conv.senderType}">
+                <div
+                     [ngClass]="{ 'reverse-arc-color-right': conv.senderType,'reverse-arc-color-left': !conv.senderType}">
+                </div>
+              </div>
+            </div>
+            <div class="no-padding"
+                 [ngClass]="{ 'message-row-right': conv.senderType,'message-row-left': !conv.senderType}">
+              <ion-text no-margin
+                        class="text">{{conv.text}}</ion-text>
+            </div>
+          </div>
 
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
 </ion-content>
+<ion-footer translucent
+            [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
+  <ion-row class="input-position"
+           [ngClass]="{ 'custom-footer-row': phone_model=='iPhone X'}">
+    <ion-col size="10">
+      <ion-input class="input restrict"
+                 type="text"
+                 placeholder="Type a message"
+                 [(ngModel)]="input"
+                 padding-start></ion-input>
+    </ion-col>
+    <ion-col size="2">
+      <!-- <ion-button shape="round"
+                  class="send-button"
+                  color="secondary"
+                  (click)="send()">
+        <ion-text color="light">
+          <ion-icon name="send"></ion-icon>
+        </ion-text>
+      </ion-button> -->
+      <ion-fab-button color="secondary"
+                      size="small"
+                      class="send-fab-button"
+                      (click)="sendChatMessage()">
+        <ion-icon name="send"
+                  style="padding-left: 5px;"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
