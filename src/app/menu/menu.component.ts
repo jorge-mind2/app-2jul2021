@@ -18,6 +18,12 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  public navigateHome() {
+    const userType = this.auth.getUserType()
+    let home = userType == 'therapist' ? 'home-therapist' : 'home'
+    this.navCtrl.navigateBack(home)
+  }
+
   public logout() {
     this.auth.logout();
     // this.auth.authenticationState.unsubscribe();

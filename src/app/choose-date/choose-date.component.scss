@@ -1,0 +1,9 @@
+ion-toolbar,
+ion-item {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+}
+
+ion-datetime {
+  color: var(--ion-color-light);
+}

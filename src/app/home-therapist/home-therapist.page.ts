@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-home-therapist',
@@ -21,8 +22,18 @@ export class HomeTherapistPage implements OnInit {
     this.getCurrrentUSer();
   }
 
-  public goToSessionPage(type, receiverId) {
-    this.navCtrl.navigateForward('chat', { queryParams: { type, receiverId } })
+  public goToSessionPage(type, receiverId, patient) {
+    const navigationExtras: NavigationExtras = {
+      queryParams: {
+        type,
+        receiverId
+      },
+      state: {
+        therapist: this.user,
+        patient
+      }
+    };
+    this.navCtrl.navigateForward('chat', { ...navigationExtras })
   }
 
   public getCurrrentUSer() {

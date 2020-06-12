@@ -20,7 +20,7 @@
     "@angular/platform-browser": "^7.2.2",
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
-    "@auth0/angular-jwt": "^4.1.2",
+    "@auth0/angular-jwt": "^4.2.0",
     "@cometchat-pro/cordova-ionic-chat": "^2.0.7",
     "@ionic-native/android-permissions": "^5.26.0",
     "@ionic-native/core": "^5.8.0",
@@ -45,6 +45,8 @@
     "cordova-sqlite-storage": "^5.0.0",
     "cordova.plugin.zoom": "^4.4.5513-0.712",
     "core-js": "^2.5.4",
+    "ion2-calendar": "^3.0.0-rc.0",
+    "moment": "^2.26.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"

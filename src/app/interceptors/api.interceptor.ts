@@ -23,7 +23,7 @@ export class ApiInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-
+    // this.presentLoading()
     let requestParams: any = {}
     if (!/(http(s?)):\/\//i.test(request.url) && request.url.indexOf('assets') == -1) {
       requestParams.url = `${environment.API_BASE_URL}${request.url}`
@@ -37,26 +37,40 @@ export class ApiInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       map((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
+        /* if (event instanceof HttpResponse) {
           console.log('event--->>>', event);
-        }
+        } */
+        /* setTimeout(() => {
+          this.loadingCtrl.getTop().then((val) => {
+            if (val) {
+              this.dismissLoading()
+            }
+          })
+        }, 1000); */
         return event;
       }),
       catchError((error: HttpErrorResponse) => {
         console.log('ERROR', error);
 
         let data = {
-          reason: error && error.error && error.error.message ? error.error.message : 'Error al conectar al servidor',
+          reason: error && error.error && error.error.message ? error.error.message : 'Error al conectar al servidor. Revisa tu conexión a internet.',
           status: error.status
         };
-        this.presentErrorAlert(data.reason);
+        setTimeout(() => {
+          /* this.loadingCtrl.getTop().then((val) => {
+            if (val) {
+              this.dismissLoading()
+            }
+          }) */
+          this.presentErrorAlert(data.reason);
+        }, 1000);
         return throwError(error);
       })
     )
 
   }
 
-  async dismis() {
+  async dismissLoading() {
     await this.loadingCtrl.dismiss()
   }
 

@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { ChatPage } from './chat.page';
 import { ChooseDateComponent } from '../choose-date/choose-date.component';
+import { CalendarModule } from 'ion2-calendar';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    CalendarModule,
     RouterModule.forChild(routes)
   ],
   entryComponents: [ChooseDateComponent],

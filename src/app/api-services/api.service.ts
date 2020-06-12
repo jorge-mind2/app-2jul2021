@@ -30,6 +30,18 @@ export class ApiService {
     return await this.caller.get(`/specialty`).toPromise()
   }
 
+  public async getPatientTherapist(type, id) {
+    if (type = !'patient' || type != 'therapist') {
+      return false
+    }
+    let opts = { params: null }
+    if (type == 'patient') {
+      opts.params = new HttpParams({ fromString: `join=therapist` })
+      let user = this.caller.get(`/users/${id}`, opts).toPromise()
+      return user.therapist
+    }
+  }
+
   public async getTherapistProfile(id) {
     const opts = { params: new HttpParams({ fromString: "join=detail&join=detail.specialties" }) }
     return await this.caller.get(`/users/${id}`, opts).toPromise()
@@ -45,6 +57,10 @@ export class ApiService {
     const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
     let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
     return userWhitPatient.therapist;
+  }
+
+  public async createAppointment(appointment) {
+    return await this.caller.post('/appointments', appointment).toPromise()
   }
 
 }

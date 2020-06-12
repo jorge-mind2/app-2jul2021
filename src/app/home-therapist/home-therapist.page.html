@@ -10,7 +10,7 @@
             margin
             class="ion-activatable ripple-parent"
             *ngFor="let patient of patients"
-            (click)="goToSessionPage('therapist', patient.cometChatId)">
+            (click)="goToSessionPage('therapist', patient.cometChatId, patient)">
     <ion-card-content>
       <ion-item lines="none"
                 detail

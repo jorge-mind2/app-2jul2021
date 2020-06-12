@@ -13,9 +13,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform, AlertController, ModalController } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { ChooseDateComponent } from '../choose-date/choose-date.component';
+import { CalendarModalOptions, CalendarModal } from 'ion2-calendar';
 
 @Component({
   selector: 'app-chat',
@@ -29,12 +30,15 @@ export class ChatPage implements OnInit {
   input: string = '';
   loginType: string = '';
   receiverUID: string = '';
-  ccUser;
+  ccUser: any
+  therapist: any
+  patient: any
 
   constructor(
     private platform: Platform,
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
+    private router: Router,
     private modalCtrl: ModalController,
     private androidPermissions: AndroidPermissions
   ) {
@@ -42,6 +46,10 @@ export class ChatPage implements OnInit {
       this.loginType = params.type;
       // this.receiverUID = this.loginType == 'therapist' ? 'patient01' : 'therapista01';
       this.receiverUID = params.receiverId.toLowerCase();
+      if (this.router.getCurrentNavigation().extras.state) {
+        this.therapist = this.router.getCurrentNavigation().extras.state.therapist
+        this.patient = this.router.getCurrentNavigation().extras.state.patient
+      }
     })
   }
 
@@ -214,8 +222,15 @@ export class ChatPage implements OnInit {
   }
 
   async presentModal() {
+    const options: CalendarModalOptions = {
+      color: 'primary'
+    };
     const modal = await this.modalCtrl.create({
-      component: ChooseDateComponent
+      component: ChooseDateComponent,
+      componentProps: {
+        patient: this.patient,
+        therapist: this.therapist
+      }
     });
     return await modal.present()
   }
