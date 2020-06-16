@@ -46,7 +46,7 @@ export class HomeTherapistPage implements OnInit {
   }
 
   public async getPacients(id) {
-    let patients = await this.api.getMyPacients(id);
+    const patients = await this.api.getMyPacients(id);
     console.log(patients);
     this.patients = patients
   }

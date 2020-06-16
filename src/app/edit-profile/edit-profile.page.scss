@@ -3,3 +3,12 @@ ion-item {
   --background: transparent;
   --ion-color-base: transparent !important;
 }
+
+ion-select {
+  color: var(--ion-color-light);
+}
+
+ion-datetime {
+  --placeholder-color: white;
+  color: white;
+}

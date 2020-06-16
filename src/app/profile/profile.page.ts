@@ -23,12 +23,14 @@ export class ProfilePage implements OnInit {
 
   private getUserInfo() {
     this.auth.getCurrentUser().then(async (user: any) => {
-      console.log(user);
-
-      const info = await this.api.getTherapistProfile(user.id)
-      user.detail = info.detail
+      if (!user.detail) {
+        const info = await this.api.getTherapistProfile(user.id)
+        this.api.setTherapistDetail(info.data.detail)
+        console.log(info);
+        user.detail = info.data.detail
+      }
       this.user = user
-      console.log(user)
+      console.log('user', user)
     })
   }
 

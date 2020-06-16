@@ -96,7 +96,8 @@ export class AuthService implements OnInit {
   }
 
   public async loginUser(data) {
-    let loggedUser = await this.http.post<any>(`/auth/signin`, data).toPromise()
+    const newSession = await this.http.post<any>(`/auth/signin`, data).toPromise()
+    const loggedUser = newSession.data
     this.setCurrentUser(loggedUser.user)
     this.setToken(loggedUser.accessToken)
     this.authenticationState.next(true);

@@ -16,84 +16,106 @@
 
   <hr>
 
-  <!-- <form (ngSubmit)="signUpUser()"> -->
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="stacked"
-               color="light">Celular</ion-label>
-    <ion-input color="light"
-               [(ngModel)]="cel"></ion-input>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="stacked"
-               color="light">Dirección (calle y número)</ion-label>
-    <ion-input color="light"
-               [(ngModel)]="address"></ion-input>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="stacked"
-               color="light">Código Postal</ion-label>
-    <ion-input color="light"
-               [(ngModel)]="zipcode"></ion-input>
-  </ion-item>
-  <br>
-  <ion-item class="ion-padding-horizontal">
-    <ion-text color="light">
-      <h4>Datos profesionales</h4>
-    </ion-text>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label color="light">Años dando terapia</ion-label>
-    <ion-select [(ngModel)]="therapy_years"
-                okText="Aceptar"
-                cancelText="Cancelar">
-      <ion-select-option *ngFor="let y of years"
-                         [value]="y">{{y}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label color="light">Años dando supervisión</ion-label>
-    <ion-select [(ngModel)]="supervising_years"
-                okText="Aceptar"
-                cancelText="Cancelar">
-      <ion-select-option *ngFor="let y of years"
-                         [value]="y">{{y}}</ion-select-option>
-    </ion-select>
-  </ion-item>
-  <br>
-  <ion-item class="ion-padding-horizontal">
-    <ion-text color="light">
-      <h4>Accesos</h4>
-    </ion-text>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="stacked"
-               color="light">Email</ion-label>
-    <ion-input color="light"
-               type="email"
-               [(ngModel)]="email"></ion-input>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="stacked"
-               color="light">Contraseña</ion-label>
-    <ion-input color="light"
-               type="password"
-               [(ngModel)]="password"></ion-input>
-  </ion-item>
+  <form [formGroup]="formProfile"
+        (ngSubmit)="saveMyProfile()">
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="stacked"
+                 color="light">Celular</ion-label>
+      <ion-input color="light"
+                 formControlName="cel"></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="detail">
+      <ion-label position="stacked"
+                 color="light">Dirección (calle y número)</ion-label>
+      <ion-input color="light"
+                 formControlName="address"></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="detail">
+      <ion-label position="stacked"
+                 color="light">Código Postal</ion-label>
+      <ion-input color="light"
+                 formControlName="zipcode"></ion-input>
+    </ion-item>
+    <br>
+    <ion-item class="ion-padding-horizontal">
+      <ion-text color="light">
+        <h4>Datos profesionales</h4>
+      </ion-text>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="detail">
+      <ion-label color="light">Años dando terapia</ion-label>
+      <ion-select formControlName="therapy_years"
+                  okText="Aceptar"
+                  cancelText="Cancelar">
+        <ion-select-option *ngFor="let y of years"
+                           [value]="y">{{y}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="detail">
+      <ion-label color="light">Años dando supervisión</ion-label>
+      <ion-select formControlName="supervising_years"
+                  okText="Aceptar"
+                  cancelText="Cancelar">
+        <ion-select-option *ngFor="let y of years"
+                           [value]="y">{{y}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="detail">
+      <ion-label color="light">Biografía</ion-label>
+      <ion-textarea color="light"
+                    rows="6"
+                    cols="20"
+                    placeholder="Escribe un poco sobre ti"
+                    maxlength="600"
+                    formControlName="bio"></ion-textarea>
+    </ion-item>
+    <br>
+    <ion-item class="ion-padding-horizontal">
+      <ion-text color="light">
+        <h4>Accesos</h4>
+      </ion-text>
+    </ion-item>
+    <ion-item color="light">
+      <ion-text color="light">
+        <p>Si quieres modificar tu contraseña ponte en contacto con nosotros en <a
+             href="mailto:contacto@mind2.me">contacto@mind2.me</a></p>
+      </ion-text>
+    </ion-item>
+    <!-- <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="stacked"
+                 color="light">Email</ion-label>
+      <ion-input color="light"
+                 type="email"
+                 formControlName="email"></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="stacked"
+                 color="light">Contraseña</ion-label>
+      <ion-input color="light"
+                 type="password"
+                 formControlName="password"></ion-input>
+    </ion-item> -->
 
-  <br><br>
-  <ion-button expand="full"
-              size="large"
-              shape="round"
-              type="submit">
-    Guardar
-  </ion-button>
-  <!-- </form> -->
+    <br><br>
+    <ion-button expand="full"
+                size="large"
+                shape="round"
+                type="submit">
+      Guardar
+    </ion-button>
+  </form>
 
 </ion-content>

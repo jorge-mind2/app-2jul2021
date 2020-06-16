@@ -8,7 +8,7 @@ import { AuthService } from "./auth.service";
 })
 export class ApiService {
 
-  caller;
+  caller: any
 
   constructor(
     private http: HTTP,
@@ -42,6 +42,13 @@ export class ApiService {
     }
   }
 
+  public setTherapistDetail(detail: any): void {
+    this.auth.getCurrentUser().then(async user => {
+      user.detail = detail
+      this.auth.setCurrentUser(user)
+    })
+  }
+
   public async getTherapistProfile(id) {
     const opts = { params: new HttpParams({ fromString: "join=detail&join=detail.specialties" }) }
     return await this.caller.get(`/users/${id}`, opts).toPromise()
@@ -49,18 +56,22 @@ export class ApiService {
 
   public async getMyPacients(id) {
     const opts = { params: new HttpParams({ fromString: "join=patients" }) };
-    let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
-    return userWhitPatient.patients;
+    const userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
+    return userWhitPatient.data.patients;
   }
 
   public async getMyTherapist(id) {
     const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
-    let userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
-    return userWhitPatient.therapist;
+    const userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
+    return userWhitPatient.data.therapist;
   }
 
   public async createAppointment(appointment) {
     return await this.caller.post('/appointments', appointment).toPromise()
+  }
+
+  public async updateUser(userId: number, data: {}): Promise<any> {
+    return await this.caller.put(`/users/${userId}`, data).toPromise()
   }
 
 }
