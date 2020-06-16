@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Platform, AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { CalendarModalOptions } from 'ion2-calendar';
 import { ChooseDateComponent } from '../choose-date/choose-date.component';
+import { AuthService } from '../api-services/auth.service';
 
 @Component({
   selector: 'app-support',
@@ -14,31 +14,33 @@ import { ChooseDateComponent } from '../choose-date/choose-date.component';
 export class SupportPage implements OnInit {
 
   conversation: any[] = [];
-  phone_model: string = 'iPhone';
-  input: string = '';
-  loginType: string = '';
-  receiverUID: string = '';
-  ccUser: any
+  phone_model: string = 'iPhone'
+  input: string = ''
+  loginType: string = ''
+  receiverUID: string = ''
+  cometchatUser: any
+  currentUser: any
   type: string = 'patient'
 
   constructor(
-    private platform: Platform,
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private router: Router,
     private modalCtrl: ModalController,
-    private androidPermissions: AndroidPermissions
+    private auth: AuthService
   ) {
     this.route.queryParams.subscribe(params => {
-      this.receiverUID = params.receiverId.toLowerCase();
+      // this.receiverUID = params.receiverId.toLowerCase();
+      // Test
+      this.receiverUID = 'a-516ee1';
     })
   }
 
   async ngOnInit() {
     // get cometchat logged user
-    this.ccUser = await CometChat.getLoggedinUser();
-
-    this.getLastConversation();
+    this.cometchatUser = await CometChat.getLoggedinUser();
+    this.auth.getCurrentUser().then(user => this.currentUser = user)
+    this.getLastConversation()
 
     // init listener cometchat
     CometChat.addMessageListener(
@@ -47,7 +49,7 @@ export class SupportPage implements OnInit {
         onTextMessageReceived: message => {
           console.log("Message received successfully:", message);
           // Handle text message
-          this.conversation.push({ text: message.text, senderType: 0, sender: message.getSender(), image: this.loginType == 'therapist' ? 'assets/patient.png' : 'assets/therapist.png' });
+          this.conversation.push({ text: message.text, senderType: 0, sender: message.getSender(), image: this.loginType == 'support' ? 'assets/patient.png' : 'assets/support.png' });
           this.input = '';
           setTimeout(() => {
             this.scrollToBottom()
@@ -80,14 +82,20 @@ export class SupportPage implements OnInit {
         console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {
-          // let isLocal = (this.ccUser.role == 'therapist' && this.loginType == 'therapist' && msg.) || (this.ccUser.role == 'patient' && this.loginType == 'patient')
+          // let isLocal = (this.cometchatUser.role == 'support' && this.loginType == 'support' && msg.) || (this.cometchatUser.role == 'patient' && this.loginType == 'patient')
           return {
             text: msg.text,
-            senderType: this.ccUser.uid == msg.sender.uid ? 1 : 0,
+            senderType: this.cometchatUser.uid == msg.sender.uid ? 1 : 0,
             sender: msg.sender,
             image: `assets/${msg.sender.role}.png`
           }
         })
+        const welcomeMessage = { text: `Hola ${this.cometchatUser.name}! ¿Cómo te podemos ayudar?`, senderType: 0, sender: { name: 'Soporte' }, image: 'assets/support.png' }
+        if (this.conversation.length <= 0) {
+          this.conversation.push(welcomeMessage);
+        } else {
+          this.conversation.unshift(welcomeMessage)
+        }
         console.log(this.conversation);
 
       },
@@ -119,7 +127,7 @@ export class SupportPage implements OnInit {
       message => {
         console.log("Message sent successfully:", message);
         // Do something with message
-        this.conversation.push({ text: this.input, senderType: 1, sender: message.getSender(), image: this.loginType == 'therapist' ? 'assets/therapist.png' : 'assets/patient.png' });
+        this.conversation.push({ text: this.input, senderType: 1, sender: message.getSender(), image: this.loginType == 'support' ? 'assets/support.png' : 'assets/patient.png' });
         this.input = '';
         setTimeout(() => {
           this.scrollToBottom()
