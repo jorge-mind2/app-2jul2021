@@ -37,7 +37,7 @@ export class MenuComponent implements OnInit {
       backdropDismiss: false,
       buttons: [{
         text: 'Aceptar',
-        cssClass: 'secondary',
+        cssClass: 'text-secondary',
         handler: () => this.logout()
       }, {
         text: 'Cancelar',

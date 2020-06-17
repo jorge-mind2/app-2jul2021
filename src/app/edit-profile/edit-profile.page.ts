@@ -52,15 +52,20 @@ export class EditProfilePage implements OnInit {
     })
   }
 
+
+  // Que no se eliminen las specialties del detalle de terapeuta cuando se sebreescriba
   async saveMyProfile() {
-    console.log({ ...this.user.detail, ...this.formProfile.value })
     try {
-      const updatedUsr = await this.api.updateUser(this.user.id, this.formProfile.value)
-      console.log(updatedUsr);
-      const newUsrDetail = { ...this.user.detail, ...this.formProfile.value }
-      console.log(newUsrDetail);
-      this.presentToast('Perfil actualizado')
-      this.api.setTherapistDetail(newUsrDetail)
+      let infoDetail = Object.assign({}, this.formProfile.value).detail
+      let infoUser = Object.assign({}, this.formProfile.value)
+      delete infoUser.detail
+      infoUser.phone = infoUser.cel
+      const updatedInfo = await this.api.updateTherapistDetail(this.user.detail.id, infoDetail)
+      const updatedUsr = await this.api.updateUser(this.user.id, infoUser)
+      console.log('updatedInfo', updatedInfo.data);
+      console.log('updatedUsr', updatedUsr);
+      this.api.setTherapistDetail(updatedInfo.data)
+      this.presentToast('Perfil actualizado').then(() => this.navCtrl.back())
       // this.navCtrl.back()
     } catch (error) {
       console.log(error);

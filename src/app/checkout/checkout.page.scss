@@ -14,6 +14,10 @@ ion-select {
   --color: var(--ion-color-light);
 } */
 
+.card-selected {
+  border: 4px solid lightblue
+}
+
 ion-segment-button {
   --indicator-color: var(--ion-color-primary);
   --color: var(--ion-color-primary);

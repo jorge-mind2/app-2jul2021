@@ -86,6 +86,151 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+    <!--
+      billingEmailAddress
+      billingFirstName_D
+      billingMiddleName_D
+      billingLastName_D
+      billingAddress_D
+      billingAddress2_D
+      billingCity_D
+      billingState_D
+      billingPostalCode_D
+      billingCountry_D
+      billingPhoneNumber_D
+     -->
+    <ion-item class="ion-padding-horizontal"
+              lines="none">
+      <ion-text color="light">
+        <h2>Datos antifraude</h2>
+      </ion-text>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Email</ion-label>
+      <ion-input color="light"
+                 type="email"
+                 formControlName="billingEmailAddress"></ion-input>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Nombre</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingFirstName_D"></ion-input>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Apellido Materno</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingMiddleName_D"></ion-input>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Apellido Paterno</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingLastName_D"></ion-input>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Calle y Número</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingAddress_D"></ion-input>
+    </ion-item>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Alcandía, municipio, colonia</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingAddress2_D"></ion-input>
+    </ion-item>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal"
+                    formGroupName="billing">
+            <ion-label position="floating"
+                       color="light">Estado</ion-label>
+            <ion-input color="light"
+                       type="text"
+                       formControlName="billingState_D"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal"
+                    formGroupName="billing">
+            <ion-label position="floating"
+                       color="light">Ciudad</ion-label>
+            <ion-input color="light"
+                       type="text"
+                       formControlName="billingCity_D"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal"
+                    formGroupName="billing">
+            <ion-label position="floating"
+                       color="light">País</ion-label>
+            <ion-input color="light"
+                       type="text"
+                       formControlName="billingCountry_D"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col>
+          <ion-item color="light"
+                    class="ion-padding-horizontal"
+                    formGroupName="billing">
+            <ion-label position="floating"
+                       color="light">Código Postal</ion-label>
+            <ion-input color="light"
+                       type="text"
+                       formControlName="billingPostalCode_D"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              formGroupName="billing">
+      <ion-label position="floating"
+                 color="light">Número de Telefono</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 formControlName="billingPhoneNumber_D"></ion-input>
+    </ion-item>
+
+
 
     <br>
     <ion-item class="ion-text-center">

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { appConstants } from "../constants.local";
+import { ApiService } from '../api-services/api.service';
 
 @Component({
   selector: 'app-plans',
@@ -8,13 +9,18 @@ import { appConstants } from "../constants.local";
   styleUrls: ['./plans.page.scss'],
 })
 export class PlansPage implements OnInit {
-  plans = appConstants.PLANS
-  constructor() {
-    console.log(this.plans);
+  plans: []
+  constructor(
+    private api: ApiService
+  ) {
 
   }
 
   ngOnInit() {
+    this.api.getPackages().then(res => {
+      const plans = res.data
+      this.plans = plans
+    })
   }
 
 }

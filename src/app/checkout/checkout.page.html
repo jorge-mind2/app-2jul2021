@@ -36,9 +36,24 @@
 
   <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
        *ngIf="view == 'card'">
-    <ion-card color="dark"
+    <ion-item *ngIf="cards.length<=0">
+      <ion-text color="light"
+                class="ion-text-center">
+        <h4>Necesitas una tarjeta de crédito o débito para pagar tu plan.</h4>
+        <ion-button color="tertiary"
+                    shape="round"
+                    type="button"
+                    [routerLink]="['/add-card']">Registrar tarjeta <ion-icon slot="end"
+                    name="card"></ion-icon>
+        </ion-button>
+      </ion-text>
+    </ion-item>
+    <ion-card [color]="card.color"
+              [ngClass]="{'card-selected': card.selected}"
               class="ion-margin-vertical"
-              margin>
+              margin
+              *ngFor="let card of cards"
+              (click)="selectThisCard(card)">
       <ion-card-content>
         <ion-grid>
           <ion-row>
@@ -63,10 +78,10 @@
                   <ion-icon name="medical"></ion-icon>
                   <ion-icon name="medical"></ion-icon>
                 </span>
-                <b>1233</b>
+                <b>{{card.number}}</b>
               </h2>
               <h2 style="font-size: 1.2em; margin-bottom: 15px;"
-                  class="ion-padding-horizontal">Nombre en la Tarjeta de Crédito</h2>
+                  class="ion-padding-horizontal">{{card.holder_name}}</h2>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -75,7 +90,10 @@
     <ion-button expand="full"
                 size="large"
                 shape="round"
-                type="submit">PAGAR</ion-button>
+                type="button"
+                (click)="presentPaymentAlert()"
+                [disabled]="!selectedCard.token"
+                *ngIf="cards.length>0">PAGAR</ion-button>
   </div>
   <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
        *ngIf="view == 'store'">
@@ -86,3 +104,14 @@
   </div>
 
 </ion-content>
+<ion-footer>
+  <ion-card color="light">
+    <ion-card-content>
+      <ion-text class="ion-text-right">
+        <h2><b>Descripción:</b> {{plan.name}}</h2>
+        <h3><b>Costo:</b> {{plan.amount | currency}}</h3>
+        <h3><b>Pagar con tarjeta:</b> {{selectedCard.number}}</h3>
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+</ion-footer>

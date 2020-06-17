@@ -21,7 +21,7 @@
       <ion-grid>
         <ion-row>
           <ion-col size="6">
-            <h2 style="font-size: 1.2em;">{{plan.description}}</h2>
+            <h2 style="font-size: 1.2em;">{{plan.name}}</h2>
           </ion-col>
           <ion-col>
             <ion-button expand="full"
@@ -29,9 +29,9 @@
                         color="tertiary"
                         shape="round"
                         [routerLink]="['/checkout']"
-                        [queryParams]="{plan: plan.price}">Comprar</ion-button>
+                        [queryParams]="{plan: plan.id}">Comprar</ion-button>
             <h1 class="ion-text-center"
-                style="margin-top: 1em; font-size: 1.3em;">{{plan.price | currency}} MXN</h1>
+                style="margin-top: 1em; font-size: 1.3em;">{{plan.amount | currency}} MXN</h1>
           </ion-col>
         </ion-row>
       </ion-grid>

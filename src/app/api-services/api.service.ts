@@ -8,7 +8,7 @@ import { AuthService } from "./auth.service";
 })
 export class ApiService {
 
-  caller: any
+  private caller: any
 
   constructor(
     private http: HTTP,
@@ -71,7 +71,27 @@ export class ApiService {
   }
 
   public async updateUser(userId: number, data: {}): Promise<any> {
-    return await this.caller.put(`/users/${userId}`, data).toPromise()
+    return await this.caller.patch(`/users/${userId}`, data).toPromise()
+  }
+
+  public async updateTherapistDetail(detailId: number, data: {}): Promise<any> {
+    return await this.caller.patch(`/therapist-detail/${detailId}`, data).toPromise()
+  }
+
+  public async getPackages(): Promise<any> {
+    return await this.caller.get('/package').toPromise()
+  }
+
+  public async createCard(card: any): Promise<any> {
+    return await this.caller.post('/users/addCard', card).toPromise()
+  }
+
+  public async getCards(): Promise<any> {
+    return this.caller.get('/users/cards').toPromise()
+  }
+
+  public async payPlan(paymentData: {}): Promise<any> {
+    return await this.caller.post('/payments', paymentData).toPromise()
   }
 
 }
