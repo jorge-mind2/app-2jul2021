@@ -1,0 +1,82 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="profile"
+                       color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis horarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item lines="none">
+    <ion-text>
+      <p>Selecciona tus horarios disponibles para tener sesiones de Mind<sup>2</sup>. Recuerda que cada sesión tiene
+        duración de 1hr.</p>
+    </ion-text>
+  </ion-item>
+  <ion-card [ngClass]="day.canEntrySchedules ? 'day-selected' : ''"
+            *ngFor="let day of days">
+    <ion-card-header>
+      <ion-item lines="none">
+        <ion-label>{{day.name}}</ion-label>
+        <ion-toggle [(ngModel)]="day.canEntrySchedules"
+                    (ionChange)="onActiveDay(day)"></ion-toggle>
+      </ion-item>
+    </ion-card-header>
+    <ion-card-content *ngIf="day.canEntrySchedules">
+      <p>Elige tus horas:</p>
+      <ion-grid *ngFor="let schedule of day.schedules; let i = index; let l = last;">
+        <ion-row class="ion-align-items-end">
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating">De</ion-label>
+              <ion-datetime [(ngModel)]="schedule.start_time"
+                            displayFormat="HH:mm"
+                            pickerFormat="HH:mm"
+                            [hourValues]="schedule.start_time_hours"
+                            minuteValues="0"
+                            (ionChange)="onSetStartTime(schedule)"
+                            displayTimezone="utc"
+                            placeholder="08:00"
+                            [disabled]="schedule.valid"
+                            doneText="Aceptar"
+                            cancelText="Cancelar"></ion-datetime>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating">A</ion-label>
+              <ion-datetime [(ngModel)]="schedule.end_time"
+                            displayFormat="HH:mm"
+                            pickerFormat="HH:mm"
+                            [hourValues]="schedule.end_time_hours"
+                            minuteValues="0"
+                            displayTimezone="utc"
+                            placeholder="15:00"
+                            [disabled]="!schedule.start_time||schedule.valid"
+                            doneText="Aceptar"
+                            cancelText="Cancelar"></ion-datetime>
+            </ion-item>
+          </ion-col>
+          <ion-col size="5">
+            <ion-button fill="clear"
+                        *ngIf="l&&day.schedules.length>1"
+                        (click)="removeSchedule(day)"
+                        color="danger">
+              <ion-icon slot="icon-only"
+                        name="trash"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear"
+                        *ngIf="l"
+                        [disabled]="!schedule.end_time"
+                        (click)="addSchedule(day)">
+              <ion-icon slot="icon-only"
+                        name="add-circle-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -24,7 +24,8 @@ const routes: Routes = [
   { path: 'video-call', loadChildren: './video-call/video-call.module#VideoCallPageModule' },
   { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule' },
   { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule' },
-  { path: 'edit-profile', loadChildren: './edit-profile/edit-profile.module#EditProfilePageModule' }
+  { path: 'edit-profile', loadChildren: './edit-profile/edit-profile.module#EditProfilePageModule' },
+  { path: 'schedule', loadChildren: './schedule/schedule.module#SchedulePageModule' }
 ];
 @NgModule({
   imports: [

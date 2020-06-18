@@ -41,6 +41,7 @@ export class LoginPage implements OnInit {
   }
 
   public async loginUser() {
+    await this.presentLoading()
     try {
       let loginData: any = { email: this.username, password: this.password }
       if (this.loginType == 'therapist') loginData = { email: this.username, password: this.password, code: this.therapistCode }
@@ -48,6 +49,7 @@ export class LoginPage implements OnInit {
       this.cometChatLogin(newSession.user);
     } catch (e) {
       console.log(e);
+      // let message = typeof e.error.message == 'object' ? e.error.message[0] : e.error.message
       // this.presentErrorAlert(e.error.message[0])
     }
   }
@@ -89,14 +91,16 @@ export class LoginPage implements OnInit {
     CometChat.login(loggedUser.cometChatId, this.cChatApiKey).then(
       loggedUser => {
         // console.log('Login Successful:', { loggedUser });
-        // this.loadingCtrl.dismiss()
+        this.loadingCtrl.dismiss()
         this.presentToast('¡Bienvenido a Mind2!');
         // console.log('Login Successful:', JSON.stringify(user));
         let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
-        this.navCtrl.navigateForward(nextPage);
+        this.navCtrl.navigateForward(nextPage)
       },
       error => {
         console.log('Login failed with exception:', { error });
+        this.loadingCtrl.dismiss()
+        this.presentErrorAlert('Error al iniciar sesión')
       }
     );
   }

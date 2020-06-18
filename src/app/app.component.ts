@@ -7,6 +7,7 @@ import { CometChat } from "@cometchat-pro/cordova-ionic-chat"
 
 import { COMETCHAT } from "./keys";
 import { AuthService } from './api-services/auth.service';
+import { ApiService } from './api-services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,7 @@ import { AuthService } from './api-services/auth.service';
 })
 export class AppComponent {
   private rootPage: string = 'welcome';
-
+  loddgerUser: any
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -22,7 +23,8 @@ export class AppComponent {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) {
     this.initializeApp();
   }
@@ -35,12 +37,23 @@ export class AppComponent {
       console.log('Platform ready');
       this.auth.authenticationState.subscribe(state => {
         let userType = this.auth.getUserType();
-        console.log(state);
+        // console.log(state);
         if (userType) {
           if (!state) {
             this.navCtrl.navigateRoot(this.rootPage)
           }
           else {
+            if (userType == 'patient') {
+              this.auth.getCurrentUser().then(async usr => {
+                this.loddgerUser = usr
+                let therapist = await this.api.getMyTherapist(usr.id);
+                if (therapist) {
+                  this.loddgerUser.therapist = therapist
+                  this.initCallListener(therapist.cometChatId)
+                }
+              })
+
+            }
             return true;
             this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
             this.navCtrl.navigateRoot(this.rootPage);
@@ -71,7 +84,63 @@ export class AppComponent {
       }
     );
 
-    const listnerID = "therapist01";
+    /* const listnerID = "therapist01";
+    const __self = this;
+    CometChat.addCallListener(
+      listnerID,
+      new CometChat.CallListener({
+        async onIncomingCallReceived(call) {
+          console.log("Incoming call:", call);
+          // console.log("Incoming call:", JSON.stringify(call));
+          // Handle incoming call
+          const sessionID = call.sessionId;
+          console.log(sessionID);
+
+          // this.presentCallAlert(sessionID)
+          const alert = await __self.alertCtrl.create({
+            header: 'Llamada entrante',
+            message: 'Tu terapeuta está llamando.',
+            backdropDismiss: false,
+            buttons: [{
+              text: 'Contestar',
+              cssClass: 'secondary',
+              handler: () => __self.acceptCall(sessionID)
+            }]
+          });
+
+          console.log(alert);
+
+          alert.present();
+
+        },
+        async onOutgoingCallAccepted(call) {
+          console.log("Outgoing call accepted:", call);
+          console.log("Outgoing call accepted:", JSON.stringify(call));
+          // Outgoing Call Accepted
+
+          var sessionID = call.sessionId;
+          // start the call using the startCall() method
+          await __self.startCall(sessionID);
+
+
+        },
+        onOutgoingCallRejected(call) {
+          console.log("Outgoing call rejected:", call);
+          console.log("Outgoing call rejected:", JSON.stringify(call));
+          // Outgoing Call Rejected
+        },
+        onIncomingCallCancelled(call) {
+          console.log("Incoming call calcelled:", call);
+          console.log("Incoming call calcelled:", JSON.stringify(call));
+        }
+      })
+    ); */
+
+  }
+
+  private initCallListener(listnerID) {
+    console.log('init cometchat listener');
+
     const __self = this;
     CometChat.addCallListener(
       listnerID,
@@ -122,7 +191,6 @@ export class AppComponent {
         }
       })
     );
-
   }
 
   private acceptCall(sessionID) {

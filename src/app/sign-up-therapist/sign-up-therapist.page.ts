@@ -81,7 +81,7 @@ export class SignUpTherapistPage implements OnInit {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }
       let newUser = await this.api.signupUser(data)
       // console.log(newUser);
-      this.createCometChatUser(newUser)
+      this.createCometChatUser(newUser.data)
     } catch (e) {
       console.log(e)
       this.loadingCtrl.dismiss()
