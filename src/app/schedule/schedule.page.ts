@@ -130,4 +130,8 @@ export class SchedulePage implements OnInit {
     last.valid = false
   }
 
+  saveSchedule() {
+
+  }
+
 }

@@ -49,9 +49,14 @@
   <ion-button expand="full"
               size="large"
               shape="round"
-              (click)="loginUser()">
-    Ingresar
-  </ion-button>
+              (click)="loginUser()">Ingresar</ion-button>
+  <br>
+  <ion-button expand="full"
+              size="large"
+              shape="round"
+              color="secondary"
+              [routerLink]="['/sign-up-therapist']"
+              *ngIf="loginType=='therapist'">Registrarme</ion-button>
   <ion-button color="light"
               fill="clear"
               expand="full"

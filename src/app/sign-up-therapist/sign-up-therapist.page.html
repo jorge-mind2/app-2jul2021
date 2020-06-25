@@ -44,6 +44,9 @@
       <ion-datetime displayFormat="MMMM DD YYYY"
                     min="1950-01-01"
                     max="1998-12-31"
+                    pickerFormat="MMMM DD YYYY"
+                    monthNames="Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre"
+                    (ionChange)="selectIonDate()"
                     color="light"
                     formControlName="birthdate"></ion-datetime>
     </ion-item>

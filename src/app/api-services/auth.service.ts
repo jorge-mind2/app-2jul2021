@@ -39,10 +39,10 @@ export class AuthService implements OnInit {
       if (token) {
         // let decoded = this.helper.decodeToken(token);
         let isExpired = this.helper.isTokenExpired(token);
-        console.log('token expired', isExpired);
+        // console.log('token expired', isExpired);
 
         if (!isExpired) {
-          console.log('Token', token);
+          // console.log('Token', token);
           this.storage.get('userType').then(async userType => {
             this.token = token;
             this.userType = userType;

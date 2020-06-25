@@ -28,6 +28,7 @@ export class SignUpPatientPage implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       last_name: ['', Validators.required],
+      age: [null, Validators.required],
       country: ['', Validators.required],
       state: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -61,18 +62,33 @@ export class SignUpPatientPage implements OnInit {
     await this.presentLoading()
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 1 }
+      data.age = `${data.age}`
       let newUser = await this.api.signupUser(data)
       console.log(newUser);
-      this.createCometChatUser(newUser.data)
+      // this.createCometChatUser(newUser.data)
+      this.loadingCtrl.dismiss()
+      const alert = await this.alertCtrl.create({
+        header: 'Registro con éxito',
+        message: 'Verifica tu email por favor.',
+        backdropDismiss: false,
+        buttons: [{
+          text: 'Aceptar',
+          cssClass: 'secondary',
+          handler: () => this.goBack()
+        }]
+      });
+
+      alert.present();
     } catch (e) {
       console.log(e)
       this.loadingCtrl.dismiss()
-      this.presentErrorAlert(e.error.message[0])
+      // this.presentErrorAlert(e.error.message[0])
     }
 
   }
 
-  private createCometChatUser(newUser) {
+  //Poisble deshuso, se pasó la creación de usuarios de cometchat al api
+  /* private createCometChatUser(newUser) {
     this.cometChat.createCCUser(newUser, 'patient').then(
       async (user) => {
         console.log("CometChat user created", user)
@@ -94,7 +110,7 @@ export class SignUpPatientPage implements OnInit {
         this.loadingCtrl.dismiss()
       }
     )
-  }
+  } */
 
   private goBack() {
     this.navCtrl.navigateBack('welcome')

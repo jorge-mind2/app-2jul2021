@@ -63,7 +63,7 @@ export class ApiService {
   public async getMyTherapist(id) {
     const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
     const userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
-    return userWhitPatient.data.therapist;
+    return userWhitPatient.data ? userWhitPatient.data.therapist : null;
   }
 
   public async createAppointment(appointment) {

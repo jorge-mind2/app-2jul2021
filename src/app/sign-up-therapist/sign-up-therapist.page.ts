@@ -5,6 +5,7 @@ import { NavController, AlertController, ModalController, LoadingController } fr
 import { CometChatService } from '../comet-chat.service';
 import { appConstants } from '../constants.local';
 import { TermsPage } from '../terms/terms.page';
+import * as moment from "moment";
 
 @Component({
   selector: 'app-sign-up-therapist',
@@ -55,7 +56,8 @@ export class SignUpTherapistPage implements OnInit {
   }
 
   async ngOnInit() {
-    this.specialties = await this.api.getSpecilaities()
+    const getSpecilaities = await this.api.getSpecilaities()
+    this.specialties = getSpecilaities.data
   }
 
   private onCountrySelect(c) {
@@ -79,38 +81,62 @@ export class SignUpTherapistPage implements OnInit {
     await this.presentLoading()
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }
+      data.age = `${moment().diff(moment(data.detail.birthdate), 'years')}`
+      data.detail.birthdate = new Date(data.detail.birthdate)
       let newUser = await this.api.signupUser(data)
       // console.log(newUser);
-      this.createCometChatUser(newUser.data)
+      // this.createCometChatUser(newUser.data)
+      this.loadingCtrl.dismiss()
+      const alert = await this.alertCtrl.create({
+        header: 'Registro con éxito',
+        message: 'Verifica tu email por favor.',
+        backdropDismiss: false,
+        buttons: [{
+          text: 'Aceptar',
+          cssClass: 'secondary',
+          handler: () => this.goBack()
+        }]
+      });
+
+      alert.present();
     } catch (e) {
       console.log(e)
       this.loadingCtrl.dismiss()
-      this.presentErrorAlert(e.error.message[0])
+      // this.presentErrorAlert(e.error.message[0])
     }
   }
 
-  private createCometChatUser(newUser) {
-    this.cometChat.createCCUser(newUser, 'therapist').then(
-      async (user) => {
-        console.log("CometChat user created", user)
-        this.loadingCtrl.dismiss()
-        const alert = await this.alertCtrl.create({
-          header: 'Registro con éxito',
-          message: 'Verifica tu email por favor.',
-          backdropDismiss: false,
-          buttons: [{
-            text: 'Aceptar',
-            cssClass: 'secondary',
-            handler: () => this.goBack()
-          }]
-        });
+  //Poisble deshuso, se pasó la creación de usuarios de cometchat al api
+  /*  private createCometChatUser(newUser) {
+     this.cometChat.createCCUser(newUser, 'therapist').then(
+       async (user) => {
+         console.log("CometChat user created", user)
+         this.loadingCtrl.dismiss()
+         const alert = await this.alertCtrl.create({
+           header: 'Registro con éxito',
+           message: 'Verifica tu email por favor.',
+           backdropDismiss: false,
+           buttons: [{
+             text: 'Aceptar',
+             cssClass: 'secondary',
+             handler: () => this.goBack()
+           }]
+         });
 
-        alert.present();
-      }, error => {
-        console.log("error", error)
-        this.loadingCtrl.dismiss()
-      }
-    )
+         alert.present();
+       }, error => {
+         console.log("error", error)
+         this.loadingCtrl.dismiss()
+       }
+     )
+   } */
+
+  selectIonDate() {
+    let bd = this.form.value.detail.birthdate
+    /* console.log({ bd });
+    console.log(moment(bd));
+    console.log(moment().diff(moment(bd), 'years')); */
+
   }
 
   private goBack() {

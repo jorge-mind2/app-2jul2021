@@ -48,6 +48,7 @@ export class LoginPage implements OnInit {
       const newSession = await this.auth.loginUser(loginData)
       this.cometChatLogin(newSession.user);
     } catch (e) {
+      this.loadingCtrl.dismiss()
       console.log(e);
       // let message = typeof e.error.message == 'object' ? e.error.message[0] : e.error.message
       // this.presentErrorAlert(e.error.message[0])

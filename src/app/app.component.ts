@@ -31,7 +31,7 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
+      this.statusBar.backgroundColorByName('transparent')
       this.splashScreen.hide();
       // this.presentCallAlert('sessionID')
       console.log('Platform ready');
@@ -47,6 +47,7 @@ export class AppComponent {
               this.auth.getCurrentUser().then(async usr => {
                 this.loddgerUser = usr
                 let therapist = await this.api.getMyTherapist(usr.id);
+                console.log('logueado sin therapist');
                 if (therapist) {
                   this.loddgerUser.therapist = therapist
                   this.initCallListener(therapist.cometChatId)
