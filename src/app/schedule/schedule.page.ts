@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../api-services/auth.service';
 import * as moment from 'moment'
+import { ApiService } from '../api-services/api.service';
+import { ToastController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-schedule',
@@ -47,11 +49,19 @@ export class SchedulePage implements OnInit {
   ]
   user: any
   constructor(
-    private auth: AuthService
+    private toastCtrl: ToastController,
+    private navCtrl: NavController,
+    private auth: AuthService,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
-    this.auth.getCurrentUser().then(user => this.user = user)
+    this.auth.getCurrentUser().then(async user => {
+      this.user = user
+      const userSchedules = await this.api.getUserSchedules(user.id)
+      console.log(userSchedules);
+
+    })
   }
   /*
   {
@@ -118,10 +128,18 @@ export class SchedulePage implements OnInit {
   }
 
   onSetStartTime(schedule: any): void {
-    schedule.end_time = null
-    if (moment.isDate(schedule.start_time) || (typeof schedule.start_time == 'string' && schedule.start_time.length > 5)) schedule.start_time = moment(schedule.start_time).format('HH:mm')
     const start_time = +schedule.start_time.split(':')[0]
+    const end_time = schedule.end_time ? +schedule.end_time.split(':')[0] : null
+    if (!schedule.start_time || start_time >= end_time) schedule.end_time = null
+    console.log(schedule.start_time);
+
+    if (moment.isDate(schedule.start_time) || (typeof schedule.start_time == 'string' && schedule.start_time.length > 5)) schedule.start_time = moment(schedule.start_time).format('HH:mm')
     schedule.end_time_hours = Array.from(Array(24).keys()).filter(hour => hour > start_time);
+  }
+
+  onSetEndTime(schedule: any): void {
+    console.log(schedule.end_time);
+    if (moment.isDate(schedule.end_time) || (typeof schedule.end_time == 'string' && schedule.end_time.length > 5)) schedule.end_time = moment(schedule.end_time).format('HH:mm')
   }
 
   removeSchedule(day: { schedules: [any] }): void {
@@ -130,8 +148,36 @@ export class SchedulePage implements OnInit {
     last.valid = false
   }
 
-  saveSchedule() {
+  async saveSchedule() {
+    try {
+      const newSchedules = this.days.filter(day => day.canEntrySchedules).map(day => day.schedules).reduce((acc, val) => acc.concat(val), []).filter(schedule => schedule.start_time && schedule.end_time)
+      console.log(newSchedules);
+      // const createdSchedules = await this.api.createManySchedules(newSchedules)
+      let createdSchedules = []
+      newSchedules.forEach(async newSchedule => {
+        let createdSchedule = await this.api.createSchedule(newSchedule);
+        console.log(createdSchedule);
 
+        createdSchedules.push(createdSchedule)
+      });
+      console.log(createdSchedules);
+      // if (createdSchedules.length==newSchedules.length)
+      this.presentToast('Listo, horarios actualizados').then(() => this.navCtrl.back())
+
+    } catch (error) {
+      console.log({ error });
+
+    }
+
+  }
+
+  async presentToast(text) {
+    const toast = await this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
 
 }

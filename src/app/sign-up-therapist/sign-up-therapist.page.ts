@@ -82,7 +82,7 @@ export class SignUpTherapistPage implements OnInit {
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }
       data.age = `${moment().diff(moment(data.detail.birthdate), 'years')}`
-      data.detail.birthdate = new Date(data.detail.birthdate)
+      data.detail.birthdate = moment(data.detail.birthdate).format('YYYY-MM-DD')
       let newUser = await this.api.signupUser(data)
       // console.log(newUser);
       // this.createCometChatUser(newUser.data)

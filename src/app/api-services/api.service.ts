@@ -94,4 +94,19 @@ export class ApiService {
     return await this.caller.post('/payments', paymentData).toPromise()
   }
 
+  public async createManySchedules(schedules: any[]): Promise<any> {
+    return await this.caller.post('/schedules/bulk', schedules).toPromise()
+  }
+
+  public async createSchedule(schedule: any): Promise<any> {
+    return await this.caller.post('/schedules', schedule).toPromise()
+  }
+
+  public async getUserSchedules(user_id: number): Promise<any> {
+    let params: HttpParams = new HttpParams()
+      .set('join', 'therapists')
+      .set('filter', `therapists.id||$eq||${user_id}`)
+    return await this.caller.get('/schedules', { params }).toPromise()
+  }
+
 }

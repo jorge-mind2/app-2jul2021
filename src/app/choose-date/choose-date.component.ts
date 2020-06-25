@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, ToastController } from '@ionic/angular';
 import * as moment from "moment";
 import { CalendarComponentOptions } from 'ion2-calendar';
 import { ApiService } from '../api-services/api.service';
@@ -29,6 +29,7 @@ export class ChooseDateComponent implements OnInit {
   }
   constructor(
     private modalCtrl: ModalController,
+    private toastCtrl: ToastController,
     private api: ApiService
   ) {
     /*
@@ -54,7 +55,7 @@ Mandar asi al post
     this.selectTime()
   }
 
-  public closeTerms() {
+  public closeModal() {
     this.modalCtrl.dismiss({
       'dismissed': true
     });
@@ -76,10 +77,25 @@ Mandar asi al post
   }
 
   private async createAppointment() {
-    this.appointment.date = this.appointmentDateStr
-    const newAppointment = await this.api.createAppointment(this.appointment)
-    console.log(newAppointment);
+    try {
+      this.appointment.date = moment(this.appointmentDateStr).format('YYYY-MM-DD')
+      const newAppointment = await this.api.createAppointment(this.appointment)
+      console.log(newAppointment);
+      this.presentToast('Cita guardada').finally(() => this.closeModal())
 
+    } catch (error) {
+
+    }
+
+  }
+
+  async presentToast(text) {
+    const toast = await this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
 
 }

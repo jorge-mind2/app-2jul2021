@@ -52,6 +52,7 @@
                             pickerFormat="HH:mm"
                             [hourValues]="schedule.end_time_hours"
                             minuteValues="0"
+                            (ionChange)="onSetEndTime(schedule)"
                             displayTimezone="utc"
                             placeholder="15:00"
                             [disabled]="!schedule.start_time||schedule.valid"
@@ -81,7 +82,8 @@
   </ion-card>
   <ion-button expand="full"
               shape="round"
-              type="submit">
+              type="button"
+              (click)="saveSchedule()">
     Guardar
   </ion-button>
 </ion-content>
