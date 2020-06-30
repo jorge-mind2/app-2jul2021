@@ -1,6 +1,6 @@
 export const COMETCHAT = {
-  APIKEY: 'b9f367608e4ae2b256b4432201db38803b1d040f',
-  APPID: '186830759069939'
+  APIKEY: 'a2a631022fe4430b918655211bfd18214caad5db',
+  APPID: '2067703f6dd6634'
 }
 export const SR_PAGO = {
   APIKEY: 'pk_dev_5ed52ab0e1fd6ViMPW'

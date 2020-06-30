@@ -12,6 +12,7 @@ export class HomePage implements OnInit {
 
   user: any = {}
   therapist: any = {}
+  supportUser: any
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -21,6 +22,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.getUser();
+    this.getSupport()
   }
 
   private getUser() {
@@ -39,6 +41,13 @@ export class HomePage implements OnInit {
     this.therapist = therapist;
   }
 
+  public async getSupport() {
+    const { data } = await this.api.getSupport()
+    console.log(data);
+    this.supportUser = data[0]
+
+  }
+
   public goToSessionPage(type) {
     if (!this.therapist) {
       this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, ve al chat de servicio para que te puedan asingar a uno.')
@@ -50,7 +59,8 @@ export class HomePage implements OnInit {
 
   public goToSupportChat() {
     // obtener el usuario asignado com sporte y mandar su receiverId
-    const receiverId = 'a-516ee1';
+    // const receiverId = 'a-516ee1';
+    const receiverId = this.supportUser.cometChatId;
     this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
   }
 

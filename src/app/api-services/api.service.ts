@@ -109,4 +109,11 @@ export class ApiService {
     return await this.caller.get('/schedules', { params }).toPromise()
   }
 
+  public async getSupport(): Promise<any> {
+    let params: HttpParams = new HttpParams()
+      .set('join', 'role')
+      .set('filter', `role.name||$eq||support`)
+    return await this.caller.get('/users', { params }).toPromise()
+  }
+
 }

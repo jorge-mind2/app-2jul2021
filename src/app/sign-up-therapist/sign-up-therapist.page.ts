@@ -60,7 +60,7 @@ export class SignUpTherapistPage implements OnInit {
     this.specialties = getSpecilaities.data
   }
 
-  private onCountrySelect(c) {
+  public onCountrySelect(c) {
     this.form.controls.state.setValue('')
     const selected = c.value
     this.states = this.countries.find(c => c.name == selected).states
@@ -73,11 +73,11 @@ export class SignUpTherapistPage implements OnInit {
     return await modal.present()
   }
 
-  private showTerms() {
+  public showTerms() {
     this.presentModal()
   }
 
-  private async signUpUser() {
+  public async signUpUser() {
     await this.presentLoading()
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }

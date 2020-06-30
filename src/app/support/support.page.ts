@@ -30,9 +30,9 @@ export class SupportPage implements OnInit {
     private auth: AuthService
   ) {
     this.route.queryParams.subscribe(params => {
-      // this.receiverUID = params.receiverId.toLowerCase();
+      this.receiverUID = params.receiverId.toLowerCase();
       // Test
-      this.receiverUID = 'a-516ee1';
+      // this.receiverUID = 'a-516ee1';
     })
   }
 
@@ -115,7 +115,7 @@ export class SupportPage implements OnInit {
     }
   }
 
-  private sendChatMessage() {
+  public sendChatMessage() {
     if (this.input.replace(/\s/g, '').length <= 0) return
     const receiverID = this.receiverUID;
     const messageText = this.input;

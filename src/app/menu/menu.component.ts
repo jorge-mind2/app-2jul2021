@@ -30,7 +30,7 @@ export class MenuComponent implements OnInit {
     this.navCtrl.navigateRoot('welcome')
   }
 
-  private async presentLogoutAlert() {
+  public async presentLogoutAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar sesión',
       message: '¿Deseas cerrar tu sesión de Mind2?',

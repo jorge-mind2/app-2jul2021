@@ -15,8 +15,8 @@ import { CurrencyPipe } from '@angular/common';
 export class CheckoutPage implements OnInit {
   months: any[] = appConstants.MONTHS
   years: any[]
-  protected plan_id: number
-  protected plan: any = {}
+  plan_id: number
+  plan: any = {}
   view: string = 'card'
   cards: Array<any> = []
   selectedCard: any = {}
@@ -45,7 +45,7 @@ export class CheckoutPage implements OnInit {
     }
   }
 
-  private setView(e) {
+  public setView(e) {
     this.view = e.detail.value
   }
 

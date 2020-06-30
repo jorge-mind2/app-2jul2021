@@ -9,7 +9,8 @@ import { ApiService } from '../api-services/api.service';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  user: object = {}
+  user: any = {}
+  userType: string = ''
   constructor(
     private alertCtrl: AlertController,
     private navCtrl: NavController,
@@ -30,6 +31,7 @@ export class ProfilePage implements OnInit {
         user.detail = info.data.detail
       }
       this.user = user
+      this.userType = user.role.name
       console.log('user', user)
     })
   }
@@ -39,14 +41,14 @@ export class ProfilePage implements OnInit {
     this.navCtrl.navigateRoot('welcome')
   }
 
-  private async presentLogoutAlert() {
+  public async presentLogoutAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Cerrar sesión',
       message: '¿Deseas cerrar tu sesión de Mind2?',
       backdropDismiss: false,
       buttons: [{
         text: 'Aceptar',
-        cssClass: 'secondary',
+        cssClass: 'text-secondary',
         handler: () => this.logout()
       }, {
         text: 'Cancelar',

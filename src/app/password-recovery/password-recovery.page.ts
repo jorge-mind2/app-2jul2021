@@ -13,7 +13,7 @@ export class PasswordRecoveryPage implements OnInit {
   ngOnInit() {
   }
 
-  private recoveryPassword() {
+  public recoveryPassword() {
     console.log(this.email);
 
   }

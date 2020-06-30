@@ -76,7 +76,7 @@ Mandar asi al post
     this.appointmentDateStr = moment(this.appointmentDateDate).toISOString()
   }
 
-  private async createAppointment() {
+  public async createAppointment() {
     try {
       this.appointment.date = moment(this.appointmentDateStr).format('YYYY-MM-DD')
       const newAppointment = await this.api.createAppointment(this.appointment)

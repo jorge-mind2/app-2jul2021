@@ -19,8 +19,8 @@ declare var $: any
 export class AddCardPage implements OnInit {
   months: any[] = appConstants.MONTHS
   years: any[]
-  private cardForm: FormGroup = new FormGroup({})
-  private card: any = {
+  cardForm: FormGroup = new FormGroup({})
+  card: any = {
     token: '',
     metadata: {
     }
@@ -89,7 +89,7 @@ export class AddCardPage implements OnInit {
     this.years = Array(20).fill(null).map((v, i) => i + currentYear)
   }
 
-  private async addCard() {
+  public async addCard() {
     try {
       // if (this.cardForm.invalid) return this.presentErrorAlert('Por favor llena todos los campos correctamente')
       console.log(this.cardForm);

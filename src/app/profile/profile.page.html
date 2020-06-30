@@ -5,6 +5,7 @@
       <ion-button defaultHref="home"
                   [routerLink]="['/edit-profile']"
                   color="light"
+                  *ngIf="userType=='therapist'"
                   iconOnly>
         <ion-icon name="cog"
                   size="large"></ion-icon>
@@ -33,23 +34,28 @@
           {{user.name}} {{user.last_name}}</ion-label>
 
         <ion-label color="light"
+                   *ngIf="userType=='therapist'"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;"><span
                 *ngFor="let sp of user.detail?.specialties">{{sp.name}}, </span></ion-label>
 
         <ion-label color="light"
+                   *ngIf="userType=='therapist'"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;">Cédula Proesional:
           {{user.detail?.professional_id}}</ion-label>
 
         <ion-label color="light"
+                   *ngIf="userType=='therapist'"
                    style="font-size: .8em; text-align: center; margin-top: 1em; padding-top: .5em; display: block; width: 100%;">
           Código</ion-label>
         <ion-button shape="round"
                     fill="outline"
                     color="light"
+                    *ngIf="userType=='therapist'"
                     expand="full">
           <p>{{user.detail?.code}}</p>
         </ion-button>
         <ion-button color="tertiary"
+                    *ngIf="userType=='therapist'"
                     shape="round"
                     [routerLink]="['/schedule']">
           Mis Horarios
@@ -61,12 +67,14 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-item lines="none">
+  <ion-item lines="none"
+            *ngIf="userType=='therapist'">
     <ion-label color="light"
                style="font-size: 1.2em; padding-top: .5em; display: block; width: 100%;">Biografía
     </ion-label>
   </ion-item>
-  <ion-item lines="none">
+  <ion-item lines="none"
+            *ngIf="userType=='therapist'">
     <ion-text color="light">
       <span *ngIf="user.detail?.bio">{{user.detail?.bio}}</span>
       <i *ngIf="!user.detail?.bio">No hay biografía</i>
