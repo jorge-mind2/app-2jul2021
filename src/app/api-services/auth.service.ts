@@ -91,6 +91,10 @@ export class AuthService implements OnInit {
     return await this.storage.get('currentUser');
   }
 
+  public async signupUser(user) {
+    return await this.http.post(`/auth/signup`, user).toPromise()
+  }
+
   public isAuthenticated(): boolean {
     return this.authenticationState.value;
   }

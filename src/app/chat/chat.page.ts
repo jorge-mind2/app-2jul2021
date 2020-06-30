@@ -55,7 +55,7 @@ export class ChatPage implements OnInit {
 
   async ngOnInit() {
 
-    if (this.platform.is('android')) {
+    if (window.cordova && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
         result => console.log('Has permission?', result.hasPermission),
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
@@ -71,7 +71,11 @@ export class ChatPage implements OnInit {
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
       );
 
-      /* this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT, this.androidPermissions.PERMISSION.RECORD_AUDIO]); */
+      this.androidPermissions.requestPermissions([
+        this.androidPermissions.PERMISSION.CAMERA,
+        this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT,
+        this.androidPermissions.PERMISSION.RECORD_AUDIO
+      ]);
     }
 
     // get cometchat logged user

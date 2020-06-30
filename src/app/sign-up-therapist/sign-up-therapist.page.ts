@@ -6,6 +6,7 @@ import { CometChatService } from '../comet-chat.service';
 import { appConstants } from '../constants.local';
 import { TermsPage } from '../terms/terms.page';
 import * as moment from "moment";
+import { AuthService } from '../api-services/auth.service';
 
 @Component({
   selector: 'app-sign-up-therapist',
@@ -25,7 +26,8 @@ export class SignUpTherapistPage implements OnInit {
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     private cometChat: CometChatService,
-    private api: ApiService
+    private api: ApiService,
+    private auth: AuthService
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -83,7 +85,7 @@ export class SignUpTherapistPage implements OnInit {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 2 }
       data.age = `${moment().diff(moment(data.detail.birthdate), 'years')}`
       data.detail.birthdate = moment(data.detail.birthdate).format('YYYY-MM-DD')
-      let newUser = await this.api.signupUser(data)
+      let newUser = await this.auth.signupUser(data)
       // console.log(newUser);
       // this.createCometChatUser(newUser.data)
       this.loadingCtrl.dismiss()

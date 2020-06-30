@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController, AlertController, NavController } from '@ionic/angular';
 import { TermsPage } from '../terms/terms.page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApiService } from '../api-services/api.service';
 import { CometChatService } from "../comet-chat.service";
 
 import { appConstants } from "../constants.local";
+import { AuthService } from '../api-services/auth.service';
 
 @Component({
   selector: 'app-sign-up-patient',
@@ -23,7 +23,7 @@ export class SignUpPatientPage implements OnInit {
     private alertCtrl: AlertController,
     private navCtrl: NavController,
     private cometChat: CometChatService,
-    private api: ApiService
+    private auth: AuthService
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -63,7 +63,7 @@ export class SignUpPatientPage implements OnInit {
     try {
       let data = { ...this.form.value, phone: this.form.value.cel, role: 1 }
       data.age = `${data.age}`
-      let newUser = await this.api.signupUser(data)
+      let newUser = await this.auth.signupUser(data)
       console.log(newUser);
       // this.createCometChatUser(newUser.data)
       this.loadingCtrl.dismiss()

@@ -8,38 +8,14 @@ import { AuthService } from "./auth.service";
 })
 export class ApiService {
 
-  private caller: any
-
   constructor(
-    private http: HTTP,
-    private a_http: HttpClient,
+    private http: HttpClient,
     private auth: AuthService
   ) {
-    this.http.setHeader('*', 'Access-Control-Allow-Origin', '*')
-    this.http.setHeader('*', 'Content-Type', 'Application/json')
-    this.caller = this.a_http;
   }
 
-  public async signupUser(user) {
-    return await this.caller.post(`/auth/signup`, user, {
-      'Content-Type': 'Application/json'
-    }).toPromise()
-  }
-
-  public async getSpecilaities() {
-    return await this.caller.get(`/specialty`).toPromise()
-  }
-
-  public async getPatientTherapist(type, id) {
-    if (type = !'patient' || type != 'therapist') {
-      return false
-    }
-    let opts = { params: null }
-    if (type == 'patient') {
-      opts.params = new HttpParams({ fromString: `join=therapist` })
-      let user = this.caller.get(`/users/${id}`, opts).toPromise()
-      return user.therapist
-    }
+  public async getSpecilaities(): Promise<any> {
+    return await this.http.get(`/specialty`).toPromise()
   }
 
   public setTherapistDetail(detail: any): void {
@@ -49,71 +25,71 @@ export class ApiService {
     })
   }
 
-  public async getTherapistProfile(id) {
+  public async getTherapistProfile(id): Promise<any> {
     const opts = { params: new HttpParams({ fromString: "join=detail&join=detail.specialties" }) }
-    return await this.caller.get(`/users/${id}`, opts).toPromise()
+    return await this.http.get(`/users/${id}`, opts).toPromise()
   }
 
-  public async getMyPacients(id) {
+  public async getMyPacients(id): Promise<any> {
     const opts = { params: new HttpParams({ fromString: "join=patients" }) };
-    const userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
-    return userWhitPatient.data.patients;
+    const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
+    return data.patients;
   }
 
-  public async getMyTherapist(id) {
+  public async getMyTherapist(id: number): Promise<any> {
     const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
-    const userWhitPatient = await this.caller.get(`/users/${id}`, opts).toPromise()
-    return userWhitPatient.data ? userWhitPatient.data.therapist : null;
+    const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
+    return data.therapist;
   }
 
-  public async createAppointment(appointment) {
-    return await this.caller.post('/appointments', appointment).toPromise()
+  public async createAppointment(appointment: any): Promise<any> {
+    return await this.http.post('/appointments', appointment).toPromise()
   }
 
   public async updateUser(userId: number, data: {}): Promise<any> {
-    return await this.caller.patch(`/users/${userId}`, data).toPromise()
+    return await this.http.patch(`/users/${userId}`, data).toPromise()
   }
 
   public async updateTherapistDetail(detailId: number, data: {}): Promise<any> {
-    return await this.caller.patch(`/therapist-detail/${detailId}`, data).toPromise()
+    return await this.http.patch(`/therapist-detail/${detailId}`, data).toPromise()
   }
 
   public async getPackages(): Promise<any> {
-    return await this.caller.get('/package').toPromise()
+    return await this.http.get('/package').toPromise()
   }
 
   public async createCard(card: any): Promise<any> {
-    return await this.caller.post('/users/addCard', card).toPromise()
+    return await this.http.post('/users/addCard', card).toPromise()
   }
 
   public async getCards(): Promise<any> {
-    return this.caller.get('/users/cards').toPromise()
+    return this.http.get('/users/cards').toPromise()
   }
 
   public async payPlan(paymentData: {}): Promise<any> {
-    return await this.caller.post('/payments', paymentData).toPromise()
+    return await this.http.post('/payments', paymentData).toPromise()
   }
 
   public async createManySchedules(schedules: any[]): Promise<any> {
-    return await this.caller.post('/schedules/bulk', schedules).toPromise()
+    return await this.http.post('/schedules/bulk', schedules).toPromise()
   }
 
   public async createSchedule(schedule: any): Promise<any> {
-    return await this.caller.post('/schedules', schedule).toPromise()
+    return await this.http.post('/schedules', schedule).toPromise()
   }
 
   public async getUserSchedules(user_id: number): Promise<any> {
     let params: HttpParams = new HttpParams()
       .set('join', 'therapists')
       .set('filter', `therapists.id||$eq||${user_id}`)
-    return await this.caller.get('/schedules', { params }).toPromise()
+    return await this.http.get('/schedules', { params }).toPromise()
   }
 
   public async getSupport(): Promise<any> {
     let params: HttpParams = new HttpParams()
       .set('join', 'role')
       .set('filter', `role.name||$eq||support`)
-    return await this.caller.get('/users', { params }).toPromise()
+    return await this.http.get('/users', { params }).toPromise()
   }
 
 }
