@@ -82,7 +82,27 @@
             </div>
           </div>
 
+
         </ion-col>
+        <ion-col size="12"
+                 size-md
+                 *ngIf="conv.action=='assigned-therapist'">
+          <ion-card>
+            <ion-card-content>
+              <ion-text clas="ion-text-center">
+                <p>
+                  Haz click en el siguiente botón para guardar este cambio.
+                </p>
+              </ion-text>
+              <ion-button shape="round"
+                          color="tertiary"
+                          expand="full"
+                          (click)="getMyTherapist()">Guardar</ion-button>
+            </ion-card-content>
+          </ion-card>
+
+        </ion-col>
+
       </ion-row>
     </div>
   </div>

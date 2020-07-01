@@ -22,37 +22,21 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.getUser();
-    this.getSupport()
   }
 
   private getUser() {
     this.auth.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user) return await this.auth.logout()
-      await this.getTherapist(user.id);
       this.user = user;
     });
-
-  }
-
-  public async getTherapist(id) {
-    let therapist = await this.api.getMyTherapist(id);
-    console.log('user Therapist', therapist);
-    this.therapist = therapist;
-  }
-
-  public async getSupport() {
-    const { data } = await this.api.getSupport()
-    console.log(data);
-    this.supportUser = data[0]
-
   }
 
   public goToSessionPage(type) {
-    if (!this.therapist) {
+    if (!this.user.therapist) {
       this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, ve al chat de servicio para que te puedan asingar a uno.')
     } else {
-      const receiverId = this.therapist.cometChatId;
+      const receiverId = this.user.therapist.cometChatId;
       this.navCtrl.navigateForward('chat', { queryParams: { type, receiverId } })
     }
   }
@@ -60,7 +44,7 @@ export class HomePage implements OnInit {
   public goToSupportChat() {
     // obtener el usuario asignado com sporte y mandar su receiverId
     // const receiverId = 'a-516ee1';
-    const receiverId = this.supportUser.cometChatId;
+    const receiverId = this.user.support.cometChatId;
     this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
   }
 

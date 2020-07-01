@@ -5,6 +5,7 @@ import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { CalendarModalOptions } from 'ion2-calendar';
 import { ChooseDateComponent } from '../choose-date/choose-date.component';
 import { AuthService } from '../api-services/auth.service';
+import { ApiService } from '../api-services/api.service';
 
 @Component({
   selector: 'app-support',
@@ -27,7 +28,8 @@ export class SupportPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalCtrl: ModalController,
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) {
     this.route.queryParams.subscribe(params => {
       this.receiverUID = params.receiverId.toLowerCase();
@@ -48,8 +50,17 @@ export class SupportPage implements OnInit {
       new CometChat.MessageListener({
         onTextMessageReceived: message => {
           console.log("Message received successfully:", message);
+          let action = message.text.match(/<assigned-therapist>/g) ? 'assigned-therapist' : null
+          console.log(message.text.match(/<assigned-therapist>/g));
+          message.text = message.text.replace(/<assigned-therapist>/g, '')
           // Handle text message
-          this.conversation.push({ text: message.text, senderType: 0, sender: message.getSender(), image: this.loginType == 'support' ? 'assets/patient.png' : 'assets/support.png' });
+          this.conversation.push({
+            text: message.text,
+            senderType: 0,
+            sender: message.getSender(),
+            image: this.loginType == 'support' ? 'assets/patient.png' : 'assets/support.png',
+            action
+          });
           this.input = '';
           setTimeout(() => {
             this.scrollToBottom()
@@ -74,23 +85,27 @@ export class SupportPage implements OnInit {
       .setUID(this.receiverUID)
       .build();
 
-    console.log(this.receiverUID);
-    CometChat.getLoggedinUser().then(usr => console.log(usr))
-
     messagesRequest.fetchPrevious().then(
       (messages: any[]) => {
         console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {
-          // let isLocal = (this.cometchatUser.role == 'support' && this.loginType == 'support' && msg.) || (this.cometchatUser.role == 'patient' && this.loginType == 'patient')
+          msg.text = msg.text.replace(/<assigned-therapist>/g, '')
           return {
             text: msg.text,
             senderType: this.cometchatUser.uid == msg.sender.uid ? 1 : 0,
             sender: msg.sender,
-            image: `assets/${msg.sender.role}.png`
+            image: `assets/${msg.sender.role}.png`,
           }
         })
-        const welcomeMessage = { text: `Hola ${this.cometchatUser.name}! ¿Cómo te podemos ayudar?`, senderType: 0, sender: { name: 'Soporte' }, image: 'assets/support.png' }
+        const welcomeMessage = {
+          text: `Hola ${this.cometchatUser.name}! ¿Cómo te podemos ayudar?`,
+          senderType: 0,
+          sender: {
+            name: `${this.currentUser.support.name} ${this.currentUser.support.last_name}`
+          },
+          image: 'assets/support.png'
+        }
         if (this.conversation.length <= 0) {
           this.conversation.push(welcomeMessage);
         } else {
@@ -105,6 +120,12 @@ export class SupportPage implements OnInit {
     );
   }
 
+  async getMyTherapist() {
+    const therapist = await this.api.getMyTherapist(this.currentUser.id)
+    this.currentUser.therapist = therapist
+    this.auth.setCurrentUser(this.currentUser).then(() => this.presentAlert())
+  }
+
   private send() {
     if (this.input != '') {
       this.conversation.push({ text: this.input, senderType: 1, image: 'assets/sg1.jpg' });
@@ -113,6 +134,19 @@ export class SupportPage implements OnInit {
         this.scrollToBottom()
       }, 10)
     }
+  }
+
+  async presentAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Guardado',
+      message: 'Ahora tienes un terapeuta asignado.',
+      buttons: [{
+        text: 'Aceptar',
+        cssClass: 'text-secondary'
+      }]
+    });
+
+    await alert.present();
   }
 
   public sendChatMessage() {
@@ -127,7 +161,11 @@ export class SupportPage implements OnInit {
       message => {
         console.log("Message sent successfully:", message);
         // Do something with message
-        this.conversation.push({ text: this.input, senderType: 1, sender: message.getSender(), image: this.loginType == 'support' ? 'assets/support.png' : 'assets/patient.png' });
+        this.conversation.push({
+          text: this.input, senderType: 1,
+          sender: message.getSender(),
+          image: this.loginType == 'support' ? 'assets/support.png' : 'assets/patient.png'
+        });
         this.input = '';
         setTimeout(() => {
           this.scrollToBottom()
@@ -136,27 +174,6 @@ export class SupportPage implements OnInit {
       error => {
         console.log("Message sending failed with error:", error);
         // Handle any error
-      }
-    );
-  }
-
-
-  /**
-   * Init CometChat video Call
-  */
-  private initVideoCall() {
-    var callType = CometChat.CALL_TYPE.VIDEO;
-    var receiverType = CometChat.RECEIVER_TYPE.USER;
-
-    var call = new CometChat.Call(this.receiverUID, callType, receiverType);
-
-    CometChat.initiateCall(call).then(
-      outGoingCall => {
-        console.log("Call initiated successfully:", outGoingCall);
-        // perform action on success. Like show your calling screen.
-      },
-      error => {
-        console.log("Call initialization failed with exception:", error);
       }
     );
   }
@@ -172,23 +189,6 @@ export class SupportPage implements OnInit {
     parent.scrollTo(scrollOptions)
   }
 
-  private async presentCallAlert() {
-    const alert = await this.alertCtrl.create({
-      header: 'Iniciar llamada',
-      message: '¿Deseas iniciar la videollamada con tu paciente?',
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Cancelar',
-        cssClass: 'text-danger'
-      }, {
-        text: 'Aceptar',
-        cssClass: 'text-tertiary',
-        handler: () => this.initVideoCall()
-      },]
-    })
-
-    alert.present();
-  }
 
   async presentModal() {
     const options: CalendarModalOptions = {

@@ -24,7 +24,12 @@ const routes: Routes = [
     CalendarModule,
     RouterModule.forChild(routes)
   ],
-  entryComponents: [ChooseDateComponent],
-  declarations: [ChatPage, ChooseDateComponent]
+  entryComponents: [
+    ChooseDateComponent,
+  ],
+  declarations: [
+    ChatPage,
+    ChooseDateComponent,
+  ]
 })
 export class ChatPageModule { }

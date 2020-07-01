@@ -5,6 +5,7 @@ import { Route, ActivatedRoute } from '@angular/router';
 
 import { COMETCHAT } from "../keys";
 import { AuthService } from '../api-services/auth.service';
+import { CometChatService } from '../comet-chat.service';
 
 @Component({
   selector: 'page-login',
@@ -17,7 +18,6 @@ export class LoginPage implements OnInit {
   password = '';
   loggedIn = false;
 
-  cChatApiKey = COMETCHAT.APIKEY;
   uid = '';
   loginType = '';
   therapistCode = '';
@@ -28,7 +28,8 @@ export class LoginPage implements OnInit {
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private navCtrl: NavController,
-    private auth: AuthService
+    private auth: AuthService,
+    private cometchat: CometChatService
   ) {
     this.route.queryParams.subscribe(params => {
       console.log(params);
@@ -46,6 +47,8 @@ export class LoginPage implements OnInit {
       let loginData: any = { email: this.username, password: this.password }
       if (this.loginType == 'therapist') loginData = { email: this.username, password: this.password, code: this.therapistCode }
       const newSession = await this.auth.loginUser(loginData)
+      console.log(newSession);
+
       this.cometChatLogin(newSession.user);
     } catch (e) {
       this.loadingCtrl.dismiss()
@@ -88,22 +91,20 @@ export class LoginPage implements OnInit {
   }
 
 
-  private cometChatLogin(loggedUser) {
-    CometChat.login(loggedUser.cometChatId, this.cChatApiKey).then(
-      loggedUser => {
-        // console.log('Login Successful:', { loggedUser });
-        this.loadingCtrl.dismiss()
-        this.presentToast('¡Bienvenido a Mind2!');
-        // console.log('Login Successful:', JSON.stringify(user));
-        let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
-        this.navCtrl.navigateForward(nextPage)
-      },
-      error => {
-        console.log('Login failed with exception:', { error });
-        this.loadingCtrl.dismiss()
-        this.presentErrorAlert('Error al iniciar sesión')
-      }
-    );
+  private async cometChatLogin(loggedUser) {
+    try {
+      const cometchatuser = await this.cometchat.login(loggedUser)
+      console.log({ cometchatuser });
+
+      this.loadingCtrl.dismiss()
+      let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
+      this.navCtrl.navigateForward(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
+
+    } catch (error) {
+      console.log('Login failed with exception:', { error });
+      this.loadingCtrl.dismiss()
+      this.presentErrorAlert('Error al iniciar sesión')
+    }
   }
 
 }

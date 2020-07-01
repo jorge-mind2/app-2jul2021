@@ -8,6 +8,7 @@ import { CometChat } from "@cometchat-pro/cordova-ionic-chat"
 import { COMETCHAT } from "./keys";
 import { AuthService } from './api-services/auth.service';
 import { ApiService } from './api-services/api.service';
+import { CometChatService } from './comet-chat.service';
 
 @Component({
   selector: 'app-root',
@@ -24,14 +25,15 @@ export class AppComponent {
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
     private auth: AuthService,
-    private api: ApiService
+    private api: ApiService,
+    private cometchat: CometChatService
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.backgroundColorByName('transparent')
+      this.statusBar.backgroundColorByHexString('#4d1c6b')
       this.splashScreen.hide();
       // this.presentCallAlert('sessionID')
       console.log('Platform ready');
@@ -43,18 +45,6 @@ export class AppComponent {
             this.navCtrl.navigateRoot(this.rootPage)
           }
           else {
-            if (userType == 'patient') {
-              this.auth.getCurrentUser().then(async usr => {
-                this.loddgerUser = usr
-                let therapist = await this.api.getMyTherapist(usr.id);
-                console.log('logueado sin therapist');
-                if (therapist) {
-                  this.loddgerUser.therapist = therapist
-                  this.initCallListener(therapist.cometChatId)
-                }
-              })
-
-            }
             return true;
             this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
             this.navCtrl.navigateRoot(this.rootPage);
@@ -69,14 +59,10 @@ export class AppComponent {
       () => {
         console.log("CometChat Initialization completed successfully");
         // You can now call login function.
-
-        /* CometChat.createUser(user, apiKey).then(
-          user => {
-            console.log("user created", user);
-          }, error => {
-            console.log("error", error);
-          }
-        ) */
+        this.auth.getCurrentUser().then(async usr => {
+          console.log({ usr });
+          if (usr) await this.cometchat.login(usr)
+        })
 
       },
       error => {
@@ -85,151 +71,9 @@ export class AppComponent {
       }
     );
 
-    /* const listnerID = "therapist01";
-    const __self = this;
-    CometChat.addCallListener(
-      listnerID,
-      new CometChat.CallListener({
-        async onIncomingCallReceived(call) {
-          console.log("Incoming call:", call);
-          // console.log("Incoming call:", JSON.stringify(call));
-          // Handle incoming call
-          const sessionID = call.sessionId;
-          console.log(sessionID);
-
-          // this.presentCallAlert(sessionID)
-          const alert = await __self.alertCtrl.create({
-            header: 'Llamada entrante',
-            message: 'Tu terapeuta está llamando.',
-            backdropDismiss: false,
-            buttons: [{
-              text: 'Contestar',
-              cssClass: 'secondary',
-              handler: () => __self.acceptCall(sessionID)
-            }]
-          });
-
-          console.log(alert);
-
-          alert.present();
-
-        },
-        async onOutgoingCallAccepted(call) {
-          console.log("Outgoing call accepted:", call);
-          console.log("Outgoing call accepted:", JSON.stringify(call));
-          // Outgoing Call Accepted
-
-          var sessionID = call.sessionId;
-          // start the call using the startCall() method
-          await __self.startCall(sessionID);
-
-
-        },
-        onOutgoingCallRejected(call) {
-          console.log("Outgoing call rejected:", call);
-          console.log("Outgoing call rejected:", JSON.stringify(call));
-          // Outgoing Call Rejected
-        },
-        onIncomingCallCancelled(call) {
-          console.log("Incoming call calcelled:", call);
-          console.log("Incoming call calcelled:", JSON.stringify(call));
-        }
-      })
-    ); */
-
   }
 
-  private initCallListener(listnerID) {
-    console.log('init cometchat listener');
 
-    const __self = this;
-    CometChat.addCallListener(
-      listnerID,
-      new CometChat.CallListener({
-        async onIncomingCallReceived(call) {
-          console.log("Incoming call:", call);
-          // console.log("Incoming call:", JSON.stringify(call));
-          // Handle incoming call
-          const sessionID = call.sessionId;
-          console.log(sessionID);
-
-          // this.presentCallAlert(sessionID)
-          const alert = await __self.alertCtrl.create({
-            header: 'Llamada entrante',
-            message: 'Tu terapeuta está llamando.',
-            backdropDismiss: false,
-            buttons: [{
-              text: 'Contestar',
-              cssClass: 'secondary',
-              handler: () => __self.acceptCall(sessionID)
-            }]
-          });
-
-          console.log(alert);
-
-          alert.present();
-
-        },
-        async onOutgoingCallAccepted(call) {
-          console.log("Outgoing call accepted:", call);
-          console.log("Outgoing call accepted:", JSON.stringify(call));
-          // Outgoing Call Accepted
-
-          var sessionID = call.sessionId;
-          // start the call using the startCall() method
-          await __self.startCall(sessionID);
-
-
-        },
-        onOutgoingCallRejected(call) {
-          console.log("Outgoing call rejected:", call);
-          console.log("Outgoing call rejected:", JSON.stringify(call));
-          // Outgoing Call Rejected
-        },
-        onIncomingCallCancelled(call) {
-          console.log("Incoming call calcelled:", call);
-          console.log("Incoming call calcelled:", JSON.stringify(call));
-        }
-      })
-    );
-  }
-
-  private acceptCall(sessionID) {
-    CometChat.acceptCall(sessionID).then(
-      call => {
-        console.log("Call accepted successfully:", call);
-        console.log("Call accepted successfully:", JSON.stringify(call));
-        // start the call using the startCall() method
-        this.startCall(sessionID)
-      },
-      error => {
-        console.log("Call acceptance failed with error", error);
-        console.log("Call acceptance failed with error", JSON.stringify(error));
-        // handle exception
-      }
-    );
-  }
-
-  private startCall(sessionID) {
-    this.navCtrl.navigateForward('video-call', { queryParams: { sessionID } })
-  }
-
-  async presentCallAlert(sessionID) {
-    console.log(sessionID);
-
-    const alert = await this.alertCtrl.create({
-      header: 'Llamada entrante',
-      message: 'Tu terapeuta está llamando.',
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Contestar',
-        cssClass: 'secondary',
-        handler: () => this.acceptCall(sessionID)
-      }]
-    });
-
-    alert.present();
-  }
 
   async presentToast(text) {
     return console.log(text)

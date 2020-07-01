@@ -1,0 +1,11 @@
+ion-content,
+.incoming-call-background {
+  background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
+  --background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
+}
+
+ion-toolbar,
+ion-item {
+  --background: transparent;
+  --ion-color-base: transparent !important;
+}

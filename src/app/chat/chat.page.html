@@ -2,7 +2,8 @@
    <ion-toolbar color="primary">
      <ion-buttons slot="start">
        <ion-buttons slot="start">
-         <ion-back-button defaultHref="home"></ion-back-button>
+         <ion-back-button defaultHref="home"
+                          (click)="navigateHome()"></ion-back-button>
        </ion-buttons>
      </ion-buttons>
      <ion-title>
@@ -10,7 +11,11 @@
          <!-- <ion-icon name="user"
                    color="secondary"
                    class="title-icon"></ion-icon> -->
-         <ion-text class="title-text">Chat de sesión</ion-text>
+         <ion-text class="title-text"
+                   *ngIf="loginType=='therapist'">Chat de sesión</ion-text>
+         <ion-text class="title-text"
+                   *ngIf="loginType=='patient'">{{loggedUser.therapist.name}} {{loggedUser.therapist.last_name}}
+         </ion-text>
        </div>
      </ion-title>
    </ion-toolbar>
@@ -56,7 +61,7 @@
            <div [ngClass]="{ 'name-row-parent-right': conv.senderType,'name-row-parent-left': !conv.senderType}">
              <div class="no-padding"
                   [ngClass]="{ 'name-row-right': conv.senderType,'name-row-left': !conv.senderType}">
-               {{conv.sender.name}}
+               {{conv.sender}}
                <div [ngClass]="{ 'timer-right': conv.senderType,'timer-left': !conv.senderType}">{{i+5}} mins ago
                  <ion-icon *ngIf="conv.senderType && conv.sent"
                            name="checkmark"
