@@ -9,18 +9,20 @@ import { AuthService } from './api-services/auth.service';
 })
 export class CometChatService {
 
+  loading: any
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     private auth: AuthService
-  ) { }
+  ) {
+  }
 
   public async login(user: any): Promise<CometChat.User> {
     const logged = await CometChat.login(user.ccUser.auth_token)
     if (user.therapist) {
-      this.initCallListener(user.therapist.cometChatId)
+      this.initCallListener(user.therapist.name)
     }
     return logged
   }
@@ -43,13 +45,13 @@ export class CometChatService {
           // Paciente aceptó la llamada - terapeuta inicia la llamada
           console.log("Outgoing call accepted:", call);
           var sessionID = call.sessionId;
-          __self.loadingCtrl.dismiss().then(async () => await __self.startCall(sessionID))
+          await __self.startCall(sessionID)
         },
         async onOutgoingCallRejected(call: CometChat.Call) {
           // Paciente rechazó la llamada - terapeuta ve alerta de llamada no contestada
           console.log("Outgoing call rejected:", call);
           __self.loadingCtrl.dismiss()
-          await __self.notAnsweredAlert()
+          if (call.getAction() == "rejected" || call.getStatus() == "rejected") await __self.notAnsweredAlert()
         },
         async onIncomingCallCancelled(call: CometChat.Call) {
           // Paciente no contestó llamada - terapeuta ve alerta de llamada no contestada
@@ -75,19 +77,22 @@ export class CometChatService {
     const outGoingCall = await CometChat.initiateCall(call)
   }
 
-  private async acceptCall(sessionID: string): Promise<boolean> {
-    await CometChat.acceptCall(sessionID)
-    return this.startCall(sessionID)
+  private async acceptCall(sessionID: string): Promise<void> {
+    const newCall = await CometChat.acceptCall(sessionID)
+    setTimeout(async () => {
+      return this.startCall(newCall.getSessionId())
+    }, 3000);
   }
 
-  private startCall(sessionID: string): Promise<boolean> {
-    return this.navCtrl.navigateForward('video-call', { queryParams: { sessionID } })
+  private async startCall(sessionID: string): Promise<boolean> {
+    return await this.navCtrl.navigateForward(['video-call'], { queryParams: { sessionID }, queryParamsHandling: "merge" }).finally(() => this.loadingCtrl.dismiss())
   }
 
   async getConversation(receiverUID: string): Promise<CometChat.BaseMessage[] | []> {
     return await new CometChat.MessagesRequestBuilder()
-      .setLimit(50)
+      .setLimit(100)
       .setUID(receiverUID)
+      .setType('text')
       .build().fetchPrevious()
   }
 
@@ -112,8 +117,8 @@ export class CometChatService {
     });
     await modal.present()
     const { data } = await modal.onDidDismiss();
-    console.log(data);
     if (data.answer) {
+      await this.presentLoading('Conectando...')
       this.acceptCall(sessionID)
     } else {
       this.rejectCall(sessionID)
@@ -132,6 +137,14 @@ export class CometChatService {
     });
 
     alert.present();
+  }
+
+  async presentLoading(message: string) {
+    this.loading = await this.loadingCtrl.create({
+      cssClass: 'custom-loading',
+      message
+    })
+    await this.loading.present();
   }
 
   async presentCallingWaitScreen() {

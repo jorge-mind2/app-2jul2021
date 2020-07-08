@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 
-import { Platform, ToastController, NavController, AlertController } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { CometChat } from "@cometchat-pro/cordova-ionic-chat"
 
 import { COMETCHAT } from "./keys";
 import { AuthService } from './api-services/auth.service';
-import { ApiService } from './api-services/api.service';
 import { CometChatService } from './comet-chat.service';
 
 @Component({
@@ -22,10 +21,7 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private navCtrl: NavController,
-    private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
     private auth: AuthService,
-    private api: ApiService,
     private cometchat: CometChatService
   ) {
     this.initializeApp();
@@ -58,6 +54,7 @@ export class AppComponent {
     CometChat.init(appID, appSetting).then(
       () => {
         console.log("CometChat Initialization completed successfully");
+
         // You can now call login function.
         this.auth.getCurrentUser().then(async usr => {
           console.log({ usr });
@@ -73,15 +70,4 @@ export class AppComponent {
 
   }
 
-
-
-  async presentToast(text) {
-    return console.log(text)
-    const toast = await this.toastCtrl.create({
-      message: text,
-      duration: 300,
-      position: 'top'
-    });
-    toast.present();
-  }
 }

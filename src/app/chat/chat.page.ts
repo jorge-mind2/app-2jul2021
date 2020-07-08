@@ -34,10 +34,9 @@ export class ChatPage implements OnInit, OnDestroy {
   receiverUID: string = '';
   ccUser: any
   therapist: any
-  patient: any
+  patient: any = {}
   loggedUser: any = {
     therapist: {},
-    patient: {}
   }
 
   constructor(
@@ -86,6 +85,10 @@ export class ChatPage implements OnInit, OnDestroy {
       ]);
     }
 
+    window.addEventListener('resize', () => {
+      this.scrollToBottom()
+    });
+
     // get cometchat logged user
     this.ccUser = await CometChat.getLoggedinUser()
     this.loggedUser = await this.auth.getCurrentUser()
@@ -112,14 +115,10 @@ export class ChatPage implements OnInit, OnDestroy {
     if (this.loginType == 'therapist') this.cometchat.removeCallListener(this.receiverUID);
   }
 
-  ionViewDidEnter() {
-    setTimeout(() => {
-      this.scrollToBottom()
-    }, 10)
-  }
-
   private async getLastConversation() {
     const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
+    console.log(messages);
+
     this.conversation = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((msg: CometChat.TextMessage) => {
       return {
         text: msg.getText(),
@@ -128,6 +127,9 @@ export class ChatPage implements OnInit, OnDestroy {
         image: `assets/${msg.getSender().getRole()}.png`
       }
     })
+    setTimeout(() => {
+      this.scrollToBottom()
+    }, 10)
   }
 
   public async sendChatMessage() {
@@ -135,7 +137,7 @@ export class ChatPage implements OnInit, OnDestroy {
     const receiverID = this.receiverUID;
     const messageText = this.input;
     const receiverType = CometChat.RECEIVER_TYPE.USER;
-
+    this.input = ''
     const textMessage = new CometChat.TextMessage(receiverID, messageText, receiverType);
     const newMessage: any = await CometChat.sendMessage(textMessage)
     this.handlerMessage(newMessage, 1)
@@ -149,7 +151,6 @@ export class ChatPage implements OnInit, OnDestroy {
       senderType,
       image: `assets/${message.getSender().getRole()}.png`
     });
-    if (senderType == 1) this.input = ''
     setTimeout(() => {
       this.scrollToBottom()
     }, 10)

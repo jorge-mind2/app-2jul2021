@@ -12,7 +12,7 @@
                    color="secondary"
                    class="title-icon"></ion-icon> -->
          <ion-text class="title-text"
-                   *ngIf="loginType=='therapist'">Chat de sesión</ion-text>
+                   *ngIf="loginType=='therapist'">{{patient.name}} {{patient.last_name}}</ion-text>
          <ion-text class="title-text"
                    *ngIf="loginType=='patient'">{{loggedUser.therapist.name}} {{loggedUser.therapist.last_name}}
          </ion-text>
