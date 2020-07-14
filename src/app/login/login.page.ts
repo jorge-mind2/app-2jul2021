@@ -3,9 +3,9 @@ import { ToastController, NavController, LoadingController, AlertController } fr
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Route, ActivatedRoute } from '@angular/router';
 
-import { COMETCHAT } from "../keys";
 import { AuthService } from '../api-services/auth.service';
 import { CometChatService } from '../comet-chat.service';
+import { Device } from '@ionic-native/device/ngx';
 
 @Component({
   selector: 'page-login',
@@ -22,7 +22,9 @@ export class LoginPage implements OnInit {
   loginType = '';
   therapistCode = '';
 
+  deviceId: string
   constructor(
+    private device: Device,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
@@ -32,20 +34,24 @@ export class LoginPage implements OnInit {
     private cometchat: CometChatService
   ) {
     this.route.queryParams.subscribe(params => {
-      console.log(params);
       this.loginType = params.type;
       this.uid = this.loginType == 'therapist' ? 'therapista01' : 'patient01';
     });
   }
 
   ngOnInit() {
+    this.deviceId = this.device.uuid
+    if (!this.deviceId) this.deviceId = window.localStorage.getItem(':keys_store/deviceId')
   }
 
   public async loginUser() {
     await this.presentLoading()
     try {
-      let loginData: any = { email: this.username, password: this.password }
-      if (this.loginType == 'therapist') loginData = { email: this.username, password: this.password, code: this.therapistCode }
+      let loginData: any = { email: this.username, password: this.password, device: this.deviceId }
+      if (this.loginType == 'therapist') {
+        if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
+        loginData = { ...loginData, code: this.therapistCode }
+      }
       const newSession = await this.auth.loginUser(loginData)
       console.log(newSession);
 
@@ -94,7 +100,7 @@ export class LoginPage implements OnInit {
   private async cometChatLogin(loggedUser) {
     try {
       const cometchatuser = await this.cometchat.login(loggedUser)
-      console.log({ cometchatuser });
+      console.log('CometChat USER', { cometchatuser });
 
       this.loadingCtrl.dismiss()
       let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
