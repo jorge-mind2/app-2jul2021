@@ -21,7 +21,7 @@ export class SupportPage implements OnInit {
   receiverUID: string = ''
   cometchatUser: any
   currentUser: any
-  type: string = 'patient'
+  showAssignmentBtn: boolean = false
 
   constructor(
     private alertCtrl: AlertController,
@@ -53,6 +53,9 @@ export class SupportPage implements OnInit {
           let action = message.text.match(/<assigned-therapist>/g) ? 'assigned-therapist' : null
           console.log(message.text.match(/<assigned-therapist>/g));
           message.text = message.text.replace(/<assigned-therapist>/g, '')
+          if (action == 'assigned-therapist') {
+            this.showAssignmentBtn = true
+          }
           // Handle text message
           this.conversation.push({
             text: message.text,
@@ -123,7 +126,9 @@ export class SupportPage implements OnInit {
   async getMyTherapist() {
     const therapist = await this.api.getMyTherapist(this.currentUser.id)
     this.currentUser.therapist = therapist
-    this.auth.setCurrentUser(this.currentUser).then(() => this.presentAlert())
+    await this.auth.setCurrentUser(this.currentUser).then(() => this.presentAlert(`Ahora tu terapeuta es: ${therapist.name} ${therapist.last_name}`))
+    this.showAssignmentBtn = false
+    await this.auth.getCurrentUser()
   }
 
   private send() {
@@ -136,10 +141,10 @@ export class SupportPage implements OnInit {
     }
   }
 
-  async presentAlert() {
+  async presentAlert(message: string): Promise<void> {
     const alert = await this.alertCtrl.create({
-      header: 'Guardado',
-      message: 'Ahora tienes un terapeuta asignado.',
+      header: 'Listo',
+      message,
       buttons: [{
         text: 'Aceptar',
         cssClass: 'text-secondary'

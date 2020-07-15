@@ -90,8 +90,8 @@ export class SignUpTherapistPage implements OnInit {
       // this.createCometChatUser(newUser.data)
       this.loadingCtrl.dismiss()
       const alert = await this.alertCtrl.create({
-        header: 'Registro con éxito',
-        message: 'Verifica tu email por favor.',
+        header: 'Registro hecho',
+        message: 'En breve te contactaremos para validar algunos datos.',
         backdropDismiss: false,
         buttons: [{
           text: 'Aceptar',

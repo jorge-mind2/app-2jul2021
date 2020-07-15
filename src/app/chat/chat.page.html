@@ -49,6 +49,21 @@
         class="bg-image"
         [ngClass]="{ 'bg-image-X': phone_model=='iPhone X'}">
      <div id="chat-container">
+       <ion-row *ngIf="conversation.length<=0">
+         <ion-col size="12"
+                  size-md>
+           <ion-card>
+             <ion-card-content>
+               <ion-text clas="ion-text-center">
+                 <p>
+                   Di <b>Hola</b> para iniciar a charlar con <b class="text-primary">{{receiverName}}</b>
+                 </p>
+               </ion-text>
+             </ion-card-content>
+           </ion-card>
+
+         </ion-col>
+       </ion-row>
        <ion-row *ngFor="let conv of conversation; let i = index;"
                 class="full no-padding">
          <ion-col class="no-padding chat-row"

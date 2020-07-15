@@ -38,6 +38,7 @@ export class ChatPage implements OnInit, OnDestroy {
   loggedUser: any = {
     therapist: {},
   }
+  receiverName: string
 
   constructor(
     private platform: Platform,
@@ -61,7 +62,6 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
         result => console.log('Has permission?', result.hasPermission),
@@ -94,6 +94,10 @@ export class ChatPage implements OnInit, OnDestroy {
     this.loggedUser = await this.auth.getCurrentUser()
     this.loginType = this.loggedUser.role.name || this.loginType;
     if (this.loginType == 'therapist') this.cometchat.initCallListener(this.receiverUID)
+
+    this.receiverName = this.loginType == 'patient' ?
+      `${this.loggedUser.therapist.name} ${this.loggedUser.therapist.last_name}` :
+      `${this.patient.name} ${this.patient.last_name}`
 
     this.getLastConversation();
 
