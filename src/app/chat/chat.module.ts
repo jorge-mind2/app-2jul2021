@@ -6,8 +6,9 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ChatPage } from './chat.page';
-import { ChooseDateComponent } from '../choose-date/choose-date.component';
 import { CalendarModule } from 'ion2-calendar';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
+import { CommonPagesModule } from '../common/common-pages.module';
 
 const routes: Routes = [
   {
@@ -22,14 +23,14 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     CalendarModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    CommonPagesModule
   ],
   entryComponents: [
-    ChooseDateComponent,
+    NextAppointmentComponent,
   ],
   declarations: [
     ChatPage,
-    ChooseDateComponent,
   ]
 })
 export class ChatPageModule { }

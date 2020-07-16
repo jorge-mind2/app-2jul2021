@@ -55,11 +55,29 @@
 }
 
 .custom-loading {
-  background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
-  --background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
+  // background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
+  // --background: linear-gradient(0deg, rgb(17, 0, 34) 0%, rgb(36, 10, 61) 100%);
+  background: linear-gradient(224deg, #884aa6, #4d1c6b, #2d0e4d);
+  --background: linear-gradient(224deg, #884aa6, #4d1c6b, #2d0e4d);
+  background-size: 600% 600%;
+  animation: custom-loader 6s ease infinite;
 
   .loading-wrapper {
     background: var(--ion-color-light);
   }
 
+}
+
+@keyframes custom-loader {
+  0% {
+    background-position: 0% 50%
+  }
+
+  50% {
+    background-position: 100% 51%
+  }
+
+  100% {
+    background-position: 0% 50%
+  }
 }

@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
-import { CalendarModalOptions } from 'ion2-calendar';
-import { ChooseDateComponent } from '../choose-date/choose-date.component';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 
@@ -26,8 +24,6 @@ export class SupportPage implements OnInit {
   constructor(
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
-    private router: Router,
-    private modalCtrl: ModalController,
     private auth: AuthService,
     private api: ApiService
   ) {
@@ -193,17 +189,5 @@ export class SupportPage implements OnInit {
 
     parent.scrollTo(scrollOptions)
   }
-
-
-  async presentModal() {
-    const options: CalendarModalOptions = {
-      color: 'primary'
-    };
-    const modal = await this.modalCtrl.create({
-      component: ChooseDateComponent,
-    });
-    return await modal.present()
-  }
-
 
 }

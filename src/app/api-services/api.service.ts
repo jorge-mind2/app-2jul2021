@@ -31,13 +31,13 @@ export class ApiService {
   }
 
   public async getMyPacients(id): Promise<any> {
-    const opts = { params: new HttpParams({ fromString: "join=patients" }) };
+    const opts = { params: new HttpParams({ fromString: "join=patients&join=patients.appointments" }) };
     const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
     return data.patients;
   }
 
   public async getMyTherapist(id: number): Promise<any> {
-    const opts = { params: new HttpParams({ fromString: "join=therapist" }) };
+    const opts = { params: new HttpParams({ fromString: "join=therapist&join=schedules&join=appointments" }) };
     const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
     return data.therapist;
   }

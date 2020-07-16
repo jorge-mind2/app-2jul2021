@@ -1,24 +1,12 @@
-/**
- *  ToDo
- *
- * Manejar eventos de chat
- * Pasar permisos de cámara y mic a video-call componen
- * En video-call component:
- *  manejar eventos de conexión a llamada
- *  Poner timer que inicie cuando se conecte el paciente
- *
- *
- *
- *  */
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform, AlertController, ModalController, NavController } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { ChooseDateComponent } from '../choose-date/choose-date.component';
-import { CalendarModalOptions, CalendarModal } from 'ion2-calendar';
+import { CalendarModalOptions } from 'ion2-calendar';
 import { CometChatService } from '../comet-chat.service';
 import { AuthService } from '../api-services/auth.service';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 
 @Component({
   selector: 'app-chat',
@@ -202,7 +190,7 @@ export class ChatPage implements OnInit, OnDestroy {
       color: 'primary'
     };
     const modal = await this.modalCtrl.create({
-      component: ChooseDateComponent,
+      component: NextAppointmentComponent,
       componentProps: {
         patient: this.patient,
         therapist: this.therapist

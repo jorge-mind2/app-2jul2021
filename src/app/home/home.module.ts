@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { HomePage } from './home.page';
 import { MenuComponentModule } from '../menu/menu.module';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
+import { CommonPagesModule } from '../common/common-pages.module';
 
 const routes: Routes = [
   {
@@ -21,8 +23,10 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     MenuComponentModule,
+    CommonPagesModule,
     RouterModule.forChild(routes)
   ],
+  entryComponents: [NextAppointmentComponent],
   declarations: [HomePage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

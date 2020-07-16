@@ -39,6 +39,21 @@
         </ion-button>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col></ion-col>
+      <ion-col size="6">
+        <ion-button color="tertiary"
+                    *ngIf="user.therapist"
+                    shape="round"
+                    class="ion-margin-top"
+                    (click)="openNextAppointment()">
+          <ion-icon slot="start"
+                    name="calendar"></ion-icon>
+          Agendar Cita
+        </ion-button>
+      </ion-col>
+      <ion-col></ion-col>
+    </ion-row>
   </ion-grid>
   <app-menu></app-menu>
 </ion-content>
