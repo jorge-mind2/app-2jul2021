@@ -14,13 +14,10 @@ import { Device } from '@ionic-native/device/ngx';
 })
 export class LoginPage implements OnInit {
   // Login variables
-  username = '';
-  password = '';
-  loggedIn = false;
-
-  uid = '';
-  loginType = '';
-  therapistCode = '';
+  username: string = '';
+  password: string = '';
+  loginType: string = '';
+  therapistCode: string;
 
   deviceId: string
   constructor(
@@ -35,7 +32,6 @@ export class LoginPage implements OnInit {
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
-      this.uid = this.loginType == 'therapist' ? 'therapista01' : 'patient01';
     });
   }
 
@@ -49,7 +45,7 @@ export class LoginPage implements OnInit {
     try {
       let loginData: any = { email: this.username, password: this.password, device: this.deviceId }
       if (this.loginType == 'therapist') {
-        if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
+        // if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
         loginData = { ...loginData, code: this.therapistCode }
       }
       const newSession = await this.auth.loginUser(loginData)

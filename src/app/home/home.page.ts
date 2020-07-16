@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, ModalController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
-import { ApiService } from '../api-services/api.service';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +11,11 @@ import { ApiService } from '../api-services/api.service';
 export class HomePage implements OnInit {
 
   user: any = {}
-  therapist: any = {}
   supportUser: any
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
-    private api: ApiService,
+    private modalCtrl: ModalController,
     private auth: AuthService
   ) { }
 
@@ -42,10 +41,19 @@ export class HomePage implements OnInit {
   }
 
   public goToSupportChat() {
-    // obtener el usuario asignado com sporte y mandar su receiverId
-    // const receiverId = 'a-516ee1';
     const receiverId = this.user.support.cometChatId;
     this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
+  }
+
+  async openNextAppointment() {
+    const modal = await this.modalCtrl.create({
+      component: NextAppointmentComponent,
+      componentProps: {
+        patient: this.user,
+        therapist: this.user.therapist
+      }
+    });
+    return await modal.present()
   }
 
   async presentErrorAlert(header, message) {
