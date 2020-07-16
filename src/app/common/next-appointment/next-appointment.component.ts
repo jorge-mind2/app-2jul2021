@@ -28,32 +28,18 @@ export class NextAppointmentComponent implements OnInit {
     date: null
   }
   hoursAvailability: any[] = []
+  therapistAvailable: boolean = false
   constructor(
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private api: ApiService
-  ) {
-    /*
-
-/:id es el del paciente
-en el body mandas un therapistId
-que es el del terapeuta
-solo se les permite asignar a administradores y soporte
-para appointments/
-le vas aaa
-Mandar asi al post
-  userId:number; patientId
-  date:string; "2020-06-12"
-  start_time:string; "18:00"
-  end_time: string; "19:00"
-    */
-  }
+  ) { }
 
   ngOnInit() {
+    this.therapistAvailable = this.therapist.availability.length
     this.calendarOptions.to = this.todayToFifthDate
     this.appointment.userId = '' + this.patient.id
-    console.log(this.patient);
     this.calendarOptions.daysConfig = this.patient.appointments.map(appointment => {
       return {
         date: moment(appointment.date).toDate(),
@@ -63,15 +49,21 @@ Mandar asi al post
         cssClass: 'scheduled',
       }
     })
-    this.calendarOptions.disableWeeks = [0, 1, 2, 3, 4, 5, 6, 7].reduce<number[]>((acc, val): number[] => {
-      if (!this.therapist.availability.some(s => s.day == val)) return acc.concat(val)
-      return acc
-    }, [])
+    console.log('patient', this.patient);
+    console.log('therapist', this.therapist);
+    var daysArray: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
+    this.calendarOptions.disableWeeks = this.therapistAvailable ?
+      daysArray.reduce<number[]>((acc, val): number[] => {
+        if (!this.therapist.availability.some(s => s.day == val)) return acc.concat(val)
+        return acc
+      }, []) :
+      daysArray
   }
 
-  public closeModal() {
+  public closeModal(updated: boolean = false) {
     this.modalCtrl.dismiss({
-      'dismissed': true
+      'dismissed': true,
+      updated
     });
   }
 
@@ -100,7 +92,7 @@ Mandar asi al post
       const newAppointment = await this.api.createAppointment(this.appointment)
       console.log(newAppointment);
       // this.presentToast('Cita guardada')
-      this.presentToast('Cita guardada').finally(() => this.closeModal())
+      this.presentToast('Cita guardada').finally(() => this.closeModal(true))
 
     } catch (error) {
       console.log(error);

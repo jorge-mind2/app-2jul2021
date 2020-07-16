@@ -98,7 +98,7 @@ export class SupportPage implements OnInit {
           }
         })
         const welcomeMessage = {
-          text: `Hola ${this.cometchatUser.name}! ¿Cómo te podemos ayudar?`,
+          text: `Hola ${this.currentUser.name}, bienvenid@ a Mind2! ¿Cómo te podemos ayudar?`,
           senderType: 0,
           sender: {
             name: `${this.currentUser.support.name} ${this.currentUser.support.last_name}`

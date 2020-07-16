@@ -32,6 +32,12 @@
   <ion-grid>
     <ion-row>
       <ion-col>
+        <ion-text color="light"
+                  *ngIf="!therapist.availability.length">
+          <h4 class="ion-text-center">
+            El terapeuta aún no tiene horarios disponibles
+          </h4>
+        </ion-text>
         <ion-button [color]="hour.color"
                     [disabled]="!hour.available"
                     size="default"
@@ -43,7 +49,7 @@
 
 
 
-  <ion-item>
+  <ion-item [hidden]="!appointment.start_time">
     <ion-text color="light">
       <p>
         La cita será el día: <b>{{appointmentDateDate | date: 'd MMMM, y'}}</b>
@@ -56,5 +62,6 @@
               expand="full"
               size="large"
               primary
+              [disabled]="!appointment.date || !appointment.start_time"
               (click)="createAppointment()">Guardar</ion-button>
 </ion-content>

@@ -84,8 +84,8 @@ export class ChatPage implements OnInit, OnDestroy {
     if (this.loginType == 'therapist') this.cometchat.initCallListener(this.receiverUID)
 
     this.receiverName = this.loginType == 'patient' ?
-      `${this.loggedUser.therapist.name} ${this.loggedUser.therapist.last_name}` :
-      `${this.patient.name} ${this.patient.last_name}`
+      this.loggedUser.therapist.name :
+      this.patient.name
 
     this.getLastConversation();
 

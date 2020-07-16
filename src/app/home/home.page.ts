@@ -46,6 +46,7 @@ export class HomePage implements OnInit {
   }
 
   async openNextAppointment() {
+    this.user = await this.auth.getCurrentUser()
     const modal = await this.modalCtrl.create({
       component: NextAppointmentComponent,
       componentProps: {
