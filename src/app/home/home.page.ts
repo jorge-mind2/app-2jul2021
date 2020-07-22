@@ -71,4 +71,27 @@ export class HomePage implements OnInit {
     alert.present();
   }
 
+  public async presentLogoutAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Deseas cerrar tu sesión de Mind2?',
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Aceptar',
+        cssClass: 'text-secondary',
+        handler: () => this.logout()
+      }, {
+        text: 'Cancelar',
+        cssClass: 'primary'
+      }]
+    })
+
+    alert.present();
+  }
+
+  async logout() {
+    await this.auth.logout()
+    this.navCtrl.navigateRoot('welcome')
+  }
+
 }

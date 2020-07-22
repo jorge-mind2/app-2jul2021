@@ -29,4 +29,8 @@ ion-fab-button {
   --border-width: 2px;
   --border-color: var(--ion-color-light);
   --border-style: solid;
+
+  &.active {
+    --background: rgba(255, 255, 255, .3);
+  }
 }

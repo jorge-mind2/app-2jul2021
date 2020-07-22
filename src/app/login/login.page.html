@@ -15,42 +15,49 @@
   </ion-item>
   <br>
   <br>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="floating"
-               color="light">Correo electrónico</ion-label>
-    <ion-input color="light"
-               type="email"
-               [(ngModel)]="username"
-               rounded></ion-input>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal">
-    <ion-label position="floating"
-               color="light">Contraseña</ion-label>
-    <ion-input color="light"
-               type="password"
-               [(ngModel)]="password"></ion-input>
-  </ion-item>
-  <ion-item color="light"
-            class="ion-padding-horizontal"
-            *ngIf="loginType=='therapist'">
-    <ion-label position="floating"
-               color="light">Código de Terapeuta</ion-label>
-    <ion-input color="light"
-               type="text"
-               [(ngModel)]="therapistCode"></ion-input>
-  </ion-item>
+  <form (ngSubmit)="loginUser()">
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="floating"
+                 color="light">Correo electrónico</ion-label>
+      <ion-input color="light"
+                 type="email"
+                 [(ngModel)]="username"
+                 [ngModelOptions]="{standalone: true}"
+                 (keyup.enter)="changeInput($event)"></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal">
+      <ion-label position="floating"
+                 color="light">Contraseña</ion-label>
+      <ion-input color="light"
+                 type="password"
+                 [(ngModel)]="password"
+                 [ngModelOptions]="{standalone: true}"
+                 (keyup.enter)="changeInput($event)"></ion-input>
+    </ion-item>
+    <ion-item color="light"
+              class="ion-padding-horizontal"
+              *ngIf="loginType=='therapist'">
+      <ion-label position="floating"
+                 color="light">Código de Terapeuta</ion-label>
+      <ion-input color="light"
+                 type="text"
+                 [(ngModel)]="therapistCode"
+                 [ngModelOptions]="{standalone: true}"
+                 (keyup.enter)="changeInput($event)"></ion-input>
+    </ion-item>
+    <br><br>
+    <ion-button expand="full"
+                size="large"
+                shape="round"
+                type="submit">Ingresar</ion-button>
+  </form>
   <br>
   <ion-button color="light"
               fill="clear"
               expand="full"
               [routerLink]="['/password-recovery']">Olvidé mi contraseña</ion-button>
-  <br><br>
-  <ion-button expand="full"
-              size="large"
-              shape="round"
-              (click)="loginUser()">Ingresar</ion-button>
   <br>
   <ion-button expand="full"
               size="large"

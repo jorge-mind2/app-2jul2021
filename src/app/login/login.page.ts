@@ -60,6 +60,22 @@ export class LoginPage implements OnInit {
     }
   }
 
+  async changeInput(ev): Promise<void> {
+    console.log(ev);
+    if (ev.keyCode == 13 || ev.keyCode == '13' || ev.key == 'Enter') {
+      if (
+        !this.username
+        || this.username == ''
+        || !this.password
+        || this.password == ''
+      ) {
+        return await this.presentErrorAlert('Ingresa tu correo y tu contraseña para poder ingresar')
+      }
+      return await this.loginUser()
+    }
+
+  }
+
   async presentToast(text) {
     const toast = await this.toastCtrl.create({
       message: text,

@@ -1,10 +1,19 @@
 <ion-content fullscreen>
   <div class="background-1"></div>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLogoutAlert()"
+                  color="light"
+                  iconOnly>
+        <ion-icon name="power"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 
   <ion-item text-center
             lines="none">
     <ion-label color="light"
-               style="font-size: 1.5em; padding-top: 50px;">Bienvenido {{user.name}}</ion-label>
+               style="font-size: 1.5em;">Bienvenido {{user.name}}</ion-label>
   </ion-item>
   <ion-grid style="margin-top: 50px;">
     <ion-row>

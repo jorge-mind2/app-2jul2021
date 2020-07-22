@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { NavigationExtras } from '@angular/router';
@@ -13,9 +13,10 @@ export class HomeTherapistPage implements OnInit {
   user: {};
   patients: []
   constructor(
+    private navCtrl: NavController,
+    private alertCtrl: AlertController,
     private auth: AuthService,
     private api: ApiService,
-    private navCtrl: NavController
   ) { }
 
   ngOnInit() {
@@ -49,6 +50,29 @@ export class HomeTherapistPage implements OnInit {
     const patients = await this.api.getMyPacients(id);
     console.log(patients);
     this.patients = patients
+  }
+
+  public async presentLogoutAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Cerrar sesión',
+      message: '¿Deseas cerrar tu sesión de Mind2?',
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Aceptar',
+        cssClass: 'text-secondary',
+        handler: () => this.logout()
+      }, {
+        text: 'Cancelar',
+        cssClass: 'primary'
+      }]
+    })
+
+    alert.present();
+  }
+
+  async logout() {
+    await this.auth.logout()
+    this.navCtrl.navigateRoot('welcome')
   }
 
 }

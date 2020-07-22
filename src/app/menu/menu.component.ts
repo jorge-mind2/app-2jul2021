@@ -8,12 +8,14 @@ import { NavController, AlertController } from '@ionic/angular';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit {
-
+  loginType: string
   constructor(
     private auth: AuthService,
     private navCtrl: NavController,
     private alertCtrl: AlertController
-  ) { }
+  ) {
+    this.loginType = this.auth.getUserType()
+  }
 
   ngOnInit() {
   }

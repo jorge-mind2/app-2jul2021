@@ -4,20 +4,29 @@
       <ion-row>
         <ion-col>
           <ion-fab-button style="margin: auto;"
-                          [routerLink]="['/profile']">
+                          [routerLink]="['/profile']"
+                          routerLinkActive="active">
             <ion-icon src="/assets/perfil.svg"></ion-icon>
           </ion-fab-button>
         </ion-col>
         <ion-col>
-          <ion-fab-button style="margin: auto;"
+          <!--  <ion-fab-button style="margin: auto;"
                           color="danger"
                           (click)="presentLogoutAlert()">
             <ion-icon name="close"></ion-icon>
-          </ion-fab-button>
+          </ion-fab-button> -->
         </ion-col>
         <ion-col>
           <ion-fab-button style="margin: auto;"
-                          (click)="navigateHome()">
+                          *ngIf="loginType=='therapist'"
+                          [routerLink]="['/home-therapist']"
+                          routerLinkActive="active">
+            <ion-icon src="/assets/home.svg"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-button style="margin: auto;"
+                          *ngIf="loginType=='patient'"
+                          [routerLink]="['/home']"
+                          routerLinkActive="active">
             <ion-icon src="/assets/home.svg"></ion-icon>
           </ion-fab-button>
         </ion-col>
