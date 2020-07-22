@@ -28,15 +28,17 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.backgroundColorByHexString('#4d1c6b')
-      this.splashScreen.hide();
+    this.platform.ready().then(async () => {
+      this.statusBar.backgroundColorByHexString('#4d1c6bab')
       // this.presentCallAlert('sessionID')
       console.log('Platform ready');
-      this.auth.authenticationState.subscribe(state => {
-        let userType = this.auth.getUserType();
+      await this.auth.checkToken()
+      this.auth.authenticationState.subscribe(async state => {
+        const userType = await this.auth.getUserType();
         // console.log(state);
+
         if (userType) {
+          this.splashScreen.hide();
           if (!state) {
             this.navCtrl.navigateRoot(this.rootPage)
           }

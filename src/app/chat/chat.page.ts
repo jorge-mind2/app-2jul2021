@@ -199,8 +199,8 @@ export class ChatPage implements OnInit, OnDestroy {
     return await modal.present()
   }
 
-  public navigateHome() {
-    const userType = this.auth.getUserType()
+  public async navigateHome() {
+    const userType = await this.auth.getUserType()
     let home = userType == 'therapist' ? 'home-therapist' : 'home'
     this.navCtrl.navigateBack(home)
   }

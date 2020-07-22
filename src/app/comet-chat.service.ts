@@ -56,8 +56,8 @@ export class CometChatService {
         async onIncomingCallCancelled(call: CometChat.Call) {
           // Paciente no contestó llamada - terapeuta ve alerta de llamada no contestada
           console.log("Incoming call calcelled:", call);
-          if (__self.auth.getUserType() == 'patient') await __self.modalCtrl.dismiss({ awnser: false })
-          else if (__self.auth.getUserType() == 'therapist') await __self.loadingCtrl.dismiss()
+          if (await __self.auth.getUserType() == 'patient') await __self.modalCtrl.dismiss({ awnser: false })
+          else if (await __self.auth.getUserType() == 'therapist') await __self.loadingCtrl.dismiss()
           await __self.notAnsweredAlert()
         }
       })

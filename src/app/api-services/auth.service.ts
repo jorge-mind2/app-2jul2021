@@ -17,42 +17,38 @@ export class AuthService implements OnInit {
   private headers
   public token: string
   public userType: string
-  authenticationState
+  authenticationState = new BehaviorSubject(false)
   constructor(
     private storage: Storage,
     private http: HttpClient,
     private platform: Platform,
     private helper: JwtHelperService
   ) {
-    this.authenticationState = new BehaviorSubject(false)
-    this.platform.ready().then(() => {
-      this.checkToken();
-    })
   }
 
   ngOnInit() {
 
   }
 
-  checkToken() {
-    this.storage.get(TOKEN_KEY).then(token => {
-      if (token) {
-        // let decoded = this.helper.decodeToken(token);
-        let isExpired = this.helper.isTokenExpired(token);
-        // console.log('token expired', isExpired);
+  async checkToken() {
+    const token = await this.storage.get(TOKEN_KEY)
+    console.log({ token });
+    if (token) {
+      // let decoded = this.helper.decodeToken(token);
+      let isExpired = this.helper.isTokenExpired(token);
+      // console.log('token expired', isExpired);
 
-        if (!isExpired) {
-          // console.log('Token', token);
-          this.storage.get('userType').then(async userType => {
-            this.token = token;
-            this.userType = userType;
-            this.authenticationState.next(true);
-          })
-        } else {
-          this.logout();
-        }
+      if (!isExpired) {
+        // console.log('Token', token);
+        const userType = await this.storage.get('userType')
+        this.token = token;
+        this.userType = userType;
+        this.authenticationState.next(true);
+
+      } else {
+        this.logout();
       }
-    });
+    }
   }
 
   public setAuthHeader(token) {
@@ -68,23 +64,23 @@ export class AuthService implements OnInit {
     return this.token;
   }
 
-  public setToken(accessToken) {
-    this.storage.set(TOKEN_KEY, accessToken);
+  public async setToken(accessToken) {
+    await this.storage.set(TOKEN_KEY, accessToken);
     return this.token = accessToken;
   }
 
-  public setUserType(userType) {
-    this.storage.set('userType', userType);
+  public async setUserType(userType) {
+    await this.storage.set('userType', userType);
     return this.userType = userType;
   }
 
-  public getUserType() {
-    return this.userType;
+  public async getUserType() {
+    return await this.storage.get('userType');
   }
 
-  public setCurrentUser(user) {
+  public async setCurrentUser(user) {
     this.setUserType(user.role.name)
-    return this.storage.set('currentUser', user);
+    return await this.storage.set('currentUser', user);
   }
 
   public async getCurrentUser() {

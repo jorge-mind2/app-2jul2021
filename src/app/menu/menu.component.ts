@@ -13,15 +13,16 @@ export class MenuComponent implements OnInit {
     private auth: AuthService,
     private navCtrl: NavController,
     private alertCtrl: AlertController
-  ) {
-    this.loginType = this.auth.getUserType()
+  ) { }
+
+  async ngOnInit() {
+    this.loginType = await this.auth.getUserType()
+    console.log(this.loginType);
+
   }
 
-  ngOnInit() {
-  }
-
-  public navigateHome() {
-    const userType = this.auth.getUserType()
+  public async navigateHome() {
+    const userType = await this.auth.getUserType()
     let home = userType == 'therapist' ? 'home-therapist' : 'home'
     this.navCtrl.navigateBack(home)
   }
