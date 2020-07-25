@@ -12,13 +12,13 @@ import { AppComponent } from './app.component';
 import { Device } from '@ionic-native/device/ngx';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HTTP } from '@ionic-native/http/ngx'
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { environment } from "../environments/environment";
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import { CommonPagesModule } from './common/common-pages.module';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
 export function jwtOptionsFactory(storage) {
   return {
@@ -58,7 +58,7 @@ export function jwtOptionsFactory(storage) {
     StatusBar,
     SplashScreen,
     Device,
-    HTTP,
+    FirebaseX,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

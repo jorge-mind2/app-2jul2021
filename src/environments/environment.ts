@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_BASE_URL: 'http://192.168.1.115:3000'
+  API_BASE_URL: 'http://192.168.1.196:3000'
   // API_BASE_URL: 'http://ec2-54-241-76-34.us-west-1.compute.amazonaws.com:3000'
 };
 

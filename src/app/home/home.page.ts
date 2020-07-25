@@ -25,7 +25,7 @@ export class HomePage implements OnInit {
 
   private getUser() {
     this.auth.getCurrentUser().then(async (user: any) => {
-      console.log('currentUser', user);
+      // console.log('currentUser', user);
       if (!user) return await this.auth.logout()
       this.user = user;
     });

@@ -17,8 +17,6 @@ export class MenuComponent implements OnInit {
 
   async ngOnInit() {
     this.loginType = await this.auth.getUserType()
-    console.log(this.loginType);
-
   }
 
   public async navigateHome() {
