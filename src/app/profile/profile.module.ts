@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { ProfilePage } from './profile.page';
 import { MenuComponentModule } from '../menu/menu.module';
+import { Camera } from '@ionic-native/camera/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 const routes: Routes = [
   {
@@ -23,6 +25,10 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     MenuComponentModule
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage],
+  providers: [
+    Camera,
+    File
+  ]
 })
 export class ProfilePageModule { }

@@ -26,8 +26,9 @@
       <ion-col>
       </ion-col>
       <ion-col size="6">
-        <ion-avatar style="margin: auto; width: 80px; height: 80px; border: 3px solid white;">
-          <img src="https://api.adorable.io/avatars/120/abo@adorable.png">
+        <ion-avatar style="margin: auto; width: 80px; height: 80px; border: 3px solid white;"
+                    (click)="selectImage()">
+          <img [src]="photoProfile">
         </ion-avatar>
         <ion-label color="light"
                    style="font-size: 1.2em; text-align: center; padding-top: .5em; display: block; width: 100%;">

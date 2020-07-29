@@ -37,7 +37,11 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.deviceId = this.device.uuid
-    if (!this.deviceId) this.deviceId = window.localStorage.getItem(':keys_store/deviceId')
+    if (!this.deviceId) { // si es navegador, o no tiene deviceId, toma el deviceId que setea cometChat en el localstorage
+      new Array(window.localStorage.length).fill(null).forEach((val, index) => {
+        if (window.localStorage.key(index).includes(':keys_store/deviceId')) this.deviceId = window.localStorage.getItem(window.localStorage.key(index))
+      })
+    }
   }
 
   public async loginUser() {
@@ -48,8 +52,10 @@ export class LoginPage implements OnInit {
         // if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
         loginData = { ...loginData, code: this.therapistCode }
       }
+      console.log({ loginData });
+
       const newSession = await this.auth.loginUser(loginData)
-      console.log(newSession);
+      console.log({ newSession });
 
       this.cometChatLogin(newSession.user);
     } catch (e) {

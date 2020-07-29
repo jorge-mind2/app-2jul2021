@@ -5,14 +5,16 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Device } from '@ionic-native/device/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { File } from '@ionic-native/file/ngx'
+import { Crop } from '@ionic-native/crop/ngx';
 
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Device } from '@ionic-native/device/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HTTP } from '@ionic-native/http/ngx'
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
@@ -58,7 +60,9 @@ export function jwtOptionsFactory(storage) {
     StatusBar,
     SplashScreen,
     Device,
-    HTTP,
+    Camera,
+    File,
+    Crop,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

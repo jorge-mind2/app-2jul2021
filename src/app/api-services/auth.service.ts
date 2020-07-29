@@ -64,27 +64,26 @@ export class AuthService implements OnInit {
     return this.headers;
   }
 
-  public getToken(): string {
+  public getToken() {
     return this.token;
   }
 
-  public setToken(accessToken) {
-    this.storage.set(TOKEN_KEY, accessToken);
+  public async setToken(accessToken) {
+    await this.storage.set(TOKEN_KEY, accessToken);
     return this.token = accessToken;
   }
 
-  public setUserType(userType) {
-    this.storage.set('userType', userType);
-    return this.userType = userType;
+  public async setUserType(userType) {
+    return await this.storage.set('userType', userType);
   }
 
-  public getUserType() {
-    return this.userType;
+  public async getUserType() {
+    return await this.storage.get('userType');
   }
 
-  public setCurrentUser(user) {
-    this.setUserType(user.role.name)
-    return this.storage.set('currentUser', user);
+  public async setCurrentUser(user) {
+    await this.setUserType(user.role.name)
+    return await this.storage.set('currentUser', user);
   }
 
   public async getCurrentUser() {
@@ -101,9 +100,11 @@ export class AuthService implements OnInit {
 
   public async loginUser(data) {
     const newSession = await this.http.post<any>(`/auth/signin`, data).toPromise()
+    console.log(newSession);
+
     const loggedUser = newSession.data
-    this.setCurrentUser(loggedUser.user)
-    this.setToken(loggedUser.accessToken)
+    await this.setCurrentUser(loggedUser.user)
+    await this.setToken(loggedUser.accessToken)
     this.authenticationState.next(true);
     return loggedUser
   }

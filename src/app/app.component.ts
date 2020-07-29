@@ -33,8 +33,8 @@ export class AppComponent {
       this.splashScreen.hide();
       // this.presentCallAlert('sessionID')
       console.log('Platform ready');
-      this.auth.authenticationState.subscribe(state => {
-        let userType = this.auth.getUserType();
+      this.auth.authenticationState.subscribe(async (state) => {
+        let userType = await this.auth.getUserType();
         // console.log(state);
         if (userType) {
           if (!state) {

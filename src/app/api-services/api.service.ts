@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { AuthService } from "./auth.service";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -92,4 +92,15 @@ export class ApiService {
     return await this.http.get('/users', { params }).toPromise()
   }
 
+  public async uploadUserPhoto(id: number, photo: any): Promise<any> {
+    return await this.http.post(`/users/${id}/photo`, photo).toPromise()
+  }
+
+  public getBaseURL(): string {
+    return environment.API_BASE_URL;
+  }
+
+  public getPhotoProfile(photo: string): string {
+    return `${this.getBaseURL()}/users/photo/${photo}`;
+  }
 }
