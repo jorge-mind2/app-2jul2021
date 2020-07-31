@@ -3,6 +3,8 @@ import { AuthService } from '../api-services/auth.service';
 import * as moment from 'moment'
 import { ApiService } from '../api-services/api.service';
 import { ToastController, NavController } from '@ionic/angular';
+import { isDefined } from '@angular/compiler/src/util';
+import { isArray } from 'util';
 
 @Component({
   selector: 'app-schedule',
@@ -55,14 +57,36 @@ export class SchedulePage implements OnInit {
     private api: ApiService
   ) { }
 
-  ngOnInit() {
-    this.auth.getCurrentUser().then(async user => {
+  async ngOnInit() {
+    await this.auth.getCurrentUser().then(async user => {
       this.user = user
       const userSchedules = await this.api.getUserSchedules(user.id)
-      console.log(userSchedules);
+      console.log(userSchedules.data);
+      const grouped = await this._groupBy(userSchedules.data, 'day')
+      console.log({ grouped });
+      for (const day of this.days) {
+        day.schedules = isArray(grouped[day.name])
+          ? grouped[day.name].map(schedule => {
+            schedule.start_time = schedule.start_time.substring(0, 5)
+            schedule.end_time = schedule.end_time.substring(0, 5)
+            return schedule
+          })
+          : []
+        day.canEntrySchedules = isDefined(grouped[day.name])
+      }
+      console.log(this.days)
+
 
     })
   }
+
+  private async _groupBy(xs: any[], key: string): Promise<[] | {}> {
+    xs = xs || []
+    return await xs.reduce(function (rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  };
   /*
   {
     "start_time": "string",
@@ -151,15 +175,24 @@ export class SchedulePage implements OnInit {
   async saveSchedule() {
     try {
       const newSchedules = this.days.filter(day => day.canEntrySchedules).map(day => day.schedules).reduce((acc, val) => acc.concat(val), []).filter(schedule => schedule.start_time && schedule.end_time)
-      console.log(newSchedules);
+      // return console.log(newSchedules);
       // const createdSchedules = await this.api.createManySchedules(newSchedules)
       let createdSchedules = []
-      newSchedules.forEach(async newSchedule => {
-        let createdSchedule = await this.api.createSchedule(newSchedule);
-        console.log(createdSchedule);
+      let updatedSchedules = []
+      for (const newSchedule of newSchedules) {
+        if (newSchedule.id) {
+          delete newSchedule.therapists
+          const updatedSchedule = await this.api.updateSchedule(newSchedule.id, newSchedule)
+          console.log({ updatedSchedule });
+          updatedSchedules.push(updatedSchedule)
+        } else {
+          let createdSchedule = await this.api.createSchedule(newSchedule);
+          console.log({ createdSchedule });
+          createdSchedules.push(createdSchedule)
+        }
+      }
+      console.log(updatedSchedules);
 
-        createdSchedules.push(createdSchedule)
-      });
       console.log(createdSchedules);
       // if (createdSchedules.length==newSchedules.length)
       this.presentToast('Listo, horarios actualizados').then(() => this.navCtrl.back())

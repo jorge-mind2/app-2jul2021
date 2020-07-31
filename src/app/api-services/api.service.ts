@@ -74,6 +74,10 @@ export class ApiService {
     return await this.http.post('/schedules/bulk', schedules).toPromise()
   }
 
+  public async updateSchedule(scheduleId: number, schedule: any): Promise<any> {
+    return await this.http.patch(`/schedules/${scheduleId}`, schedule).toPromise()
+  }
+
   public async createSchedule(schedule: any): Promise<any> {
     return await this.http.post('/schedules', schedule).toPromise()
   }
