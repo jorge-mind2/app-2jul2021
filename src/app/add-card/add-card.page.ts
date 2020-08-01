@@ -123,7 +123,7 @@ export class AddCardPage implements OnInit {
       const newCard = await this.api.createCard(this.card)
       console.log(newCard);
       this.loadingCtrl.dismiss();
-      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.back())
+      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.pop())
     } catch (error) {
       this.loadingCtrl.dismiss();
     }

@@ -63,7 +63,7 @@ export class ApiInterceptor implements HttpInterceptor {
             }
           }) */
           this.presentErrorAlert(data.reason);
-        }, 1000);
+        }, 500);
         return throwError(error);
       })
     )

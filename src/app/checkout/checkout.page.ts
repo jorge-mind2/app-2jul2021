@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-
-import { appConstants } from '../constants.local'
-
-import { AlertController, LoadingController, NavController } from '@ionic/angular';
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { AlertController, LoadingController, NavController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api-services/api.service';
 import { CurrencyPipe } from '@angular/common';
+import { appConstants } from '../constants.local'
+import * as moment from "moment";
 
 @Component({
   selector: 'app-checkout',
@@ -13,6 +14,7 @@ import { CurrencyPipe } from '@angular/common';
   styleUrls: ['./checkout.page.scss'],
 })
 export class CheckoutPage implements OnInit {
+  moment = moment
   months: any[] = appConstants.MONTHS
   years: any[]
   plan_id: number
@@ -20,18 +22,23 @@ export class CheckoutPage implements OnInit {
   view: string = 'card'
   cards: Array<any> = []
   selectedCard: any = {}
+  paymentPending = {}
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private navCtrl: NavController,
     private currencyPipe: CurrencyPipe,
+    private file: File,
+    private fileTransfer: FileTransfer,
+    private platform: Platform,
     private api: ApiService
   ) {
     this.activatedRoute.queryParams.subscribe(params => this.plan_id = +params.plan)
   }
 
   async ngOnInit() {
+    await this.presentPaymentLoading('Cargando...')
     const getPlans = await this.api.getPackages()
     const plans = getPlans.data
     this.plan = plans.find(plan => this.plan_id == plan.id)
@@ -40,9 +47,10 @@ export class CheckoutPage implements OnInit {
     if (dataCards.data) {
       this.cards = dataCards.data.result.cards
       console.log('this.cards', this.cards);
-
+      if (dataCards.data.result.pending_payment && dataCards.data.result.pending_payment.status == 2) this.paymentPending = dataCards.data.result.pending_payment
       this.selectThisCard(this.cards[0])
     }
+    this.loadingCtrl.dismiss()
   }
 
   public setView(e) {
@@ -50,6 +58,7 @@ export class CheckoutPage implements OnInit {
   }
 
   selectThisCard(selectedCard) {
+    if (!selectedCard) return
     this.cards.forEach((card: any) => {
       if (card.number.length > 4) card.number = card.number.substr(card.number.length - 4)
       if (card.token != selectedCard.token) {
@@ -63,7 +72,7 @@ export class CheckoutPage implements OnInit {
   }
 
   private async payPlan() {
-    await this.presentPaymentLoading()
+    await this.presentPaymentLoading('Procesando pago...')
     try {
       const paymentData = {
         token: this.selectedCard.token,
@@ -78,13 +87,118 @@ export class CheckoutPage implements OnInit {
       })
     } catch (error) {
       console.log(error);
-      this.loadingCtrl.dismiss().finally(() => this.presentErrorAlert(error))
+      this.loadingCtrl.dismiss()
+      // .finally(() => this.presentErrorAlert(error))
 
     }
 
   }
 
-  private async presentPaymentAlert() {
+  async getPaymentTicket() {
+    await this.presentPaymentLoading('Obteniendo recibo...')
+    try {
+      const paymentData = {
+        token: null,
+        type: 2,
+        ip: "127.0.0.0",
+        packageId: this.plan.id
+      }
+      const postPayment = await this.api.payPlan(paymentData)
+      console.log(postPayment)
+      const ticketURL = postPayment.data.result.url;
+      const expirationDate = moment(postPayment.data.result.expiration_date).toLocaleString();
+      const amount = postPayment.data.result.total.amount;
+      /*
+      RESPONSE
+      {
+        "success": true,
+        "result": {
+          "transaction": "f4eb6a19-6b97-4d99-9bff-226300372fa7",
+          "store": {
+            "name": "OXXO",
+            "short_name": "OXXO"
+          },
+          "type": "barcode",
+          "bank_account_number": "4201000318262020080100400009",
+          "bank_name": "OXXO",
+          "barcode": "4201000318262020080100400009",
+          "barcode_url": "https://sandbox-connect.srpago.com/barcode/f4eb6a19-6b97-4d99-9bff-226300372fa7/4201000318262020080100400009",
+          "reference": {
+            "description": "400-cus_dev_5f249df8696d5"
+          },
+          "total": {
+            "amount": "400.00",
+            "currency": "MXN"
+          },
+          "url": "https://sandbox-connect.srpago.com/voucher/YmFyY29kZV80MjAxMDAwMzE4MjYyMDIwMDgwMTAwNDAwMDA5",
+          "timestamp": "2020-07-31T18:31:23-05:00",
+          "expiration_date": "2020-08-01T00:00:00-05:00",
+          "status": 2,
+          "status_code": "pending"
+        }
+      }
+      */
+      this.paymentPending = postPayment.data.result
+      this.loadingCtrl.dismiss().finally(() => {
+        this.presentSuccessAlert('Recibo generado exitosamente.')
+      })
+    } catch (error) {
+      console.log(error);
+      this.loadingCtrl.dismiss()
+      // .finally(() => this.presentErrorAlert(error))
+
+    }
+
+  }
+
+  async downloadTicket(file, name) {
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+    const fileName = `${name}_${new Date().getTime()}.pdf`
+    if (this.platform.is('cordova')) {
+      this.file.checkDir(this.file.externalRootDirectory, 'downloads')
+        .then(
+          // Directory exists, check for file with the same name
+          _ => this.file.checkFile(this.file.externalRootDirectory, 'downloads/' + fileName)
+            .then(_ => { alert("A file with the same name already exists!") })
+            // File does not exist yet, we can save normally
+            .catch(err =>
+              fileTransfer.download(file, this.file.externalRootDirectory + '/downloads/' + fileName).then((entry) => {
+                alert('File saved in:  ' + entry.nativeURL);
+              })
+                .catch((err) => {
+                  alert('Error saving file: ' + err.message);
+                })
+            ))
+        .catch(
+          // Directory does not exists, create a new one
+          err => this.file.createDir(this.file.externalRootDirectory, 'downloads', false)
+            .then(response => {
+              alert('New folder created:  ' + response.fullPath);
+              fileTransfer.download(file, this.file.externalRootDirectory + '/downloads/' + fileName).then((entry) => {
+                alert('File saved in : ' + entry.nativeURL);
+              })
+                .catch((err) => {
+                  alert('Error saving file:  ' + err.message);
+                });
+
+            }).catch(err => {
+              alert('It was not possible to create the dir "downloads". Err: ' + err.message);
+            })
+        );
+
+    } else {
+      // If downloaded by Web Browser
+      let link = document.createElement("a");
+      link.download = fileName;
+      link.href = file;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      link = null;
+    }
+  }
+
+  async presentPaymentAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Pagar ahora',
       message: `Se hará el cargo de ${this.currencyPipe.transform(this.plan.amount)}MXN a tu tarjeta con terminación ${this.selectedCard.number}. ¿Deseas continuar?`,
@@ -130,10 +244,10 @@ export class CheckoutPage implements OnInit {
     alert.present();
   }
 
-  async presentPaymentLoading() {
+  async presentPaymentLoading(message: string) {
     const loading = await this.loadingCtrl.create({
       cssClass: 'custom-loading',
-      message: 'Procesando pago...'
+      message
     })
     await loading.present();
   }

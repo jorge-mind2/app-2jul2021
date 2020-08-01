@@ -88,7 +88,7 @@ export class SupportPage implements OnInit {
 
     messagesRequest.fetchPrevious().then(
       (messages: any[]) => {
-        console.log("Message list fetched:", messages);
+        // console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {
           msg.text = msg.text.replace(/<assigned-therapist>/g, '')

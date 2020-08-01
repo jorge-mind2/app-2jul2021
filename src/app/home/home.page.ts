@@ -20,6 +20,9 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
     this.getUser();
   }
 
