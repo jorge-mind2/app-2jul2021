@@ -32,7 +32,7 @@
         <ion-label color="light">
           <p class="notification-wrapper">
             <ion-icon name="cash"></ion-icon> OXXO <span class="notification-badge"
-                  *ngIf="paymentPending.status==2">1</span>
+                  *ngIf="paymentPending.status&&paymentPending.status==2">1</span>
           </p>
         </ion-label>
       </ion-segment-button>
@@ -108,7 +108,8 @@
                 (click)="getPaymentTicket()"
                 shape="round"
                 *ngIf="!paymentPending.status || paymentPending.status!=2">Obtener recibo de pago</ion-button>
-    <ion-card color="light">
+    <ion-card color="light"
+              *ngIf="paymentPending.status && paymentPending.status==2">
       <ion-card-content>
         <ion-grid>
           <h4>Realiza tu pago en cualquier tienda OXXO</h4>

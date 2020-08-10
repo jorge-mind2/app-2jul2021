@@ -22,7 +22,7 @@ export class CheckoutPage implements OnInit {
   view: string = 'card'
   cards: Array<any> = []
   selectedCard: any = {}
-  paymentPending = {}
+  paymentPending = { status: null }
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertCtrl: AlertController,
