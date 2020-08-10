@@ -60,7 +60,7 @@ export class AuthService implements OnInit {
     return this.headers;
   }
 
-  public getToken(): string {
+  public getToken() {
     return this.token;
   }
 
@@ -70,8 +70,7 @@ export class AuthService implements OnInit {
   }
 
   public async setUserType(userType) {
-    await this.storage.set('userType', userType);
-    return this.userType = userType;
+    return await this.storage.set('userType', userType);
   }
 
   public async getUserType() {
@@ -79,7 +78,7 @@ export class AuthService implements OnInit {
   }
 
   public async setCurrentUser(user) {
-    this.setUserType(user.role.name)
+    await this.setUserType(user.role.name)
     return await this.storage.set('currentUser', user);
   }
 
@@ -97,9 +96,11 @@ export class AuthService implements OnInit {
 
   public async loginUser(data) {
     const newSession = await this.http.post<any>(`/auth/signin`, data).toPromise()
+    console.log(newSession);
+
     const loggedUser = newSession.data
-    this.setCurrentUser(loggedUser.user)
-    this.setToken(loggedUser.accessToken)
+    await this.setCurrentUser(loggedUser.user)
+    await this.setToken(loggedUser.accessToken)
     this.authenticationState.next(true);
     return loggedUser
   }

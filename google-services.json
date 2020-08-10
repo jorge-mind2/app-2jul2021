@@ -5,36 +5,28 @@
     "project_id": "mind2dev-5ddb1",
     "storage_bucket": "mind2dev-5ddb1.appspot.com"
   },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:378566212104:android:d9969489d7fca1f5d7efbd",
-        "android_client_info": {
-          "package_name": "me.mind2.app"
-        }
-      },
-      "oauth_client": [
-        {
+  "client": [{
+    "client_info": {
+      "mobilesdk_app_id": "1:378566212104:android:d9969489d7fca1f5d7efbd",
+      "android_client_info": {
+        "package_name": "me.mind2.app"
+      }
+    },
+    "oauth_client": [{
+      "client_id": "378566212104-6tk7544sksndgahjsidcmj2e8aip5ukg.apps.googleusercontent.com",
+      "client_type": 3
+    }],
+    "api_key": [{
+      "current_key": "AIzaSyCwSwcyS-x-XsMYM35aoMOaklIlkuPnGCI"
+    }],
+    "services": {
+      "appinvite_service": {
+        "other_platform_oauth_client": [{
           "client_id": "378566212104-6tk7544sksndgahjsidcmj2e8aip5ukg.apps.googleusercontent.com",
           "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCwSwcyS-x-XsMYM35aoMOaklIlkuPnGCI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "378566212104-6tk7544sksndgahjsidcmj2e8aip5ukg.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
+        }]
       }
     }
-  ],
+  }],
   "configuration_version": "1"
 }

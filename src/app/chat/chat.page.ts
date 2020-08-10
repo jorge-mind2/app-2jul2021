@@ -7,6 +7,7 @@ import { CalendarModalOptions } from 'ion2-calendar';
 import { CometChatService } from '../comet-chat.service';
 import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
+import { ApiService } from '../api-services/api.service';
 
 @Component({
   selector: 'app-chat',
@@ -27,7 +28,8 @@ export class ChatPage implements OnInit, OnDestroy {
     therapist: {},
   }
   receiverName: string
-
+  receiverPhoto: string
+  senderPhoto: string
   constructor(
     private platform: Platform,
     private navCtrl: NavController,
@@ -37,7 +39,8 @@ export class ChatPage implements OnInit, OnDestroy {
     private modalCtrl: ModalController,
     private androidPermissions: AndroidPermissions,
     private cometchat: CometChatService,
-    private auth: AuthService
+    private auth: AuthService,
+    private api: ApiService
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -83,9 +86,23 @@ export class ChatPage implements OnInit, OnDestroy {
     this.loginType = this.loggedUser.role.name || this.loginType;
     if (this.loginType == 'therapist') this.cometchat.initCallListener(this.receiverUID)
 
-    this.receiverName = this.loginType == 'patient' ?
-      this.loggedUser.therapist.name :
-      this.patient.name
+    if (this.loginType == 'patient') {
+      this.receiverPhoto = this.loggedUser.therapist.photo
+        ? this.api.getPhotoProfile(this.loggedUser.therapist.photo)
+        : 'assets/therapist.png'
+      this.senderPhoto = this.loggedUser.photo
+        ? this.api.getPhotoProfile(this.loggedUser.photo)
+        : 'assets/patient.png'
+      this.receiverName = this.loggedUser.therapist.name
+    } else if (this.loginType == 'therapist') {
+      this.receiverPhoto = this.patient.photo
+        ? this.api.getPhotoProfile(this.patient.photo)
+        : 'assets/patient.png'
+      this.senderPhoto = this.loggedUser.photo
+        ? this.api.getPhotoProfile(this.loggedUser.photo)
+        : 'assets/therapist.png'
+      this.receiverName = this.patient.name
+    }
 
     this.getLastConversation();
 
@@ -116,7 +133,7 @@ export class ChatPage implements OnInit, OnDestroy {
         text: msg.getText(),
         senderType: this.ccUser.uid == msg.getSender().getUid() ? 1 : 0,
         sender: msg.getSender().getName(),
-        image: `assets/${msg.getSender().getRole()}.png`
+        image: this.ccUser.uid == msg.getSender().getUid() ? this.senderPhoto : this.receiverPhoto
       }
     })
     setTimeout(() => {
@@ -141,7 +158,7 @@ export class ChatPage implements OnInit, OnDestroy {
       text: message.getText(),
       sender: message.getSender().getName(),
       senderType,
-      image: `assets/${message.getSender().getRole()}.png`
+      image: senderType == 1 ? this.senderPhoto : this.receiverPhoto
     });
     setTimeout(() => {
       this.scrollToBottom()

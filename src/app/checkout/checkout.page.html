@@ -21,14 +21,19 @@
                  color="light"
                  mode="md"
                  value="card">
-      <ion-segment-button value="card">
-        <ion-label>
+      <ion-segment-button value="card"
+                          color="light">
+        <ion-label color="light">
           <ion-icon name="card"></ion-icon> Tarjeta
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button value="store">
-        <ion-label>
-          <ion-icon name="cash"></ion-icon> OXXO
+      <ion-segment-button value="store"
+                          color="light">
+        <ion-label color="light">
+          <p class="notification-wrapper">
+            <ion-icon name="cash"></ion-icon> OXXO <span class="notification-badge"
+                  *ngIf="paymentPending.status&&paymentPending.status==2">1</span>
+          </p>
         </ion-label>
       </ion-segment-button>
     </ion-segment>
@@ -50,7 +55,7 @@
     </ion-item>
     <ion-card [color]="card.color"
               [ngClass]="{'card-selected': card.selected}"
-              class="ion-margin-vertical"
+              class="ion-margin-vertical card"
               margin
               *ngFor="let card of cards"
               (click)="selectThisCard(card)">
@@ -100,7 +105,40 @@
     <ion-button expand="full"
                 color="secondary"
                 size="large"
-                shape="round">Obtener recibo de pago</ion-button>
+                (click)="getPaymentTicket()"
+                shape="round"
+                *ngIf="!paymentPending.status || paymentPending.status!=2">Obtener recibo de pago</ion-button>
+    <ion-card color="light"
+              *ngIf="paymentPending.status && paymentPending.status==2">
+      <ion-card-content>
+        <ion-grid>
+          <h4>Realiza tu pago en cualquier tienda OXXO</h4>
+          <ion-row>
+            <ion-col size="3">
+              <p>Monto: </p>
+            </ion-col>
+            <ion-col>
+              <p>${{paymentPending.total?.amount}}</p>
+              <p><small>la tienda puede aplicar cargos por comisión</small></p>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="3">
+              <p>Pagar antes del: </p>
+            </ion-col>
+            <ion-col>
+              <p>{{moment(paymentPending.expiration_date).format('LLL')}}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <h3 class="ion-text-right">
+          <a [href]="paymentPending.url"
+             class="ion-text-capitalize"
+             target="_blank">Descargar recibo</a>
+        </h3>
+        <!-- (click)="downloadTicket(paymentPending.url, 'mind2')">Descargar recibo</ion-button> -->
+      </ion-card-content>
+    </ion-card>
   </div>
 
 </ion-content>

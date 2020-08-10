@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { AuthService } from "./auth.service";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -73,6 +74,10 @@ export class ApiService {
     return await this.http.post('/schedules/bulk', schedules).toPromise()
   }
 
+  public async updateSchedule(scheduleId: number, schedule: any): Promise<any> {
+    return await this.http.patch(`/schedules/${scheduleId}`, schedule).toPromise()
+  }
+
   public async createSchedule(schedule: any): Promise<any> {
     return await this.http.post('/schedules', schedule).toPromise()
   }
@@ -91,4 +96,15 @@ export class ApiService {
     return await this.http.get('/users', { params }).toPromise()
   }
 
+  public async uploadUserPhoto(id: number, photo: any): Promise<any> {
+    return await this.http.post(`/users/${id}/photo`, photo).toPromise()
+  }
+
+  public getBaseURL(): string {
+    return environment.API_BASE_URL;
+  }
+
+  public getPhotoProfile(photo: string): string {
+    return `${this.getBaseURL()}/users/photo/${photo}`;
+  }
 }

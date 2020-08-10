@@ -20,6 +20,9 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
     this.getUser();
   }
 
@@ -33,7 +36,7 @@ export class HomePage implements OnInit {
 
   public goToSessionPage(type) {
     if (!this.user.therapist) {
-      this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, ve al chat de servicio para que te puedan asingar a uno.')
+      this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, contactanos en el chat de servicio para poder asignarte uno.')
     } else {
       const receiverId = this.user.therapist.cometChatId;
       this.navCtrl.navigateForward('chat', { queryParams: { type, receiverId } })
@@ -57,7 +60,7 @@ export class HomePage implements OnInit {
     return await modal.present()
   }
 
-  async presentErrorAlert(header, message) {
+  async presentErrorAlert(header: string, message: string): Promise<void> {
     const alert = await this.alertCtrl.create({
       header,
       message,
@@ -68,7 +71,7 @@ export class HomePage implements OnInit {
       }]
     });
 
-    alert.present();
+    return alert.present();
   }
 
   public async presentLogoutAlert() {

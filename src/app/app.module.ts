@@ -5,12 +5,16 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Device } from '@ionic-native/device/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { File } from '@ionic-native/file/ngx'
+import { Crop } from '@ionic-native/crop/ngx';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { Device } from '@ionic-native/device/ngx';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
@@ -59,6 +63,10 @@ export function jwtOptionsFactory(storage) {
     SplashScreen,
     Device,
     FirebaseX,
+    Camera,
+    File,
+    Crop,
+    FileTransfer,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

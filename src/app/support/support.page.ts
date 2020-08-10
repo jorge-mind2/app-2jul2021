@@ -20,6 +20,7 @@ export class SupportPage implements OnInit {
   cometchatUser: any
   currentUser: any
   showAssignmentBtn: boolean = false
+  patientPhoto = 'assets/patient.png'
 
   constructor(
     private alertCtrl: AlertController,
@@ -37,7 +38,8 @@ export class SupportPage implements OnInit {
   async ngOnInit() {
     // get cometchat logged user
     this.cometchatUser = await CometChat.getLoggedinUser();
-    this.auth.getCurrentUser().then(user => this.currentUser = user)
+    this.currentUser = await this.auth.getCurrentUser()
+    if (this.currentUser.photo) this.patientPhoto = this.api.getPhotoProfile(this.currentUser.photo)
     this.getLastConversation()
 
     // init listener cometchat
@@ -57,7 +59,7 @@ export class SupportPage implements OnInit {
             text: message.text,
             senderType: 0,
             sender: message.getSender(),
-            image: this.loginType == 'support' ? 'assets/patient.png' : 'assets/support.png',
+            image: this.loginType == 'support' ? this.patientPhoto : 'assets/support.png',
             action
           });
           this.input = '';
@@ -86,7 +88,7 @@ export class SupportPage implements OnInit {
 
     messagesRequest.fetchPrevious().then(
       (messages: any[]) => {
-        console.log("Message list fetched:", messages);
+        // console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {
           msg.text = msg.text.replace(/<assigned-therapist>/g, '')
@@ -94,7 +96,7 @@ export class SupportPage implements OnInit {
             text: msg.text,
             senderType: this.cometchatUser.uid == msg.sender.uid ? 1 : 0,
             sender: msg.sender,
-            image: `assets/${msg.sender.role}.png`,
+            image: this.cometchatUser.uid == msg.sender.uid ? this.patientPhoto : `assets/${msg.sender.role}.png`,
           }
         })
         const welcomeMessage = {
@@ -165,7 +167,7 @@ export class SupportPage implements OnInit {
         this.conversation.push({
           text: this.input, senderType: 1,
           sender: message.getSender(),
-          image: this.loginType == 'support' ? 'assets/support.png' : 'assets/patient.png'
+          image: this.loginType == 'support' ? 'assets/support.png' : this.patientPhoto
         });
         this.input = '';
         setTimeout(() => {
