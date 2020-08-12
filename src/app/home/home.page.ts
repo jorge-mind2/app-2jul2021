@@ -48,7 +48,7 @@ export class HomePage implements OnInit {
     if (this.user.therapist) {
       this.therapistMessagesUnread = unreadMessages.some(message => message.id == this.user.therapist.cometChatId && message.unread)
     }
-    this.supportMessagesUnread = unreadMessages.some(message => message.id == this.user.support.cometChatId && message.unread)
+    if (this.user.role.name == 'patient') this.supportMessagesUnread = unreadMessages.some(message => message.id == this.user.support.cometChatId && message.unread)
 
   }
 

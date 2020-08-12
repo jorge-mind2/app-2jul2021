@@ -107,4 +107,8 @@ export class ApiService {
   public getPhotoProfile(photo: string): string {
     return `${this.getBaseURL()}/users/photo/${photo}`;
   }
+
+  public async setUserSessionPrice(id: number, price: string): Promise<any> {
+    return await this.http.post(`/users/${id}/price`, { price }).toPromise()
+  }
 }

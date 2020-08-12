@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Platform, AlertController, ModalController, NavController } from '@ionic/angular';
+import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -9,7 +9,7 @@ import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
-
+import { OptionsComponent } from './options/options.component';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
@@ -31,11 +31,15 @@ export class ChatPage implements OnInit, OnDestroy {
   receiverName: string
   receiverPhoto: string
   senderPhoto: string
+  defaultBackHref: string = 'home'
   constructor(
     private platform: Platform,
+    private events: Events,
     private androidPermissions: AndroidPermissions,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    private popoverCtrl: PopoverController,
     private route: ActivatedRoute,
     private router: Router,
     private modalCtrl: ModalController,
@@ -46,6 +50,7 @@ export class ChatPage implements OnInit, OnDestroy {
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
+      if (this.loginType == 'therapist') this.defaultBackHref = 'home-therapist'
       this.receiverUID = params.receiverId.toLowerCase();
       if (this.router.getCurrentNavigation().extras.state) {
         this.therapist = this.router.getCurrentNavigation().extras.state.therapist
@@ -123,15 +128,15 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.loginType == 'therapist') this.cometchat.removeCallListener(this.receiverUID);
+    this.cometchat.removeCallListener(this.receiverUID);
   }
 
   private async getLastConversation() {
     const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
     console.log(messages);
     const type = this.loginType == 'therapist' ? 'patient' : 'therapist'
-    const selectMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
-    this.storageService.setUnreadMessages(selectMessage, false)
+    const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
+    if (selectedMessage) this.storageService.setUnreadMessages(selectedMessage, false)
 
     this.conversation = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((msg: CometChat.TextMessage) => {
       return {
@@ -143,7 +148,7 @@ export class ChatPage implements OnInit, OnDestroy {
     })
     setTimeout(() => {
       this.scrollToBottom()
-    }, 10)
+    }, 50)
   }
 
   public async sendChatMessage() {
@@ -189,7 +194,7 @@ export class ChatPage implements OnInit, OnDestroy {
     parent.scrollTo(scrollOptions)
   }
 
-  private async presentCallAlert() {
+  async presentCallAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Iniciar llamada',
       message: '¿Deseas iniciar la videollamada con tu paciente?',
@@ -205,6 +210,69 @@ export class ChatPage implements OnInit, OnDestroy {
     })
 
     alert.present();
+  }
+
+  async presentOptions(ev: any) {
+    const popover = await this.popoverCtrl.create({
+      component: OptionsComponent,
+      cssClass: 'my-custom-class',
+      event: ev,
+      translucent: true
+    });
+    await popover.present();
+    return this.events.subscribe('onSelectOption', selected => {
+      if (selected == 'session_price') {
+        this.presentPricePrompt()
+      }
+      this.events.unsubscribe('onSelectOption')
+      this.popoverCtrl.dismiss()
+    })
+  }
+
+  async presentPricePrompt() {
+    const alert = await this.alertCtrl.create({
+      cssClass: 'my-custom-class',
+      message: `Elige el costo por sesión para ${this.patient.name}. (Sólo se puede cambiar 1 vez)`,
+      inputs: [
+        {
+          name: 'price',
+          type: 'number',
+          value: this.patient.session_price || 400,
+          placeholder: 'Costo por sesión',
+          disabled: this.patient.session_price > 0,
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Aceptar',
+          handler: (promptData) => {
+            console.log('Confirm Ok');
+            this.saveSessionPrice(promptData.price)
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async saveSessionPrice(newPrice) {
+    if (this.patient.session_price && this.patient.session_price > 0) return
+    try {
+      const setedPrice = await this.api.setUserSessionPrice(this.patient.id, newPrice)
+      this.patient.session_price = newPrice
+      console.log('setedPrice', setedPrice);
+      this.presentToast('Guardado')
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async presentModal() {
@@ -225,6 +293,15 @@ export class ChatPage implements OnInit, OnDestroy {
     const userType = await this.auth.getUserType()
     let home = userType == 'therapist' ? 'home-therapist' : 'home'
     this.navCtrl.navigateBack(home)
+  }
+
+  async presentToast(text) {
+    const toast = await this.toastCtrl.create({
+      message: text,
+      duration: 3000,
+      position: 'top'
+    });
+    toast.present();
   }
 
 }

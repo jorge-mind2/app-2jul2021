@@ -33,6 +33,7 @@ export class AppComponent {
       this.statusBar.backgroundColorByHexString('#4d1c6bab')
       console.log('Platform ready');
       this.cometchat.initializeCometChat()
+      if (this.platform.is('cordova')) this.notifications.initFirebase()
       await this.auth.checkToken()
       this.auth.authenticationState.subscribe(async state => {
         console.log('state', state);

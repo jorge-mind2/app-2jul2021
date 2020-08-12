@@ -90,8 +90,8 @@ export class SupportPage implements OnInit {
 
     messagesRequest.fetchPrevious().then(
       async (messages: any[]) => {
-        const selectMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == 'support')
-        this.storageService.setUnreadMessages(selectMessage, false)
+        const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == 'support')
+        if (selectedMessage) this.storageService.setUnreadMessages(selectedMessage, false)
         // console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {

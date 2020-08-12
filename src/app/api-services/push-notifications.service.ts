@@ -1,5 +1,4 @@
 import { Injectable, OnInit, EventEmitter } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Router } from '@angular/router';
@@ -12,16 +11,11 @@ import { StorageService } from './storage.service';
 export class PushNotificationsService implements OnInit {
   onNotification: EventEmitter<any> = new EventEmitter()
   constructor(
-    private platform: Platform,
     private fcm: FirebaseX,
     private route: Router,
     private localNotifications: LocalNotifications,
     private storageService: StorageService
-  ) {
-    this.platform.ready().then(() => {
-      this.initFirebase()
-    })
-  }
+  ) { }
 
   ngOnInit() {
   }

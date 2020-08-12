@@ -1,10 +1,22 @@
  <ion-header>
    <ion-toolbar color="primary">
      <ion-buttons slot="start">
-       <ion-buttons slot="start">
-         <ion-back-button defaultHref="home"
-                          (click)="navigateHome()"></ion-back-button>
-       </ion-buttons>
+       <ion-back-button [defaultHref]="defaultBackHref"
+                        (click)="navigateHome()"></ion-back-button>
+     </ion-buttons>
+     <ion-buttons slot="end">
+       <ion-button (click)="presentCallAlert()">
+         <ion-icon name="call"
+                   size="large"></ion-icon>
+       </ion-button>
+       <ion-button (click)="presentModal()">
+         <ion-icon name="calendar"
+                   size="large"></ion-icon>
+       </ion-button>
+       <ion-button (click)="presentOptions($event)">
+         <ion-icon name="more"
+                   size="large"></ion-icon>
+       </ion-button>
      </ion-buttons>
      <ion-title>
        <div class="title-block">
@@ -23,7 +35,7 @@
 
  <ion-content padding-vertical
               fullscreen>
-   <ion-fab vertical="top"
+   <!-- <ion-fab vertical="top"
             horizontal="end"
             edge
             slot="fixed"
@@ -40,11 +52,12 @@
                        (click)="presentModal()">
          <ion-icon name="calendar"></ion-icon>
        </ion-fab-button>
-       <ion-fab-button color="tertiary">
+       <ion-fab-button color="tertiary"
+                       (click)="presentPricePrompt()">
          <ion-icon name="cash"></ion-icon>
        </ion-fab-button>
      </ion-fab-list>
-   </ion-fab>
+   </ion-fab> -->
    <div id="chat-parent"
         class="bg-image"
         [ngClass]="{ 'bg-image-X': phone_model=='iPhone X'}">
