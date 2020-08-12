@@ -31,6 +31,10 @@ ion-icon.icon-large {
     align-items: center;
     margin: 10%;
 
+    .notification-badge {
+      top: -5px
+    }
+
     ion-icon {
       margin-bottom: 10px;
       font-size: 72px;

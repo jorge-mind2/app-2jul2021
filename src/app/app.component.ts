@@ -1,10 +1,12 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './api-services/auth.service';
 import { CometChatService } from './comet-chat.service';
+import { StorageService } from './api-services/storage.service';
+import { PushNotificationsService } from './api-services/push-notifications.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,8 @@ export class AppComponent {
     private navCtrl: NavController,
     private auth: AuthService,
     private cometchat: CometChatService,
-    private ref: ChangeDetectorRef,
+    private storageService: StorageService,
+    private notifications: PushNotificationsService,
   ) {
     this.initializeApp();
   }
@@ -32,6 +35,7 @@ export class AppComponent {
       this.cometchat.initializeCometChat()
       await this.auth.checkToken()
       this.auth.authenticationState.subscribe(async state => {
+        console.log('state', state);
         const userType = await this.auth.getUserType();
         if (userType) {
           this.splashScreen.hide();
@@ -40,10 +44,11 @@ export class AppComponent {
           }
           else {
             return true;
-            this.rootPage = userType == 'therapist' ? 'home-therapist' : 'home';
-            this.navCtrl.navigateRoot(this.rootPage);
           }
         }
+      })
+      this.notifications.onNotification.subscribe(async message => {
+        await this.storageService.setUnreadMessages(message, true)
       })
     });
 

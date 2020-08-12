@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 
 const TOKEN_KEY = 'accessToken';
+const CURRENT_USER = 'currentUser'
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,6 @@ export class AuthService implements OnInit {
 
   async checkToken() {
     const token = await this.storage.get(TOKEN_KEY)
-    // console.log({ token });
     if (token) {
       // let decoded = this.helper.decodeToken(token);
       let isExpired = this.helper.isTokenExpired(token);
@@ -79,11 +79,11 @@ export class AuthService implements OnInit {
 
   public async setCurrentUser(user) {
     await this.setUserType(user.role.name)
-    return await this.storage.set('currentUser', user);
+    return await this.storage.set(CURRENT_USER, user);
   }
 
   public async getCurrentUser() {
-    return await this.storage.get('currentUser');
+    return await this.storage.get(CURRENT_USER);
   }
 
   public async signupUser(user) {
@@ -96,7 +96,7 @@ export class AuthService implements OnInit {
 
   public async loginUser(data) {
     const newSession = await this.http.post<any>(`/auth/signin`, data).toPromise()
-    console.log(newSession);
+    console.log('login response', newSession);
 
     const loggedUser = newSession.data
     await this.setCurrentUser(loggedUser.user)
@@ -106,7 +106,8 @@ export class AuthService implements OnInit {
   }
 
   public logout() {
-    this.storage.clear().then(async () => {
+    this.storage.remove(TOKEN_KEY).then(async () => {
+      this.storage.remove(CURRENT_USER)
       let ccuser = await CometChat.getLoggedinUser()
       if (ccuser) CometChat.logout()
       this.userType = 'logged'

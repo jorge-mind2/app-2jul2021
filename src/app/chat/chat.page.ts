@@ -8,6 +8,7 @@ import { CometChatService } from '../comet-chat.service';
 import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { ApiService } from '../api-services/api.service';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-chat',
@@ -32,13 +33,14 @@ export class ChatPage implements OnInit, OnDestroy {
   senderPhoto: string
   constructor(
     private platform: Platform,
+    private androidPermissions: AndroidPermissions,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private router: Router,
     private modalCtrl: ModalController,
-    private androidPermissions: AndroidPermissions,
     private cometchat: CometChatService,
+    private storageService: StorageService,
     private auth: AuthService,
     private api: ApiService
   ) {
@@ -127,6 +129,9 @@ export class ChatPage implements OnInit, OnDestroy {
   private async getLastConversation() {
     const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
     console.log(messages);
+    const type = this.loginType == 'therapist' ? 'patient' : 'therapist'
+    const selectMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
+    this.storageService.setUnreadMessages(selectMessage, false)
 
     this.conversation = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((msg: CometChat.TextMessage) => {
       return {

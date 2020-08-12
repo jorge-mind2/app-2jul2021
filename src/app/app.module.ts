@@ -11,18 +11,19 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx'
 import { Crop } from '@ionic-native/crop/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CommonPagesModule } from './common/common-pages.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { ApiInterceptor } from './interceptors/api.interceptor';
 import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { environment } from "../environments/environment";
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
-import { CommonPagesModule } from './common/common-pages.module';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
 export function jwtOptionsFactory(storage) {
   return {
@@ -63,6 +64,7 @@ export function jwtOptionsFactory(storage) {
     SplashScreen,
     Device,
     FirebaseX,
+    LocalNotifications,
     Camera,
     File,
     Crop,

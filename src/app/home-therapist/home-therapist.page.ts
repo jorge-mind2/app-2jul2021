@@ -3,6 +3,7 @@ import { NavController, AlertController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { NavigationExtras } from '@angular/router';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-home-therapist',
@@ -11,16 +12,18 @@ import { NavigationExtras } from '@angular/router';
 })
 export class HomeTherapistPage implements OnInit {
   user: {};
-  patients: []
+  patients: any[]
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
+    private storageService: StorageService,
     private auth: AuthService,
     private api: ApiService,
   ) { }
 
   ngOnInit() {
     this.getCurrrentUSer();
+    this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
   }
 
   public goToSessionPage(type, receiverId, patient) {
@@ -49,7 +52,23 @@ export class HomeTherapistPage implements OnInit {
   public async getPacients(id) {
     const patients = await this.api.getMyPacients(id);
     console.log(patients);
+    for (const patient of patients) {
+      if (patient.photo) patient.avatar = this.api.getPhotoProfile(patient.photo)
+      else patient.avatar = 'https://api.adorable.io/avatars/285/dev.png'
+    }
     this.patients = patients
+    await this.setUnreadMessages()
+  }
+
+  private async setUnreadMessages() {
+    const unreadMessages = await this.storageService.getUnreadMessages()
+    for (const patient of this.patients) {
+      for (const message of unreadMessages) {
+        if (message.id == patient.cometChatId && message.unread) {
+          patient.unreadMessages = true
+        }
+      }
+    }
   }
 
   public async presentLogoutAlert() {

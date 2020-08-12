@@ -28,8 +28,11 @@
         <ion-icon slot="start"
                   color="dark"
                   src="/assets/chat_dark.svg"></ion-icon>
-        <ion-avatar slot="start">
-          <img src="https://api.adorable.io/avatars/285/dev.png">
+        <ion-avatar slot="start"
+                    class="notification-badge-wrapper">
+          <span *ngIf="patient.unreadMessages"
+                class="notification-badge">1</span>
+          <img [src]="patient.avatar">
         </ion-avatar>
         <ion-label>
           <h3>{{patient.name}} {{patient.last_name}}</h3>

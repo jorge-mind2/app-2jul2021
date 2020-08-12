@@ -30,7 +30,6 @@ export class CometChatService {
         console.log("CometChat Initialization completed successfully");
         // You can now call login function.
         this.auth.getCurrentUser().then(async usr => {
-          // console.log({ usr });
           if (usr) await this.login(usr)
         })
 

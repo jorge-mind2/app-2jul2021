@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-support',
@@ -25,6 +26,7 @@ export class SupportPage implements OnInit {
   constructor(
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
+    private storageService: StorageService,
     private auth: AuthService,
     private api: ApiService
   ) {
@@ -87,7 +89,9 @@ export class SupportPage implements OnInit {
       .build();
 
     messagesRequest.fetchPrevious().then(
-      (messages: any[]) => {
+      async (messages: any[]) => {
+        const selectMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == 'support')
+        this.storageService.setUnreadMessages(selectMessage, false)
         // console.log("Message list fetched:", messages);
         // Handle the list of messages
         this.conversation = messages.filter(message => message.getType() == 'text').map(msg => {

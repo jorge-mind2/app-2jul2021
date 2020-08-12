@@ -21,7 +21,9 @@
         <ion-button class="home-button"
                     expand="full"
                     (click)="goToSessionPage('patient')">
-          <div>
+          <div class="notification-badge-wrapper">
+            <span *ngIf="therapistMessagesUnread"
+                  class="notification-badge">1</span>
             <ion-icon name="chatboxes"></ion-icon>
             Mi Sesión <br> &nbsp;
           </div>
@@ -31,7 +33,9 @@
         <ion-button class="home-button"
                     expand="full"
                     (click)="goToSupportChat()">
-          <div>
+          <div class="notification-badge-wrapper">
+            <span *ngIf="supportMessagesUnread"
+                  class="notification-badge">1</span>
             <ion-icon name="headset"></ion-icon>
             Chat de <br>Servicio
           </div>

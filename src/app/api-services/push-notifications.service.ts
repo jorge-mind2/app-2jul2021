@@ -1,19 +1,22 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
-// import { LocalNotifications, ILocalNotification, ILocalNotificationActionType } from '@ionic-native/local-notifications/ngx';
-
-declare var CCCometChat: any;
+import { Router } from '@angular/router';
+import { LocalNotifications, ILocalNotification, ILocalNotificationActionType } from '@ionic-native/local-notifications/ngx';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PushNotificationsService implements OnInit {
+  onNotification: EventEmitter<any> = new EventEmitter()
   constructor(
     private platform: Platform,
     private fcm: FirebaseX,
-    // private localNotifications: LocalNotifications
+    private route: Router,
+    private localNotifications: LocalNotifications,
+    private storageService: StorageService
   ) {
     this.platform.ready().then(() => {
       this.initFirebase()
@@ -24,38 +27,27 @@ export class PushNotificationsService implements OnInit {
   }
 
   public async initFirebase(): Promise<any> {
-    const firebaseConfig = {
-      apiKey: "AIzaSyCsO2yH7g25fwTwuyGRI2exQytJgifUj6s",
-      authDomain: "mind2dev-5ddb1.firebaseapp.com",
-      databaseURL: "https://mind2dev-5ddb1.firebaseio.com",
-      projectId: "mind2dev-5ddb1",
-      storageBucket: "mind2dev-5ddb1.appspot.com",
-      messagingSenderId: "378566212104",
-      appId: "1:378566212104:web:2179e18bf770db09d7efbd",
-      measurementId: 'G-measurement-id'
-    };
-
     console.log('init FCM service');
-
-
     // return await this.fcm.getToken();
     const perms = await this.fcm.hasPermission()
     console.log(perms);
-
-
-    return this.fcm.onMessageReceived().subscribe(data => {
+    return this.fcm.onMessageReceived().subscribe(async data => {
       console.log("here you receive the message", data);
-      if (data.message) {
-        var jsonMsg = JSON.parse(data.message);
-        var processedMessage = CometChat.CometChatHelper.processMessage(jsonMsg);
-        console.log('JSON MESSAGE', jsonMsg);
-        console.log('CometChat.CometChatHelper.processMessage()', processedMessage);
-      }
-      alert('FCM onMessageReceived show Push Notification here')
       if (data.wasTapped) {
         console.log("Received in background");
       } else {
         console.log("Received in foreground");
+        if (data.message) { // CometChat Message received in foreground
+          var jsonMsg = JSON.parse(data.message);
+          var processedMessage = await CometChat.CometChatHelper.processMessage(jsonMsg);
+          console.log('JSON MESSAGE', jsonMsg);
+          console.log('CometChat.CometChatHelper.processMessage()', processedMessage);
+          console.log('this.route.url', this.route.url);
+          if (!this.route.url.includes('support') && !this.route.url.includes('chat')) {
+            this.showNotification(jsonMsg.data.text, jsonMsg.data.entities.sender.entity.name, false)
+            this.onNotification.emit(processedMessage)
+          }
+        }
       };
     });
   };
@@ -64,25 +56,32 @@ export class PushNotificationsService implements OnInit {
     return await this.fcm.getToken();
   }
 
-  /* showNotification(text: string, title: string = 'Mind2'): void {
-    const notif: ILocalNotification = {
-      id: 1,
-      text,
-      title,
-      vibrate: true,
-      led: true,
-      priority: 2,
-      silent: false,
-      wakeup: true,
-      foreground: true,
-      actions: [{
-        id: 'reply',
-        type: ILocalNotificationActionType.INPUT,
-        title: 'Reply',
+  showNotification(text: string, title: string = 'Mind2', saveToSchedule: boolean = false): void {
+    this.storageService.getNotificationsSchedule().then(schedule => {
+      const notif: ILocalNotification = {
+        id: 1,
+        text,
+        title,
+        vibrate: true,
+        led: true,
+        priority: -1,
+        silent: false,
+        wakeup: true,
+        sound: 'file://sound.mp3',
         foreground: true,
-      },]
-    }
-    this.localNotifications.schedule(notif);
-  } */
+        actions: [{
+          id: 'reply',
+          type: ILocalNotificationActionType.INPUT,
+          title: 'Responder',
+          foreground: true,
+        },]
+      }
+      this.localNotifications.schedule(notif);
+      if (saveToSchedule) this.storageService.setNotificationsSchedule(notif)
+
+    })
+  }
+
+
 
 }

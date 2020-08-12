@@ -3,7 +3,7 @@
     <name>Mind2</name>
     <description>Psicoterapia online v1</description>
     <author email="hola@mind2.me" href="https://mind2.me">Mind2. Copyright 2020</author>
-    <content original-src="index.html" src="http://localhost:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

@@ -69,6 +69,25 @@
 
 }
 
+.notification-badge-wrapper {
+  position: relative;
+
+  .notification-badge {
+    background-color: red;
+    color: white;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+    font-size: .8rem;
+    font-weight: bold;
+    line-height: 1.2rem;
+    text-align: center;
+  }
+}
+
 @keyframes custom-loader {
   0% {
     background-position: 0% 50%

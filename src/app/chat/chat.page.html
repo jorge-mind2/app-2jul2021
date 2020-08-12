@@ -114,6 +114,7 @@
                   type="text"
                   placeholder="Type a message"
                   [(ngModel)]="input"
+                  (keyup.enter)="sendChatMessage()"
                   padding-start></ion-input>
      </ion-col>
      <ion-col size="2">
