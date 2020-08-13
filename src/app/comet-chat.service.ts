@@ -17,8 +17,8 @@ export class CometChatService {
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
+    private push: PushNotificationsService,
     private auth: AuthService,
-    private push: PushNotificationsService
   ) {
   }
 
@@ -38,6 +38,23 @@ export class CometChatService {
         console.log("Initialization failed with error:", error);
         // Check the reason for error and take appropriate action.
       }
+    );
+  }
+
+  public initMessageListener(receiverUID: string, onTextReceived: Function): void {
+    return CometChat.addMessageListener(
+      receiverUID,
+      new CometChat.MessageListener({
+        onTextMessageReceived: (message: CometChat.TextMessage) => {
+          console.log("Message received successfully:", message);
+          onTextReceived(message, 0)
+        },
+        onMessagesDelivered: (message: any) => {
+          console.log('Message readed successfully:', message);
+          CometChat.markAsRead(message.messageId, message.receiver, message.receiverType)
+
+        }
+      })
     );
   }
 
@@ -161,8 +178,8 @@ export class CometChatService {
     return await new CometChat.MessagesRequestBuilder()
       .setLimit(100)
       .setUID(receiverUID)
-      .setType('text')
-      .build().fetchPrevious()
+      .build()
+      .fetchPrevious()
   }
 
   async rejectCall(sessionID: string): Promise<CometChat.Call> {

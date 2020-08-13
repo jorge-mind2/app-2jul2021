@@ -10,6 +10,8 @@ import { NextAppointmentComponent } from '../common/next-appointment/next-appoin
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { OptionsComponent } from './options/options.component';
+import * as moment from 'moment'
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
@@ -17,7 +19,7 @@ import { OptionsComponent } from './options/options.component';
 })
 export class ChatPage implements OnInit, OnDestroy {
 
-  conversation: any[] = [];
+  messages: any[] = [];
   phone_model: string = 'iPhone';
   input: string = '';
   loginType: string = '';
@@ -32,6 +34,7 @@ export class ChatPage implements OnInit, OnDestroy {
   receiverPhoto: string
   senderPhoto: string
   defaultBackHref: string = 'home'
+  moment = moment
   constructor(
     private platform: Platform,
     private events: Events,
@@ -115,15 +118,21 @@ export class ChatPage implements OnInit, OnDestroy {
 
 
     // init listener cometchat
-    CometChat.addMessageListener(
+    this.cometchat.initMessageListener(this.receiverUID, this.handlerMessage)
+    /* CometChat.addMessageListener(
       this.receiverUID,
       new CometChat.MessageListener({
         onTextMessageReceived: (message: CometChat.TextMessage) => {
           console.log("Message received successfully:", message);
           this.handlerMessage(message, 0)
+        },
+        onMessagessentAt: (message: any) => {
+          console.log('Message readed successfully:', message);
+          CometChat.markAsRead(message.messageId, message.receiver, message.receiverType)
+
         }
       })
-    );
+    ); */
 
   }
 
@@ -138,12 +147,13 @@ export class ChatPage implements OnInit, OnDestroy {
     const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
     if (selectedMessage) this.storageService.setUnreadMessages(selectedMessage, false)
 
-    this.conversation = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((msg: CometChat.TextMessage) => {
+    this.messages = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((message: CometChat.TextMessage) => {
       return {
-        text: msg.getText(),
-        senderType: this.ccUser.uid == msg.getSender().getUid() ? 1 : 0,
-        sender: msg.getSender().getName(),
-        image: this.ccUser.uid == msg.getSender().getUid() ? this.senderPhoto : this.receiverPhoto
+        text: message.getText(),
+        senderType: this.ccUser.uid == message.getSender().getUid() ? 1 : 0,
+        sender: message.getSender().getName(),
+        image: this.ccUser.uid == message.getSender().getUid() ? this.senderPhoto : this.receiverPhoto,
+        sentAt: message.getSentAt()
       }
     })
     setTimeout(() => {
@@ -164,15 +174,28 @@ export class ChatPage implements OnInit, OnDestroy {
 
 
   private handlerMessage(message: CometChat.TextMessage, senderType: number): void {
-    this.conversation.push({
+    this.messages.push({
       text: message.getText(),
       sender: message.getSender().getName(),
       senderType,
-      image: senderType == 1 ? this.senderPhoto : this.receiverPhoto
+      image: senderType == 1 ? this.senderPhoto : this.receiverPhoto,
+      sentAt: message.getSentAt()
     });
     setTimeout(() => {
       this.scrollToBottom()
     }, 10)
+  }
+
+
+  printDate(time1, time2?) {
+    if (time2) {
+      if (new Date(time1 * 1000).getDate() - new Date(time2 * 1000).getDate()) {
+        return new Date(time1 * 1000).toLocaleDateString();
+      }
+    } else {
+      return new Date(time1 * 1000).toLocaleDateString();
+    }
+    return undefined;
   }
 
 

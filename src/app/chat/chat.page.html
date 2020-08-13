@@ -62,7 +62,7 @@
         class="bg-image"
         [ngClass]="{ 'bg-image-X': phone_model=='iPhone X'}">
      <div id="chat-container">
-       <ion-row *ngIf="conversation.length<=0">
+       <ion-row *ngIf="messages.length<=0">
          <ion-col size="12"
                   size-md>
            <ion-card>
@@ -77,39 +77,49 @@
 
          </ion-col>
        </ion-row>
-       <ion-row *ngFor="let conv of conversation; let i = index;"
+       <ion-row *ngFor="let message of messages; let i = index;"
                 class="full no-padding">
+         <div class="dateSeperatorCongtainer"
+              *ngIf="( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))">
+           <span class="dateSeperator">
+             {{( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))}}
+           </span>
+         </div>
          <ion-col class="no-padding chat-row"
-                  [ngClass]="{ 'reverse': conv.senderType}">
+                  [ngClass]="{ 'reverse': message.senderType}">
            <div class="avatar-parent">
              <div class="avatar-border"></div>
-             <img [src]="conv.image"
+             <img [src]="message.image"
                   class="avatar">
            </div>
-           <div [ngClass]="{ 'name-row-parent-right': conv.senderType,'name-row-parent-left': !conv.senderType}">
+           <div [ngClass]="{ 'name-row-parent-right': message.senderType,'name-row-parent-left': !message.senderType}">
              <div class="no-padding"
-                  [ngClass]="{ 'name-row-right': conv.senderType,'name-row-left': !conv.senderType}">
-               {{conv.sender}}
-               <div [ngClass]="{ 'timer-right': conv.senderType,'timer-left': !conv.senderType}">{{i+5}} mins ago
-                 <ion-icon *ngIf="conv.senderType && conv.sent"
-                           name="checkmark"
-                           [color]="conv.read ? 'primary': 'light'"
-                           class="first-tick"></ion-icon>
-                 <ion-icon *ngIf="conv.senderType && conv.delivered"
-                           name="checkmark"
-                           [color]="conv.read ? 'primary': 'light'"
-                           class="second-tick"></ion-icon>
-               </div>
-               <div [ngClass]="{ 'reverse-arc-right': conv.senderType,'reverse-arc-left': !conv.senderType}">
+                  [ngClass]="{ 'name-row-right': message.senderType,'name-row-left': !message.senderType}">
+               {{message.sender}}
+
+               <div [ngClass]="{ 'reverse-arc-right': message.senderType,'reverse-arc-left': !message.senderType}">
                  <div
-                      [ngClass]="{ 'reverse-arc-color-right': conv.senderType,'reverse-arc-color-left': !conv.senderType}">
+                      [ngClass]="{ 'reverse-arc-color-right': message.senderType,'reverse-arc-color-left': !message.senderType}">
                  </div>
                </div>
              </div>
              <div class="no-padding"
-                  [ngClass]="{ 'message-row-right': conv.senderType,'message-row-left': !conv.senderType}">
-               <ion-text no-margin
-                         class="text">{{conv.text}}</ion-text>
+                  [ngClass]="{ 'message-row-right': message.senderType,'message-row-left': !message.senderType}">
+               <ion-text class="ion-no-margin"
+                         class="text">
+                 {{message.text}}
+               </ion-text>
+               <div [ngClass]="{ 'timer-right': message.senderType,'timer-left': !message.senderType}">
+                 {{message.sentAt *1000|date:'h:mm a' }}
+                 <ion-icon *ngIf="message.senderType && message.sent"
+                           name="checkmark"
+                           [color]="message.read ? 'primary': 'light'"
+                           class="first-tick"></ion-icon>
+                 <ion-icon *ngIf="message.senderType && message.delivered"
+                           name="checkmark"
+                           [color]="message.read ? 'primary': 'light'"
+                           class="second-tick"></ion-icon>
+               </div>
              </div>
            </div>
 
@@ -118,17 +128,15 @@
      </div>
    </div>
  </ion-content>
- <ion-footer translucent
-             [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
+ <ion-footer [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
    <ion-row class="input-position"
             [ngClass]="{ 'custom-footer-row': phone_model=='iPhone X'}">
      <ion-col size="10">
-       <ion-input class="input restrict"
+       <ion-input class="input restrict ion-padding-start"
                   type="text"
                   placeholder="Type a message"
                   [(ngModel)]="input"
-                  (keyup.enter)="sendChatMessage()"
-                  padding-start></ion-input>
+                  (keyup.enter)="sendChatMessage()"></ion-input>
      </ion-col>
      <ion-col size="2">
        <!-- <ion-button shape="round"
