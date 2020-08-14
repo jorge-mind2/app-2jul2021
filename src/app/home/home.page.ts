@@ -3,7 +3,8 @@ import { NavController, AlertController, ModalController } from '@ionic/angular'
 import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { StorageService } from '../api-services/storage.service';
-import { PushNotificationsService } from '../api-services/push-notifications.service';
+import { ApiService } from '../api-services/api.service';
+import * as moment from 'moment'
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     private auth: AuthService,
     private storageService: StorageService,
-    private notifications: PushNotificationsService
+    private api: ApiService
   ) { }
 
   ngOnInit() {
@@ -36,13 +37,27 @@ export class HomePage implements OnInit {
 
   private getUser() {
     this.auth.getCurrentUser().then(async (user: any) => {
-      // console.log('currentUser', user);
-      if (!user) return await this.auth.logout()
+      console.log('currentUser', user);
+      if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()
+      if (user.therapist && user.therapist.photo) user.therapist.photo = this.api.getPhotoProfile(user.therapist.photo)
+      else if (user.therapist && !user.therapist.photo) user.therapist.photo = 'https://api.adorable.io/avatars/285/dev.png'
       this.user = user;
+      const groupedAppointments = await this.api.getUserAppointments(user.id)
+      // this.user.groupedAppointments = groupedAppointments.data
+      const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
+      const nextAppointment = nextAppointments.appointments[0]
+      const date = `${nextAppointment.date} ${nextAppointment.start_time}`
+      this.user.nextAppointment = nextAppointment ? {
+        date: moment(date).format('DD [de] MMMM, YYYY'),
+        start_time: moment(date).format('hh:mm'),
+        am_pm: moment(date).format('a')
+      } : undefined
+      console.log(this.user.nextAppointment);
     });
   }
 
   private async setUnreadMessages() {
+    if (!this.user) return
     const unreadMessages = await this.storageService.getUnreadMessages()
 
     if (this.user.therapist) {

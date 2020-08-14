@@ -60,12 +60,36 @@
                     shape="round"
                     class="ion-margin-top"
                     (click)="openNextAppointment()">
-          <ion-icon slot="start"
-                    name="calendar"></ion-icon>
           Agendar Cita
         </ion-button>
       </ion-col>
       <ion-col></ion-col>
+    </ion-row>
+    <ion-row class="ion-padding-horizontal"
+             *ngIf="user.nextAppointment">
+      <ion-col class="ion-padding-horizontal">
+        <ion-card color="secondary next-appointment-info"
+                  class="ion-padding-horizontal">
+          <ion-card-content class="ion-text-center">
+            <ion-card-title>
+              Próxima cita
+            </ion-card-title>
+            <!-- <div class="avatar-wrapper">
+              <ion-avatar *ngIf="user.therapist?.photo">
+                <img [src]="user.therapist?.photo">
+              </ion-avatar>
+              <h2>{{user.therapist?.name}} {{user.therapist?.last_name}}</h2>
+            </div> -->
+            <ion-label>
+              <h3 class="date">{{user.nextAppointment?.date}}</h3>
+              <span class="am-pm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span
+                    class="hour">{{user.nextAppointment?.start_time}}</span> <span
+                    class="am-pm">{{user.nextAppointment?.am_pm}}</span>
+            </ion-label>
+
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
     </ion-row>
   </ion-grid>
   <app-menu></app-menu>

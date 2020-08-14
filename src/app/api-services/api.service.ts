@@ -111,4 +111,8 @@ export class ApiService {
   public async setUserSessionPrice(id: number, price: string): Promise<any> {
     return await this.http.post(`/users/${id}/price`, { price }).toPromise()
   }
+
+  public async getUserAppointments(id: number): Promise<any> {
+    return await this.http.get(`/users/${id}/appointments`).toPromise()
+  }
 }

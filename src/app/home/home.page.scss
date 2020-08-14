@@ -41,3 +41,40 @@ ion-icon.icon-large {
     }
   }
 }
+
+.next-appointment-info {
+  border-radius: 10px;
+  max-width: 300px;
+
+  .avatar-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    ion-avatar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 5px;
+
+      img {
+        border: 3px solid whitesmoke;
+      }
+    }
+  }
+
+
+  .hour {
+    font-size: 5em;
+  }
+
+  .date {
+    transform: translateY(70%);
+  }
+
+  .date,
+  .am-pm {
+    margin: 0;
+    font-size: 1.3em;
+  }
+}
