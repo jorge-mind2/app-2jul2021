@@ -5,7 +5,6 @@ import { Storage } from '@ionic/storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 
 const TOKEN_KEY = 'accessToken';
@@ -18,11 +17,10 @@ export class AuthService implements OnInit {
   private headers
   public token: string
   public userType: string
-  authenticationState = new BehaviorSubject(false)
+  authenticationState = new BehaviorSubject(true)
   constructor(
     private storage: Storage,
     private http: HttpClient,
-    private platform: Platform,
     private helper: JwtHelperService
   ) {
   }
@@ -33,6 +31,8 @@ export class AuthService implements OnInit {
 
   async checkToken() {
     const token = await this.storage.get(TOKEN_KEY)
+    console.log(token);
+
     if (token) {
       // let decoded = this.helper.decodeToken(token);
       let isExpired = this.helper.isTokenExpired(token);
@@ -67,6 +67,11 @@ export class AuthService implements OnInit {
   public async setToken(accessToken) {
     await this.storage.set(TOKEN_KEY, accessToken);
     return this.token = accessToken;
+  }
+
+  public async isValidToken() {
+    const token = await this.storage.get(TOKEN_KEY)
+    return this.helper.isTokenExpired(token)
   }
 
   public async setUserType(userType) {
@@ -105,13 +110,13 @@ export class AuthService implements OnInit {
     return loggedUser
   }
 
-  public logout() {
+  public logout(next: boolean = true) {
     this.storage.remove(TOKEN_KEY).then(async () => {
       this.storage.remove(CURRENT_USER)
       let ccuser = await CometChat.getLoggedinUser()
       if (ccuser) CometChat.logout()
-      this.userType = 'logged'
-      this.authenticationState.next(false);
+      this.userType = ''
+      if (next) this.authenticationState.next(false);
     });
   }
 

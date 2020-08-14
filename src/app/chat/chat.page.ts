@@ -137,6 +137,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.cometchat.removeMessageListener(this.receiverUID);
     this.cometchat.removeCallListener(this.receiverUID);
   }
 

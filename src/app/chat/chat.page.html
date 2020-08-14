@@ -4,7 +4,8 @@
        <ion-back-button [defaultHref]="defaultBackHref"
                         (click)="navigateHome()"></ion-back-button>
      </ion-buttons>
-     <ion-buttons slot="end">
+     <ion-buttons slot="end"
+                  *ngIf="loginType=='therapist'">
        <ion-button (click)="presentCallAlert()">
          <ion-icon name="call"
                    size="large"></ion-icon>

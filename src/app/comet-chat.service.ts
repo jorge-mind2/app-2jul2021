@@ -58,6 +58,9 @@ export class CometChatService {
     );
   }
 
+  public removeMessageListener(receiverUID: string): void {
+    return CometChat.removeMessageListener(receiverUID)
+  }
 
   public async login(user: any): Promise<CometChat.User> {
     const logged = await CometChat.login(user.ccUser.auth_token)

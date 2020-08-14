@@ -25,29 +25,33 @@ export class AppComponent {
     private storageService: StorageService,
     private notifications: PushNotificationsService,
   ) {
+    this.auth.authenticationState.subscribe(async state => {
+      this.splashScreen.hide();
+      console.log('state', state);
+      const userType = await this.auth.getUserType();
+      console.log('userType', userType);
+
+      if (userType && state) {
+        return true;
+      }
+      else {
+        this.navCtrl.navigateRoot(this.rootPage)
+
+      }
+
+    })
     this.initializeApp();
+
   }
 
   initializeApp() {
     this.platform.ready().then(async () => {
+      // this.auth.checkToken()
+      await this.auth.checkToken()
       this.statusBar.backgroundColorByHexString('#4d1c6bab')
       console.log('Platform ready');
       this.cometchat.initializeCometChat()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
-      await this.auth.checkToken()
-      this.auth.authenticationState.subscribe(async state => {
-        console.log('state', state);
-        const userType = await this.auth.getUserType();
-        if (userType) {
-          this.splashScreen.hide();
-          if (!state) {
-            this.navCtrl.navigateRoot(this.rootPage)
-          }
-          else {
-            return true;
-          }
-        }
-      })
       this.notifications.onNotification.subscribe(async message => {
         await this.storageService.setUnreadMessages(message, true)
       })

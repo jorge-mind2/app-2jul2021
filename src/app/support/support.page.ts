@@ -5,6 +5,7 @@ import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
+import { CometChatService } from '../comet-chat.service';
 
 @Component({
   selector: 'app-support',
@@ -27,6 +28,7 @@ export class SupportPage implements OnInit {
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private storageService: StorageService,
+    private cometchat: CometChatService,
     private auth: AuthService,
     private api: ApiService
   ) {
@@ -72,6 +74,11 @@ export class SupportPage implements OnInit {
       })
     );
 
+  }
+
+
+  ngOnDestroy() {
+    this.cometchat.removeMessageListener(this.receiverUID);
   }
 
   ionViewDidEnter() {
