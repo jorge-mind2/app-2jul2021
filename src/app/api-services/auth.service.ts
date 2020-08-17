@@ -112,11 +112,12 @@ export class AuthService implements OnInit {
 
   public logout(next: boolean = true) {
     this.storage.remove(TOKEN_KEY).then(async () => {
-      this.storage.remove(CURRENT_USER)
+      await this.storage.remove(CURRENT_USER)
+      await this.storage.remove('userType')
       let ccuser = await CometChat.getLoggedinUser()
       if (ccuser) CometChat.logout()
       this.userType = ''
-      if (next) this.authenticationState.next(false);
+      this.authenticationState.next(false);
     });
   }
 

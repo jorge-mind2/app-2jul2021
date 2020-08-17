@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
@@ -12,6 +12,7 @@ import { PushNotificationsService } from './api-services/push-notifications.serv
 export class CometChatService {
   CometChatAppId = COMETCHAT.APPID
   loading: any
+  onMessageTextReceived: EventEmitter<{ message: CometChat.TextMessage, senderType: number }> = new EventEmitter()
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -41,13 +42,14 @@ export class CometChatService {
     );
   }
 
-  public initMessageListener(receiverUID: string, onTextReceived: Function): void {
+  public initMessageListener(receiverUID: string): void {
+    console.log('init cometchat message listener: ', receiverUID);
     return CometChat.addMessageListener(
       receiverUID,
       new CometChat.MessageListener({
         onTextMessageReceived: (message: CometChat.TextMessage) => {
           console.log("Message received successfully:", message);
-          onTextReceived(message, 0)
+          this.onMessageTextReceived.emit({ message, senderType: 0 })
         },
         onMessagesDelivered: (message: any) => {
           console.log('Message readed successfully:', message);
@@ -59,6 +61,7 @@ export class CometChatService {
   }
 
   public removeMessageListener(receiverUID: string): void {
+    console.log('remove cometchat message listener: ', receiverUID);
     return CometChat.removeMessageListener(receiverUID)
   }
 
@@ -117,7 +120,7 @@ export class CometChatService {
   }
 
   public initCallListener(listnerID) {
-    console.log('init cometchat listener');
+    console.log('init cometchat call listener: ', listnerID);
 
     const __self = this;
     CometChat.addCallListener(
@@ -154,6 +157,7 @@ export class CometChatService {
   }
 
   removeCallListener(receiverUID: string): void {
+    console.log('remove cometchat call listener: ', receiverUID);
     return CometChat.removeCallListener(receiverUID)
   }
 

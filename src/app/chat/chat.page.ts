@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events } from '@ionic/angular';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events, IonContent } from '@ionic/angular';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -18,7 +18,8 @@ import * as moment from 'moment'
   styleUrls: ['./chat.page.scss'],
 })
 export class ChatPage implements OnInit, OnDestroy {
-
+  // @ViewChild('chatBox') private chatBox: any;
+  @ViewChild(IonContent, { read: IonContent }) chatBox: IonContent;
   messages: any[] = [];
   phone_model: string = 'iPhone';
   input: string = '';
@@ -118,34 +119,24 @@ export class ChatPage implements OnInit, OnDestroy {
 
 
     // init listener cometchat
-    this.cometchat.initMessageListener(this.receiverUID, this.handlerMessage)
-    /* CometChat.addMessageListener(
-      this.receiverUID,
-      new CometChat.MessageListener({
-        onTextMessageReceived: (message: CometChat.TextMessage) => {
-          console.log("Message received successfully:", message);
-          this.handlerMessage(message, 0)
-        },
-        onMessagessentAt: (message: any) => {
-          console.log('Message readed successfully:', message);
-          CometChat.markAsRead(message.messageId, message.receiver, message.receiverType)
-
-        }
-      })
-    ); */
+    this.cometchat.initMessageListener(this.receiverUID)
+    this.cometchat.onMessageTextReceived.subscribe(data => this.handlerMessage(data.message, data.senderType))
 
   }
 
   ngOnDestroy() {
     this.cometchat.removeMessageListener(this.receiverUID);
     this.cometchat.removeCallListener(this.receiverUID);
+    window.removeEventListener('resize', () => { })
   }
 
   private async getLastConversation() {
     const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
-    console.log(messages);
+    // console.log(messages);
     const type = this.loginType == 'therapist' ? 'patient' : 'therapist'
     const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
+    console.log('selectedMessage', selectedMessage.getSender().getUid());
+
     if (selectedMessage) this.storageService.setUnreadMessages(selectedMessage, false)
 
     this.messages = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((message: CometChat.TextMessage) => {
@@ -157,10 +148,15 @@ export class ChatPage implements OnInit, OnDestroy {
         sentAt: message.getSentAt()
       }
     })
+    console.log('OnInit BEFORE');
+
     setTimeout(() => {
-      this.scrollToBottom()
+      console.log('OnInit');
+
+      this.scrollToBottom(0)
     }, 50)
   }
+
 
   public async sendChatMessage() {
     if (this.input.replace(/\s/g, '').length <= 0) return
@@ -182,6 +178,7 @@ export class ChatPage implements OnInit, OnDestroy {
       image: senderType == 1 ? this.senderPhoto : this.receiverPhoto,
       sentAt: message.getSentAt()
     });
+
     setTimeout(() => {
       this.scrollToBottom()
     }, 10)
@@ -207,15 +204,21 @@ export class ChatPage implements OnInit, OnDestroy {
     this.cometchat.initVideoCall(this.receiverUID)
   }
 
-  private scrollToBottom() {
-    let content = document.getElementById("chat-container");
-    let parent = document.getElementById("chat-parent");
-    let scrollOptions = {
+  private async scrollToBottom(duration: number = 300) {
+    let content = window.document.getElementById("chat-container");
+    let parent = window.document.getElementById("chat-parent");
+    /* console.log('content', content);
+    console.log('parent', parent);
+    console.log('this.chatBox', this.chatBox); */
+
+    /* let scrollOptions = {
       left: 0,
       top: content.offsetHeight
-    }
+    } */
+    await this.chatBox.scrollToBottom(duration)
 
-    parent.scrollTo(scrollOptions)
+    // el.scrollTo(scrollOptions)
+    // parent.scrollTo(scrollOptions)
   }
 
   async presentCallAlert() {

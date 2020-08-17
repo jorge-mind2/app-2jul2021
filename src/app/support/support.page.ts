@@ -47,32 +47,34 @@ export class SupportPage implements OnInit {
     this.getLastConversation()
 
     // init listener cometchat
-    CometChat.addMessageListener(
-      this.receiverUID,
-      new CometChat.MessageListener({
-        onTextMessageReceived: message => {
-          console.log("Message received successfully:", message);
-          let action = message.text.match(/<assigned-therapist>/g) ? 'assigned-therapist' : null
-          console.log(message.text.match(/<assigned-therapist>/g));
-          message.text = message.text.replace(/<assigned-therapist>/g, '')
-          if (action == 'assigned-therapist') {
-            this.showAssignmentBtn = true
-          }
-          // Handle text message
-          this.conversation.push({
-            text: message.text,
-            senderType: 0,
-            sender: message.getSender(),
-            image: this.loginType == 'support' ? this.patientPhoto : 'assets/support.png',
-            action
-          });
-          this.input = '';
-          setTimeout(() => {
-            this.scrollToBottom()
-          }, 10)
-        }
-      })
+    this.cometchat.initMessageListener(
+      this.receiverUID
     );
+    this.cometchat.onMessageTextReceived.subscribe(data => this.handleMessageReception(data.message, data.senderType))
+
+  }
+
+  handleMessageReception(message: CometChat.TextMessage, senderType: number) {
+
+    console.log("Message received successfully:", message);
+    let action = message.getText().match(/<assigned-therapist>/g) ? 'assigned-therapist' : null
+    console.log(message.getText().match(/<assigned-therapist>/g));
+    const text = message.getText().replace(/<assigned-therapist>/g, '')
+    if (action == 'assigned-therapist') {
+      this.showAssignmentBtn = true
+    }
+    // Handle text message
+    this.conversation.push({
+      text,
+      senderType,
+      sender: message.getSender(),
+      image: this.loginType == 'support' ? this.patientPhoto : 'assets/support.png',
+      action
+    });
+    this.input = '';
+    setTimeout(() => {
+      this.scrollToBottom()
+    }, 10)
 
   }
 

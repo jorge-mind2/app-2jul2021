@@ -34,7 +34,9 @@
    </ion-toolbar>
  </ion-header>
 
- <ion-content padding-vertical
+ <ion-content #chatBox
+              id="chat-parent"
+              padding-vertical
               fullscreen>
    <!-- <ion-fab vertical="top"
             horizontal="end"
@@ -59,75 +61,77 @@
        </ion-fab-button>
      </ion-fab-list>
    </ion-fab> -->
-   <div id="chat-parent"
+   <!-- <div id="chat-parent"
         class="bg-image"
         [ngClass]="{ 'bg-image-X': phone_model=='iPhone X'}">
-     <div id="chat-container">
-       <ion-row *ngIf="messages.length<=0">
-         <ion-col size="12"
-                  size-md>
-           <ion-card>
-             <ion-card-content>
-               <ion-text clas="ion-text-center">
-                 <p>
-                   Di <b>Hola</b> para iniciar a charlar con <b class="text-primary">{{receiverName}}</b>
-                 </p>
-               </ion-text>
-             </ion-card-content>
-           </ion-card>
+     <div id="chat-container"> -->
+   <ion-row class="ion-no-margin"
+            *ngIf="messages.length<=0">
+     <ion-col size="12"
+              size-md>
+       <ion-card>
+         <ion-card-content>
+           <ion-text clas="ion-text-center">
+             <p>
+               Di <b>Hola</b> para iniciar a charlar con <b class="text-primary">{{receiverName}}</b>
+             </p>
+           </ion-text>
+         </ion-card-content>
+       </ion-card>
 
-         </ion-col>
-       </ion-row>
-       <ion-row *ngFor="let message of messages; let i = index;"
-                class="full no-padding">
-         <div class="dateSeperatorCongtainer"
-              *ngIf="( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))">
-           <span class="dateSeperator">
-             {{( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))}}
-           </span>
-         </div>
-         <ion-col class="no-padding chat-row"
-                  [ngClass]="{ 'reverse': message.senderType}">
-           <div class="avatar-parent">
-             <div class="avatar-border"></div>
-             <img [src]="message.image"
-                  class="avatar">
-           </div>
-           <div [ngClass]="{ 'name-row-parent-right': message.senderType,'name-row-parent-left': !message.senderType}">
-             <div class="no-padding"
-                  [ngClass]="{ 'name-row-right': message.senderType,'name-row-left': !message.senderType}">
-               {{message.sender}}
-
-               <div [ngClass]="{ 'reverse-arc-right': message.senderType,'reverse-arc-left': !message.senderType}">
-                 <div
-                      [ngClass]="{ 'reverse-arc-color-right': message.senderType,'reverse-arc-color-left': !message.senderType}">
-                 </div>
-               </div>
-             </div>
-             <div class="no-padding"
-                  [ngClass]="{ 'message-row-right': message.senderType,'message-row-left': !message.senderType}">
-               <ion-text class="ion-no-margin"
-                         class="text">
-                 {{message.text}}
-               </ion-text>
-               <div [ngClass]="{ 'timer-right': message.senderType,'timer-left': !message.senderType}">
-                 {{message.sentAt *1000|date:'h:mm a' }}
-                 <ion-icon *ngIf="message.senderType && message.sent"
-                           name="checkmark"
-                           [color]="message.read ? 'primary': 'light'"
-                           class="first-tick"></ion-icon>
-                 <ion-icon *ngIf="message.senderType && message.delivered"
-                           name="checkmark"
-                           [color]="message.read ? 'primary': 'light'"
-                           class="second-tick"></ion-icon>
-               </div>
-             </div>
-           </div>
-
-         </ion-col>
-       </ion-row>
+     </ion-col>
+   </ion-row>
+   <ion-row [ngClass]="{'ion-no-margin':i==0}"
+            *ngFor="let message of messages; let i = index;"
+            class="full no-padding">
+     <div class="dateSeperatorCongtainer"
+          *ngIf="( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))">
+       <span class="dateSeperator">
+         {{( i===0?printDate(message.sentAt):printDate(message.sentAt,messages[i-1].sentAt))}}
+       </span>
      </div>
-   </div>
+     <ion-col class="no-padding chat-row"
+              [ngClass]="{ 'reverse': message.senderType}">
+       <div class="avatar-parent">
+         <div class="avatar-border"></div>
+         <img [src]="message.image"
+              class="avatar">
+       </div>
+       <div [ngClass]="{ 'name-row-parent-right': message.senderType,'name-row-parent-left': !message.senderType}">
+         <div class="no-padding"
+              [ngClass]="{ 'name-row-right': message.senderType,'name-row-left': !message.senderType}">
+           {{message.sender}}
+
+           <div [ngClass]="{ 'reverse-arc-right': message.senderType,'reverse-arc-left': !message.senderType}">
+             <div
+                  [ngClass]="{ 'reverse-arc-color-right': message.senderType,'reverse-arc-color-left': !message.senderType}">
+             </div>
+           </div>
+         </div>
+         <div class="no-padding"
+              [ngClass]="{ 'message-row-right': message.senderType,'message-row-left': !message.senderType}">
+           <ion-text class="ion-no-margin"
+                     class="text">
+             {{message.text}}
+           </ion-text>
+           <div [ngClass]="{ 'timer-right': message.senderType,'timer-left': !message.senderType}">
+             {{message.sentAt *1000|date:'h:mm a' }}
+             <ion-icon *ngIf="message.senderType && message.sent"
+                       name="checkmark"
+                       [color]="message.read ? 'primary': 'light'"
+                       class="first-tick"></ion-icon>
+             <ion-icon *ngIf="message.senderType && message.delivered"
+                       name="checkmark"
+                       [color]="message.read ? 'primary': 'light'"
+                       class="second-tick"></ion-icon>
+           </div>
+         </div>
+       </div>
+
+     </ion-col>
+   </ion-row>
+   <!-- </div>
+   </div> -->
  </ion-content>
  <ion-footer [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
    <ion-row class="input-position"
