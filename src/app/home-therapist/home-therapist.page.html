@@ -15,6 +15,28 @@
     <ion-label color="light"
                style="font-size: 1.5em;">Bienvenido {{user?.name}}</ion-label>
   </ion-item>
+  <ion-refresher slot="fixed"
+                 (ionRefresh)="getCurrrentUSer($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-grid>
+    <ion-row class="ion-justify-content-center ion-align-items-center">
+      <ion-card color="secondary next-appointment-info"
+                class="ion-padding-horizontal"
+                *ngIf="user?.nextAppointment"
+                button>
+        <ion-card-content class="ion-text-center">
+          <ion-label>
+            <h2>Próxima cita</h2>
+            <span class="am_pm">{{user?.nextAppointment?.date}} - {{user?.nextAppointment?.start_time}}
+              {{user?.nextAppointment?.am_pm}}</span>
+          </ion-label>
+
+        </ion-card-content>
+      </ion-card>
+    </ion-row>
+  </ion-grid>
 
   <ion-card color="light"
             margin

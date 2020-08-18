@@ -27,9 +27,9 @@ export class HomeTherapistPage implements OnInit {
     this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
   }
 
-  ionViewWillEnter() {
+  /* ionViewDidEnter() {
     this.setUnreadMessages()
-  }
+  } */
 
   public goToSessionPage(type, receiverId, patient) {
     const navigationExtras: NavigationExtras = {
@@ -45,7 +45,7 @@ export class HomeTherapistPage implements OnInit {
     this.navCtrl.navigateForward('chat', { ...navigationExtras })
   }
 
-  public getCurrrentUSer() {
+  public getCurrrentUSer(event?) {
     this.auth.getCurrentUser().then(async (user: any) => {
       console.log('Mind2 user logged', user);
       if (!user || !this.auth.isAuthenticated()) return this.auth.logout()
@@ -64,6 +64,9 @@ export class HomeTherapistPage implements OnInit {
         am_pm: moment(date).format('a')
       } : undefined
       console.log(this.user.nextAppointment);
+      if (event) {
+        event.target.complete()
+      }
     });
   }
 
@@ -75,14 +78,15 @@ export class HomeTherapistPage implements OnInit {
       else patient.avatar = 'https://api.adorable.io/avatars/285/dev.png'
     }
     this.patients = patients
+    this.setUnreadMessages()
   }
 
   private async setUnreadMessages() {
     const unreadMessages = await this.storageService.getUnreadMessages()
     console.log('unreadMessages', unreadMessages);
 
-    for (const patient of this.patients) {
-      for (const message of unreadMessages) {
+    for (const message of unreadMessages) {
+      for (const patient of this.patients) {
         if (message.id == patient.cometChatId) {
           patient.unreadMessages = message.unread
         }
