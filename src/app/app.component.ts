@@ -48,7 +48,7 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       // this.auth.checkToken()
       await this.auth.checkToken()
-      this.statusBar.backgroundColorByHexString('#4d1c6bab')
+      this.statusBar.backgroundColorByHexString('#006675')
       console.log('Platform ready');
       this.cometchat.initializeCometChat()
       if (this.platform.is('cordova')) this.notifications.initFirebase()

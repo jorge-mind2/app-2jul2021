@@ -3,8 +3,7 @@ import { AuthService } from '../api-services/auth.service';
 import * as moment from 'moment'
 import { ApiService } from '../api-services/api.service';
 import { ToastController, NavController } from '@ionic/angular';
-import { isDefined } from '@angular/compiler/src/util';
-import { isArray } from 'util';
+import { isArray, isUndefined } from 'util';
 
 @Component({
   selector: 'app-schedule',
@@ -72,7 +71,7 @@ export class SchedulePage implements OnInit {
             return schedule
           })
           : []
-        day.canEntrySchedules = isDefined(grouped[day.name])
+        if (!isUndefined(grouped[day.name])) day.canEntrySchedules = grouped[day.name]
       }
       console.log(this.days)
 

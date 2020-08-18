@@ -78,3 +78,9 @@ ion-icon.icon-large {
     font-size: 1.3em;
   }
 }
+
+@media screen and (min-height: 730px) {
+  .home-content {
+    margin-top: 50px;
+  }
+}

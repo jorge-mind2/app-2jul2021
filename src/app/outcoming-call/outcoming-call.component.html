@@ -1,0 +1,50 @@
+<ion-content fullscreen
+             class="incoming-call-background">
+  <ion-item text-center
+            lines="none">
+    <ion-label color="light"
+               style="font-size: 1.5em; padding-top: 20%;">Llamando a</ion-label>
+  </ion-item>
+  <ion-grid style="margin-top: 20%;">
+    <ion-row>
+      <ion-col>
+        <ion-text text-center
+                  color="light">
+          <h1>
+            {{receiver.name}}
+
+          </h1>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <h2>&nbsp;</h2>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col></ion-col>
+    </ion-row>
+    <ion-row style="margin-top: 30%;">
+      <ion-col size="2">
+      </ion-col>
+      <ion-col>
+        <ion-text text-center
+                  color="light">
+          <p>
+            Colgar
+          </p>
+        </ion-text>
+        <ion-fab-button (click)="dismiss(true)"
+                        style="margin: auto;"
+                        color="danger">
+          <ion-icon name="call"></ion-icon>
+        </ion-fab-button>
+
+      </ion-col>
+      <ion-col size="2">
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

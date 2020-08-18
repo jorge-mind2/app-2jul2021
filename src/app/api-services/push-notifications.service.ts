@@ -33,52 +33,54 @@ export class PushNotificationsService implements OnInit {
         console.log("Received in foreground");
         if (data.message) { // CometChat Message received in foreground
           var jsonMsg = JSON.parse(data.message);
-          /*
-          jsonMsg = {
-            "receiver": "t-4a8447",
-            "data": {
-              "entities": {
-                "receiver": {
-                  "entityType": "user",
-                  "entity": {
-                    "lastActiveAt": 1597518855,
-                    "uid": "t-4a8447",
-                    "role": "therapist",
-                    "name": "Juan Pinzon",
-                    "status": "available"
+          if (jsonMsg.type == 'text') {
+            /*
+            jsonMsg = {
+              "receiver": "t-4a8447",
+              "data": {
+                "entities": {
+                  "receiver": {
+                    "entityType": "user",
+                    "entity": {
+                      "lastActiveAt": 1597518855,
+                      "uid": "t-4a8447",
+                      "role": "therapist",
+                      "name": "Juan Pinzon",
+                      "status": "available"
+                    }
+                  },
+                  "sender": {
+                    "entityType": "user",
+                    "entity": {
+                      "lastActiveAt": 1597518855,
+                      "uid": "p-dfb08e",
+                      "role": "patient",
+                      "name": "María Chavez",
+                      "status": "available"
+                    }
                   }
                 },
-                "sender": {
-                  "entityType": "user",
-                  "entity": {
-                    "lastActiveAt": 1597518855,
-                    "uid": "p-dfb08e",
-                    "role": "patient",
-                    "name": "María Chavez",
-                    "status": "available"
-                  }
-                }
+                "text": "Hola"
               },
-              "text": "Hola"
-            },
-            "sender": "p-dfb08e",
-            "conversationId": "p-dfb08e_user_t-4a8447",
-            "receiverType": "user",
-            "id": "461",
-            "sentAt": 1597518880,
-            "category": "message",
-            "type": "text",
-            "updatedAt": 1597518880
-          }
-           */
-          var processedMessage: CometChat.BaseMessage = await CometChat.CometChatHelper.processMessage(jsonMsg);
-          console.log('JSON MESSAGE', jsonMsg);
-          console.log('CometChat.CometChatHelper.processMessage()', processedMessage);
-          console.log('this.route.url', this.route.url);
-          if (!this.route.url.includes('support') && !this.route.url.includes('chat')) {
-            processedMessage.setType('text')
-            this.showNotification(+jsonMsg.id, jsonMsg.data.text, jsonMsg.data.entities.sender.entity.name, false)
-            this.onNotification.emit(processedMessage)
+              "sender": "p-dfb08e",
+              "conversationId": "p-dfb08e_user_t-4a8447",
+              "receiverType": "user",
+              "id": "461",
+              "sentAt": 1597518880,
+              "category": "message",
+              "type": "text",
+              "updatedAt": 1597518880
+            }
+             */
+            var processedMessage: CometChat.BaseMessage = await CometChat.CometChatHelper.processMessage(jsonMsg);
+            console.log('JSON MESSAGE', jsonMsg);
+            console.log('CometChat.CometChatHelper.processMessage()', processedMessage);
+            console.log('this.route.url', this.route.url);
+            if (!this.route.url.includes('support') && !this.route.url.includes('chat')) {
+              processedMessage.setType('text')
+              this.showNotification(+jsonMsg.id, jsonMsg.data.text, jsonMsg.data.entities.sender.entity.name, false)
+              this.onNotification.emit(processedMessage)
+            }
           }
         }
       };

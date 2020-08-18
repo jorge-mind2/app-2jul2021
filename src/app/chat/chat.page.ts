@@ -132,7 +132,6 @@ export class ChatPage implements OnInit, OnDestroy {
 
   private async getLastConversation() {
     const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
-    // console.log(messages);
     const type = this.loginType == 'therapist' ? 'patient' : 'therapist'
     const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
     console.log('selectedMessage', selectedMessage.getSender().getUid());

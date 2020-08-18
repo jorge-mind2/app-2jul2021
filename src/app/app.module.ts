@@ -25,7 +25,8 @@ import { JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { environment } from "../environments/environment";
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import * as moment from 'moment'
-moment.lang('es')
+import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
+moment.locale('es')
 
 export function jwtOptionsFactory(storage) {
   return {
@@ -37,9 +38,10 @@ export function jwtOptionsFactory(storage) {
 }
 
 @NgModule({
-  declarations: [AppComponent, IncomingCallComponent],
+  declarations: [AppComponent, IncomingCallComponent, OutcomingCallComponent],
   entryComponents: [
-    IncomingCallComponent
+    IncomingCallComponent,
+    OutcomingCallComponent
   ],
   imports: [
     BrowserModule,

@@ -5,6 +5,7 @@ import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import { AuthService } from './api-services/auth.service';
 import { COMETCHAT } from './keys';
 import { PushNotificationsService } from './api-services/push-notifications.service';
+import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,7 @@ export class CometChatService {
   }
 
   public initMessageListener(receiverUID: string): void {
-    console.log('init cometchat message listener: ', receiverUID);
+    console.log('init cometchat message listener:', receiverUID);
     return CometChat.addMessageListener(
       receiverUID,
       new CometChat.MessageListener({
@@ -70,7 +71,7 @@ export class CometChatService {
     console.log('CometChat USER LOGGED', logged);
     this.subscribeToCurrentUser(logged.getUid())
     if (user.therapist) {
-      this.initCallListener(user.therapist.name)
+      this.initCallListener(`${user.therapist.uuid}`)
     }
     return logged
   }
@@ -120,7 +121,7 @@ export class CometChatService {
   }
 
   public initCallListener(listnerID) {
-    console.log('init cometchat call listener: ', listnerID);
+    console.log('init cometchat call listener:', listnerID);
 
     const __self = this;
     CometChat.addCallListener(
@@ -142,15 +143,16 @@ export class CometChatService {
         async onOutgoingCallRejected(call: CometChat.Call) {
           // Paciente rechazó la llamada - terapeuta ve alerta de llamada no contestada
           console.log("Outgoing call rejected:", call);
-          __self.loadingCtrl.dismiss()
+          if (await __self.loadingCtrl.getTop()) __self.loadingCtrl.dismiss()
+          else if (await __self.auth.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
           if (call.getAction() == "rejected" || call.getStatus() == "rejected") await __self.notAnsweredAlert()
         },
         async onIncomingCallCancelled(call: CometChat.Call) {
           // Paciente no contestó llamada - terapeuta ve alerta de llamada no contestada
           console.log("Incoming call calcelled:", call);
-          if (await __self.auth.getUserType() == 'patient') await __self.modalCtrl.dismiss({ awnser: false })
-          else if (await __self.auth.getUserType() == 'therapist') await __self.loadingCtrl.dismiss()
-          await __self.notAnsweredAlert()
+          if (await __self.auth.getUserType() == 'patient') await __self.modalCtrl.dismiss({ answered: false })
+          else if (await __self.auth.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
+          if (call.getAction() == "rejected" || call.getStatus() == "rejected") await __self.notAnsweredAlert()
         }
       })
     );
@@ -162,12 +164,15 @@ export class CometChatService {
   }
 
   async initVideoCall(receiverUID: string) {
-    await this.presentCallingWaitScreen()
+    // await this.presentCallingWaitScreen()
     const callType = CometChat.CALL_TYPE.VIDEO;
     const receiverType = CometChat.RECEIVER_TYPE.USER;
 
     const call = new CometChat.Call(receiverUID, callType, receiverType)
     const outGoingCall = await CometChat.initiateCall(call)
+    console.log('outGoingCall', outGoingCall);
+
+    await this.presentOutcomingCallScreen(outGoingCall)
   }
 
   private async acceptCall(sessionID: string): Promise<void> {
@@ -198,6 +203,15 @@ export class CometChatService {
     return rejected
   }
 
+  async cancelCall(sessionID: string): Promise<CometChat.Call> {
+    var status = CometChat.CALL_STATUS.CANCELLED;
+
+    const cancelled = await CometChat.rejectCall(sessionID, status)
+    console.log({ cancelled });
+
+    return cancelled
+  }
+
   async presentIncomingCallScreen(call: CometChat.Call): Promise<void> {
     const caller = call.getSender()
     const sessionID = call.getSessionId()
@@ -206,15 +220,35 @@ export class CometChatService {
       componentProps: {
         caller
       },
-      keyboardClose: false
+      keyboardClose: false,
     });
     await modal.present()
     const { data } = await modal.onDidDismiss();
-    if (data.answer) {
+    if (data.answered) {
       await this.presentLoading('Conectando...')
       this.acceptCall(sessionID)
     } else {
       this.rejectCall(sessionID)
+    }
+  }
+
+  async presentOutcomingCallScreen(call: CometChat.Call): Promise<void> {
+    const receiver = call.getReceiver()
+    const sessionID = call.getSessionId()
+    const modal = await this.modalCtrl.create({
+      component: OutcomingCallComponent,
+      componentProps: {
+        receiver
+      },
+      keyboardClose: false,
+    });
+    await modal.present()
+    const { data } = await modal.onDidDismiss();
+    if (data.cancelled) {
+      this.cancelCall(sessionID)
+    } else {
+      this.acceptCall(sessionID)
+      await this.presentLoading('Conectando...')
     }
   }
 

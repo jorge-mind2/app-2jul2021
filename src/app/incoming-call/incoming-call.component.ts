@@ -15,9 +15,9 @@ export class IncomingCallComponent implements OnInit {
 
   ngOnInit() { }
 
-  dismiss(answer) {
+  dismiss(answered) {
     this.modalCtrl.dismiss({
-      answer
+      answered
     });
   }
 

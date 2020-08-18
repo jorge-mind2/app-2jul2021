@@ -15,7 +15,7 @@
     <ion-label color="light"
                style="font-size: 1.5em;">Bienvenido {{user.name}}</ion-label>
   </ion-item>
-  <ion-grid style="margin-top: 50px;">
+  <ion-grid class="home-content">
     <ion-row>
       <ion-col size="4">
         <ion-button class="home-button"
@@ -52,44 +52,38 @@
         </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row>
-      <ion-col></ion-col>
-      <ion-col size="6">
-        <ion-button color="tertiary"
-                    *ngIf="user.therapist"
-                    shape="round"
-                    class="ion-margin-top"
-                    (click)="openNextAppointment()">
-          Agendar Cita
-        </ion-button>
-      </ion-col>
-      <ion-col></ion-col>
+    <ion-row class="ion-justify-content-center ion-align-items-center">
+      <ion-button color="tertiary"
+                  *ngIf="user.therapist"
+                  shape="round"
+                  class="ion-margin-top"
+                  (click)="openNextAppointment()">
+        Agendar Cita
+      </ion-button>
     </ion-row>
-    <ion-row class="ion-padding-horizontal"
+    <ion-row class="ion-padding-horizontal ion-justify-content-center ion-align-items-center"
              *ngIf="user.nextAppointment">
-      <ion-col class="ion-padding-horizontal">
-        <ion-card color="secondary next-appointment-info"
-                  class="ion-padding-horizontal">
-          <ion-card-content class="ion-text-center">
-            <ion-card-title>
-              Próxima cita
-            </ion-card-title>
-            <!-- <div class="avatar-wrapper">
+      <ion-card color="secondary next-appointment-info"
+                class="ion-padding-horizontal">
+        <ion-card-content class="ion-text-center">
+          <ion-card-title>
+            Próxima cita
+          </ion-card-title>
+          <!-- <div class="avatar-wrapper">
               <ion-avatar *ngIf="user.therapist?.photo">
                 <img [src]="user.therapist?.photo">
               </ion-avatar>
               <h2>{{user.therapist?.name}} {{user.therapist?.last_name}}</h2>
             </div> -->
-            <ion-label>
-              <h3 class="date">{{user.nextAppointment?.date}}</h3>
-              <span class="am-pm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span
-                    class="hour">{{user.nextAppointment?.start_time}}</span> <span
-                    class="am-pm">{{user.nextAppointment?.am_pm}}</span>
-            </ion-label>
+          <ion-label>
+            <h3 class="date">{{user.nextAppointment?.date}}</h3>
+            <span class="am-pm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span
+                  class="hour">{{user.nextAppointment?.start_time}}</span> <span
+                  class="am-pm">{{user.nextAppointment?.am_pm}}</span>
+          </ion-label>
 
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
+        </ion-card-content>
+      </ion-card>
     </ion-row>
   </ion-grid>
   <app-menu></app-menu>

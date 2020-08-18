@@ -64,9 +64,9 @@ export class HomeTherapistPage implements OnInit {
         am_pm: moment(date).format('a')
       } : undefined
       console.log(this.user.nextAppointment);
-      if (event) {
-        event.target.complete()
-      }
+      if (event) event.target.complete()
+    }).catch(error => {
+      if (event) event.target.complete()
     });
   }
 
