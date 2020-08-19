@@ -7,61 +7,125 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title color="light">
+    <!-- <ion-title color="light">
       Agendar próxima cita
-    </ion-title>
+    </ion-title> -->
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment (ionChange)="setView($event)"
+                 color="light"
+                 mode="md"
+                 value="schedule">
+      <ion-segment-button value="schedule"
+                          color="light">
+        <ion-label color="light">
+          <ion-icon name="calendar"></ion-icon> Agendar
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="appointments"
+                          color="light">
+        <ion-label color="light">
+          <p class="notification-wrapper">
+            <ion-icon name="checkbox-outline"></ion-icon> Mis Citas
+          </p>
+        </ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 
-  <ion-item class="ion-padding-horizontal"
-            lines="none">
-    <ion-text color="light">
-      <p>{{patient?.name}} {{patient?.last_name}}</p>
-    </ion-text>
-  </ion-item>
+  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+       *ngIf="view == 'schedule'">
+    <ion-item class="ion-padding-horizontal"
+              lines="none">
+      <ion-text color="light">
+        <p>{{patient?.name}} {{patient?.last_name}}</p>
+      </ion-text>
+    </ion-item>
 
-  <ion-card color="primary">
-    <ion-calendar [(ngModel)]="appointmentDateDate"
-                  (change)="selectCalendarDay($event)"
-                  #calendar
-                  [type]="type"
-                  [options]="calendarOptions"
-                  [format]="'YYYY-MM-DD'">
-    </ion-calendar>
-  </ion-card>
+    <ion-card color="primary">
+      <ion-calendar [(ngModel)]="appointmentDateDate"
+                    (change)="selectCalendarDay($event)"
+                    #calendar
+                    [type]="type"
+                    [options]="calendarOptions"
+                    [format]="'YYYY-MM-DD'">
+      </ion-calendar>
+    </ion-card>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col>
-        <ion-text color="light"
-                  *ngIf="!therapist.availability.length">
-          <h4 class="ion-text-center">
-            El terapeuta aún no tiene horarios disponibles
-          </h4>
-        </ion-text>
-        <ion-button [color]="hour.color"
-                    [disabled]="!hour.available"
-                    size="default"
-                    (click)="selectTime(hour)"
-                    *ngFor="let hour of hoursAvailability">{{hour.start_time}}:00</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-text color="light"
+                    *ngIf="!therapist.availability.length">
+            <h4 class="ion-text-center">
+              El terapeuta aún no tiene horarios disponibles
+            </h4>
+          </ion-text>
+          <ion-button [color]="hour.color"
+                      [disabled]="!hour.available"
+                      size="default"
+                      (click)="selectTime(hour)"
+                      *ngFor="let hour of hoursAvailability">{{hour.start_time}}:00</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
 
 
-  <ion-item [hidden]="!appointment.start_time">
-    <ion-text color="light">
-      <p>
-        La cita será el día: <b>{{appointmentDateDate | date: 'd MMMM, y'}}</b>
-      </p>
-      <p>Inicia: <b>{{appointment.start_time}} hrs.</b></p>
-      <p>Finaliza: <b>{{appointment.end_time}} hrs.</b></p>
-    </ion-text>
-  </ion-item>
-  <ion-button shape="round"
-              expand="full"
-              size="large"
-              primary
-              [disabled]="!appointment.date || !appointment.start_time"
-              (click)="createAppointment()">Guardar</ion-button>
+    <ion-item [hidden]="!appointment.start_time">
+      <ion-text color="light">
+        <p>
+          La cita será el día: <b>{{appointmentDateDate | date: 'd MMMM, y'}}</b>
+        </p>
+        <p>Inicia: <b>{{appointment.start_time}} hrs.</b></p>
+        <p>Finaliza: <b>{{appointment.end_time}} hrs.</b></p>
+      </ion-text>
+    </ion-item>
+    <ion-button shape="round"
+                expand="full"
+                size="large"
+                primary
+                [disabled]="!appointment.date || !appointment.start_time"
+                (click)="createAppointment()">Guardar</ion-button>
+  </div>
+
+  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+       *ngIf="view == 'appointments'">
+    <ion-list>
+      <ion-item-group *ngFor="let appointmentsGroup of groupedAppointments">
+        <ion-item-divider color="secondary">
+          <ion-label>{{appointmentsGroup.name}}</ion-label>
+        </ion-item-divider>
+
+        <ion-item style="background: rgba(255, 255, 255, 0.13)"
+                  *ngFor="let appointment of appointmentsGroup.appointments">
+          <ion-grid class="ion-padding-bottom">
+            <ion-row class="ion-padding-top">
+              <ion-icon color="light"
+                        name="calendar"></ion-icon>
+              <ion-text color="light"
+                        class="ion-padding-start">
+                {{appointment.date}}
+              </ion-text>
+            </ion-row>
+            <ion-row>
+              <ion-icon color="light"
+                        name="time"></ion-icon>
+              <ion-text color="light"
+                        class="ion-padding-start">
+                {{appointment.start_time.substring(0,5)}} hrs.
+              </ion-text>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item style="background: rgba(255, 255, 255, 0.13)"
+                  *ngIf="!appointmentsGroup.appointments.length">
+          <ion-text color="light"><i>No hay citas</i></ion-text>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+
+  </div>
+
+
 </ion-content>

@@ -3,6 +3,7 @@ import { CalendarComponentOptions } from 'ion2-calendar';
 import { ModalController, ToastController, AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/api-services/api.service';
 import * as moment from 'moment';
+import { AuthService } from 'src/app/api-services/auth.service';
 
 @Component({
   selector: 'app-next-appointment',
@@ -29,10 +30,13 @@ export class NextAppointmentComponent implements OnInit {
   }
   hoursAvailability: any[] = []
   therapistAvailable: boolean = false
+  view: string = 'schedule'
+  groupedAppointments: any[]
   constructor(
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private auth: AuthService,
     private api: ApiService
   ) { }
 
@@ -51,6 +55,7 @@ export class NextAppointmentComponent implements OnInit {
     })
     console.log('patient', this.patient);
     console.log('therapist', this.therapist);
+    this.getMyAppointments()
     var daysArray: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
     this.calendarOptions.disableWeeks = this.therapistAvailable ?
       daysArray.reduce<number[]>((acc, val): number[] => {
@@ -60,11 +65,26 @@ export class NextAppointmentComponent implements OnInit {
       daysArray
   }
 
+  public setView(e) {
+    this.view = e.detail.value
+  }
+
   public closeModal(updated: boolean = false) {
     this.modalCtrl.dismiss({
       'dismissed': true,
       updated
     });
+  }
+
+  public async getMyAppointments() {
+    const appointments = await this.api.getUserAppointments(await this.auth.getCurrentId())
+    this.groupedAppointments = appointments.data.map(a => {
+      a.order = a.group == 'today' ? 0 : a.group == 'next' ? 1 : 2
+      a.name = a.group == 'today' ? 'Hoy' : a.group == 'next' ? 'Próximas' : 'Pasadas'
+      return a
+    }).sort((a, b) => a.order - b.order)
+    console.log('this.groupedAppointments', this.groupedAppointments);
+
   }
 
   public selectTime(selectedHour): void {

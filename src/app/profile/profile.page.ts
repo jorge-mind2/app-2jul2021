@@ -95,7 +95,7 @@ export class ProfilePage implements OnInit {
   }
 
   cropImage(fileUrl) {
-    this.crop.crop(fileUrl, { quality: 80 })
+    this.crop.crop(fileUrl, { quality: 100 })
       .then(
         newPath => {
           this.uploadCroppedImage(newPath.split('?')[0])

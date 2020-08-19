@@ -41,18 +41,23 @@
 
   <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
        *ngIf="view == 'card'">
-    <ion-item *ngIf="cards.length<=0">
-      <ion-text color="light"
-                class="ion-text-center">
-        <h4>Necesitas una tarjeta de crédito o débito para pagar tu plan.</h4>
+    <ion-grid *ngIf="cards.length<=0">
+      <ion-row class="ion-justify-content-center ion-align-items-center">
+        <ion-item lines="none">
+          <ion-text color="light"
+                    class="ion-text-center">
+            <h4>Necesitas una tarjeta de crédito o débito para pagar tu plan.</h4>
+          </ion-text>
+        </ion-item>
+      </ion-row>
+      <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-button color="tertiary"
                     shape="round"
-                    type="button"
-                    [routerLink]="['/add-card']">Registrar tarjeta <ion-icon slot="end"
-                    name="card"></ion-icon>
+                    [routerLink]="['/add-card']">Nueva tarjeta <ion-icon slot="start"
+                    name="add"></ion-icon>
         </ion-button>
-      </ion-text>
-    </ion-item>
+      </ion-row>
+    </ion-grid>
     <ion-card [color]="card.color"
               [ngClass]="{'card-selected': card.selected}"
               class="ion-margin-vertical card"
