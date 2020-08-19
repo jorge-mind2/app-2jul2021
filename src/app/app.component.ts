@@ -26,7 +26,6 @@ export class AppComponent {
     private notifications: PushNotificationsService,
   ) {
     this.auth.authenticationState.subscribe(async state => {
-      this.splashScreen.hide();
       console.log('state', state);
       const userType = await this.auth.getUserType();
       console.log('userType', userType);
@@ -46,10 +45,10 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(async () => {
-      // this.auth.checkToken()
-      await this.auth.checkToken()
-      this.statusBar.backgroundColorByHexString('#006675')
       console.log('Platform ready');
+      this.statusBar.backgroundColorByHexString('#006675')
+      await this.auth.checkToken()
+      this.splashScreen.hide();
       this.cometchat.initializeCometChat()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
       this.notifications.onNotification.subscribe(async message => {

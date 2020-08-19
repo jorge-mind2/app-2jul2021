@@ -17,7 +17,7 @@ import * as moment from 'moment'
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit, OnDestroy {
+export class ChatPage implements OnInit {
   // @ViewChild('chatBox') private chatBox: any;
   @ViewChild(IonContent, { read: IonContent }) chatBox: IonContent;
   messages: any[] = [];
@@ -98,35 +98,32 @@ export class ChatPage implements OnInit, OnDestroy {
     if (this.loginType == 'therapist') this.cometchat.initCallListener(this.receiverUID)
 
     if (this.loginType == 'patient') {
-      this.receiverPhoto = this.loggedUser.therapist.photo
-        ? this.api.getPhotoProfile(this.loggedUser.therapist.photo)
-        : 'assets/therapist.png'
-      this.senderPhoto = this.loggedUser.photo
-        ? this.api.getPhotoProfile(this.loggedUser.photo)
-        : 'assets/patient.png'
+      this.receiverPhoto = this.api.getPhotoProfile(this.loggedUser.therapist)
+      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
       this.receiverName = this.loggedUser.therapist.name
     } else if (this.loginType == 'therapist') {
-      this.receiverPhoto = this.patient.photo
-        ? this.api.getPhotoProfile(this.patient.photo)
-        : 'assets/patient.png'
-      this.senderPhoto = this.loggedUser.photo
-        ? this.api.getPhotoProfile(this.loggedUser.photo)
-        : 'assets/therapist.png'
+      this.receiverPhoto = this.api.getPhotoProfile(this.patient)
+      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
       this.receiverName = this.patient.name
     }
 
-    this.getLastConversation();
-
-
     // init listener cometchat
-    this.cometchat.initMessageListener(this.receiverUID)
-    this.cometchat.onMessageTextReceived.subscribe(data => this.handlerMessage(data.message, data.senderType))
+    this.cometchat.initMessageListener(
+      this.receiverUID
+    );
+    this.cometchat.onMessageTextReceived.subscribe(data => { if (data.receiverUID == this.receiverUID) this.handlerMessage(data.message, data.senderType) })
+    this.getLastConversation();
 
   }
 
-  ngOnDestroy() {
+
+  ionViewWillEnter() {
+  }
+
+  ionViewWillLeave() {
     this.cometchat.removeMessageListener(this.receiverUID);
     this.cometchat.removeCallListener(this.receiverUID);
+    // this.cometchat.onMessageTextReceived.unsubscribe()
     window.removeEventListener('resize', () => { })
   }
 

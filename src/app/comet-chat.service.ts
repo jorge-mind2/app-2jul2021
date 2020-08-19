@@ -13,7 +13,7 @@ import { OutcomingCallComponent } from './outcoming-call/outcoming-call.componen
 export class CometChatService {
   CometChatAppId = COMETCHAT.APPID
   loading: any
-  onMessageTextReceived: EventEmitter<{ message: CometChat.TextMessage, senderType: number }> = new EventEmitter()
+  onMessageTextReceived: EventEmitter<{ message: CometChat.TextMessage, senderType: number, receiverUID: string }> = new EventEmitter()
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -49,8 +49,9 @@ export class CometChatService {
       receiverUID,
       new CometChat.MessageListener({
         onTextMessageReceived: (message: CometChat.TextMessage) => {
+          console.log('message listener UID:', receiverUID);
           console.log("Message received successfully:", message);
-          this.onMessageTextReceived.emit({ message, senderType: 0 })
+          if (receiverUID == message.getSender().getUid()) this.onMessageTextReceived.emit({ message, senderType: 0, receiverUID })
         },
         onMessagesDelivered: (message: any) => {
           console.log('Message readed successfully:', message);

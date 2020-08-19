@@ -22,7 +22,7 @@ export class SupportPage implements OnInit {
   cometchatUser: any
   currentUser: any
   showAssignmentBtn: boolean = false
-  patientPhoto = 'assets/patient.png'
+  patientPhoto: string
 
   constructor(
     private alertCtrl: AlertController,
@@ -43,15 +43,30 @@ export class SupportPage implements OnInit {
     // get cometchat logged user
     this.cometchatUser = await CometChat.getLoggedinUser();
     this.currentUser = await this.auth.getCurrentUser()
-    if (this.currentUser.photo) this.patientPhoto = this.api.getPhotoProfile(this.currentUser.photo)
-    this.getLastConversation()
+    this.patientPhoto = this.api.getPhotoProfile(this.currentUser)
 
     // init listener cometchat
     this.cometchat.initMessageListener(
       this.receiverUID
     );
-    this.cometchat.onMessageTextReceived.subscribe(data => this.handleMessageReception(data.message, data.senderType))
+    this.cometchat.onMessageTextReceived.subscribe(data => { if (data.receiverUID == this.receiverUID) this.handleMessageReception(data.message, data.senderType) })
 
+    this.getLastConversation()
+
+  }
+
+  ionViewWillEnter() {
+  }
+
+  ionViewDidEnter() {
+    setTimeout(() => {
+      this.scrollToBottom()
+    }, 10)
+  }
+
+  ionViewWillLeave() {
+    this.cometchat.removeMessageListener(this.receiverUID);
+    this.cometchat.onMessageTextReceived.unsubscribe()
   }
 
   handleMessageReception(message: CometChat.TextMessage, senderType: number) {
@@ -78,18 +93,6 @@ export class SupportPage implements OnInit {
 
   }
 
-
-  ngOnDestroy() {
-    this.cometchat.removeMessageListener(this.receiverUID);
-  }
-
-  ionViewDidEnter() {
-
-    setTimeout(() => {
-      this.scrollToBottom()
-    }, 10)
-
-  }
 
   private getLastConversation() {
     const messagesRequest = new CometChat.MessagesRequestBuilder()

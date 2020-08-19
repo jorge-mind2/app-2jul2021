@@ -40,6 +40,9 @@ export class AuthService implements OnInit {
 
       if (!isExpired) {
         // console.log('Token', token);
+        const currentUser = await this.getServerCurrentUser()
+        console.log('currentUser', currentUser);
+
         const userType = await this.storage.get('userType')
         this.token = token;
         this.userType = userType;
@@ -83,7 +86,7 @@ export class AuthService implements OnInit {
   }
 
   public async setCurrentUser(user) {
-    await this.setUserType(user.role.name)
+    if (user.role) await this.setUserType(user.role.name)
     return await this.storage.set(CURRENT_USER, user);
   }
 
@@ -91,13 +94,23 @@ export class AuthService implements OnInit {
     return await this.storage.get(CURRENT_USER);
   }
 
+  public async getServerCurrentUser() {
+    return await this.http.get('/me').toPromise()
+  }
+
   public async signupUser(user) {
     return await this.http.post(`/auth/signup`, user).toPromise()
   }
 
   public async getCurrentId(): Promise<number> {
-    const user = await this.storage.get(CURRENT_USER)
+    const user = await this.getCurrentUser()
     return +user.id;
+  }
+
+  public async setCurrenUserPhoto(photo: string): Promise<void> {
+    const user = await this.getCurrentUser()
+    user.photo = photo
+    return await this.setCurrentUser(user)
   }
 
   public isAuthenticated(): boolean {

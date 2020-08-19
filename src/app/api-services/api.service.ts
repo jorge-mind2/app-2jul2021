@@ -104,8 +104,8 @@ export class ApiService {
     return environment.API_BASE_URL;
   }
 
-  public getPhotoProfile(photo: string): string {
-    return `${this.getBaseURL()}/users/photo/${photo}`;
+  public getPhotoProfile(user: any): string {
+    return user.photo ? `${this.getBaseURL()}/users/photo/${user.photo}` : `https://ui-avatars.com/api/?size=128&background=006675&color=fff&name=${user.name.substring(0, 1)}+${user.last_name.substring(0, 1)}`
   }
 
   public async setUserSessionPrice(id: number, price: string): Promise<any> {

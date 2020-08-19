@@ -74,8 +74,7 @@ export class HomeTherapistPage implements OnInit {
     const patients = await this.api.getMyPacients(id);
     console.log(patients);
     for (const patient of patients) {
-      if (patient.photo) patient.avatar = this.api.getPhotoProfile(patient.photo)
-      else patient.avatar = 'https://api.adorable.io/avatars/285/dev.png'
+      patient.avatar = this.api.getPhotoProfile(patient)
     }
     this.patients = patients
     this.setUnreadMessages()

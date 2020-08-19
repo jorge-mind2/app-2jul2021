@@ -15,7 +15,7 @@ export class ProfilePage implements OnInit {
   user: any = {}
   userType: string = ''
   loading: any
-  photoProfile = 'https://api.adorable.io/avatars/120/abo@adorable.png'
+  photoProfile: string
 
   imagePickerOptions = {
     maximumImagesCount: 1,
@@ -40,7 +40,7 @@ export class ProfilePage implements OnInit {
 
   private getUserInfo() {
     this.auth.getCurrentUser().then(async (user: any) => {
-      if (user.photo) this.photoProfile = await this.api.getPhotoProfile(user.photo)
+      this.photoProfile = await this.api.getPhotoProfile(user)
       if (!user.detail) {
         const info = await this.api.getTherapistProfile(user.id)
         this.api.setTherapistDetail(info.data.detail)
@@ -119,8 +119,12 @@ export class ProfilePage implements OnInit {
       this.file.readAsDataURL(filePath, imageName).then(async base64 => {
         console.log(base64.length);
         const base64Image = base64.split(';base64,').pop()
-        console.log('base64Image', base64Image.length);
+        // console.log('base64Image', base64Image.length);
         const photoData = await this.api.uploadUserPhoto(this.user.id, { photo: base64Image });
+        console.log('photoData', photoData);
+        const photoName = `${this.user.cometChatId}_${this.user.uuid.split('-')[0]}`;
+
+        await this.auth.setCurrenUserPhoto(photoName)
         await this.loading.dismiss()
         this.photoProfile = base64
         this.presentToast('Foto de perfil actualizada.')

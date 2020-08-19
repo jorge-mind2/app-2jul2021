@@ -39,8 +39,7 @@ export class HomePage implements OnInit {
     this.auth.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()
-      if (user.therapist && user.therapist.photo) user.therapist.photo = this.api.getPhotoProfile(user.therapist.photo)
-      else if (user.therapist && !user.therapist.photo) user.therapist.photo = 'https://api.adorable.io/avatars/285/dev.png'
+      if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
       this.user = user;
       const groupedAppointments = await this.api.getUserAppointments(user.id)
       // this.user.groupedAppointments = groupedAppointments.data
