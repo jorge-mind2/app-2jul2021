@@ -41,7 +41,7 @@ export class ProfilePage implements OnInit {
   private getUserInfo() {
     this.auth.getCurrentUser().then(async (user: any) => {
       this.photoProfile = await this.api.getPhotoProfile(user)
-      if (!user.detail) {
+      if (!user.detail && user.role.name == 'therapist') {
         const info = await this.api.getTherapistProfile(user.id)
         this.api.setTherapistDetail(info.data.detail)
         user.detail = info.data.detail

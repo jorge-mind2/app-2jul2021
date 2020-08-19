@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, ModalController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { NavigationExtras } from '@angular/router';
 import { StorageService } from '../api-services/storage.service';
 import * as moment from 'moment';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 
 @Component({
   selector: 'app-home-therapist',
@@ -16,6 +17,7 @@ export class HomeTherapistPage implements OnInit {
   patients: any[]
   constructor(
     private navCtrl: NavController,
+    private modalCtrl: ModalController,
     private alertCtrl: AlertController,
     private storageService: StorageService,
     private auth: AuthService,
@@ -91,6 +93,19 @@ export class HomeTherapistPage implements OnInit {
         }
       }
     }
+  }
+
+  async showSchedule() {
+    const patient = {}
+    const modal = await this.modalCtrl.create({
+      component: NextAppointmentComponent,
+      componentProps: {
+        patient,
+        therapist: this.user,
+        onlySchedule: true
+      }
+    });
+    return await modal.present()
   }
 
   public async presentLogoutAlert() {

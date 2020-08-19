@@ -22,9 +22,7 @@
   </ion-toolbar>
 
   <ion-grid style="margin-top: 1em;">
-    <ion-row>
-      <ion-col>
-      </ion-col>
+    <ion-row class="ion-justify-content-center ion-align-items-center">
       <ion-col size="6">
         <ion-avatar style="margin: auto; width: 80px; height: 80px; border: 3px solid white;"
                     (click)="selectImage()">
@@ -34,29 +32,29 @@
                    style="font-size: 1.2em; text-align: center; padding-top: .5em; display: block; width: 100%;">
           {{user.name}} {{user.last_name}}</ion-label>
 
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center ion-align-items-center">
+      <ion-col size="6"
+               *ngIf="userType=='therapist'">
         <ion-label color="light"
-                   *ngIf="userType=='therapist'"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;"><span
                 *ngFor="let sp of user.detail?.specialties">{{sp.name}}, </span></ion-label>
 
         <ion-label color="light"
-                   *ngIf="userType=='therapist'"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;">Cédula Profesional:
           {{user.detail?.professional_id}}</ion-label>
 
         <ion-label color="light"
-                   *ngIf="userType=='therapist'"
                    style="font-size: .8em; text-align: center; margin-top: 1em; padding-top: .5em; display: block; width: 100%;">
           Código</ion-label>
         <ion-button shape="round"
                     fill="outline"
                     color="light"
-                    *ngIf="userType=='therapist'"
                     expand="full">
           <p>{{user.detail?.code}}</p>
         </ion-button>
         <ion-button color="tertiary"
-                    *ngIf="userType=='therapist'"
                     shape="round"
                     [routerLink]="['/schedule']">
           Mis Horarios
@@ -64,7 +62,31 @@
                     name="time"></ion-icon>
         </ion-button>
       </ion-col>
-      <ion-col>
+
+      <ion-col size="10"
+               *ngIf="userType=='patient'">
+        <ion-label color="light"
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Correo
+            Electrónico:</b>
+          {{user.email}}</ion-label>
+
+        <ion-label color="light"
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Teléfono:</b>
+          {{user.cel}}</ion-label>
+
+        <ion-label color="light"
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Terapeuta:</b>
+          {{user.therapist?.name || 'No'}} {{user.therapist?.last_name || 'Asignado'}}</ion-label>
+
+        <!-- <ion-label color="light"
+                   style="font-size: .8em; text-align: center; margin-top: 1em; padding-top: .5em; display: block; width: 100%;">
+          Código</ion-label>
+        <ion-button shape="round"
+                    fill="outline"
+                    color="light"
+                    expand="full">
+          <p>{{user.}}</p>
+        </ion-button> -->
       </ion-col>
     </ion-row>
   </ion-grid>

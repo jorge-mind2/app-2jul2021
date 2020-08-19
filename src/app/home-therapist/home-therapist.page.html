@@ -25,6 +25,7 @@
       <ion-card color="secondary next-appointment-info"
                 class="ion-padding-horizontal"
                 *ngIf="user?.nextAppointment"
+                (click)="showSchedule()"
                 button>
         <ion-card-content class="ion-text-center">
           <ion-label>

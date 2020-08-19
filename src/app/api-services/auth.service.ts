@@ -40,8 +40,8 @@ export class AuthService implements OnInit {
 
       if (!isExpired) {
         // console.log('Token', token);
-        const currentUser = await this.getServerCurrentUser()
-        console.log('currentUser', currentUser);
+        /* const currentUser = await this.getServerCurrentUser()
+        console.log('currentUser', currentUser); */
 
         const userType = await this.storage.get('userType')
         this.token = token;

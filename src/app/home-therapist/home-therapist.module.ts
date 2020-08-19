@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 
 import { HomeTherapistPage } from './home-therapist.page';
 import { MenuComponentModule } from '../menu/menu.module';
+import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
+import { CommonPagesModule } from '../common/common-pages.module';
 
 const routes: Routes = [
   {
@@ -21,9 +23,11 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     MenuComponentModule,
-    RouterModule.forChild(routes)
+    CommonPagesModule,
+    RouterModule.forChild(routes),
   ],
+  entryComponents: [NextAppointmentComponent],
   declarations: [HomeTherapistPage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class HomeTherapistPageModule { }

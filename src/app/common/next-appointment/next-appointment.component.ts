@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/api-services/auth.service';
 export class NextAppointmentComponent implements OnInit {
   @Input() patient: any
   @Input() therapist: any
+  @Input() onlySchedule: any
   appointmentDate: moment.Moment = moment().add('day', 1).startOf('day').add('hours', 10)
   appointmentDateStr: string = this.appointmentDate.toISOString()
   appointmentDateDate: Date = this.appointmentDate.toDate()
@@ -43,6 +44,10 @@ export class NextAppointmentComponent implements OnInit {
   ngOnInit() {
     this.therapistAvailable = this.therapist.availability.length
     this.calendarOptions.to = this.todayToFifthDate
+    if (this.onlySchedule) {
+      this.view = 'appointments'
+      return this.getMyAppointments()
+    }
     this.appointment.userId = '' + this.patient.id
     this.calendarOptions.daysConfig = this.patient.appointments.map(appointment => {
       return {
@@ -78,9 +83,15 @@ export class NextAppointmentComponent implements OnInit {
 
   public async getMyAppointments() {
     const appointments = await this.api.getUserAppointments(await this.auth.getCurrentId())
+    console.log('appointments', appointments.data);
+    const currentUserId = await this.auth.getCurrentId()
     this.groupedAppointments = appointments.data.map(a => {
       a.order = a.group == 'today' ? 0 : a.group == 'next' ? 1 : 2
       a.name = a.group == 'today' ? 'Hoy' : a.group == 'next' ? 'Próximas' : 'Pasadas'
+      a.appointments = a.appointments.map(A => {
+        A.user = A.users.find(u => u.id !== currentUserId)
+        return A
+      })
       return a
     }).sort((a, b) => a.order - b.order)
     console.log('this.groupedAppointments', this.groupedAppointments);

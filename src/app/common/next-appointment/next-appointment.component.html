@@ -15,9 +15,10 @@
     <ion-segment (ionChange)="setView($event)"
                  color="light"
                  mode="md"
-                 value="schedule">
+                 [value]="view">
       <ion-segment-button value="schedule"
-                          color="light">
+                          color="light"
+                          *ngIf="!onlySchedule">
         <ion-label color="light">
           <ion-icon name="calendar"></ion-icon> Agendar
         </ion-label>
@@ -114,6 +115,14 @@
               <ion-text color="light"
                         class="ion-padding-start">
                 {{appointment.start_time.substring(0,5)}} hrs.
+              </ion-text>
+            </ion-row>
+            <ion-row>
+              <ion-icon color="light"
+                        name="person"></ion-icon>
+              <ion-text color="light"
+                        class="ion-padding-start">
+                {{appointment.user.name}} {{appointment.user.last_name}}
               </ion-text>
             </ion-row>
           </ion-grid>
