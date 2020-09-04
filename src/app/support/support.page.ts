@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
@@ -12,7 +12,7 @@ import { CometChatService } from '../comet-chat.service';
   templateUrl: './support.page.html',
   styleUrls: ['../chat/chat.page.scss', './support.page.scss'],
 })
-export class SupportPage implements OnInit {
+export class SupportPage implements OnInit, OnDestroy {
 
   conversation: any[] = [];
   phone_model: string = 'iPhone'
@@ -55,18 +55,15 @@ export class SupportPage implements OnInit {
 
   }
 
-  ionViewWillEnter() {
-  }
-
   ionViewDidEnter() {
     setTimeout(() => {
       this.scrollToBottom()
     }, 10)
   }
 
-  ionViewWillLeave() {
+  ngOnDestroy() {
     this.cometchat.removeMessageListener(this.receiverUID);
-    this.cometchat.onMessageTextReceived.unsubscribe()
+    // this.cometchat.onMessageTextReceived.unsubscribe()
   }
 
   handleMessageReception(message: CometChat.TextMessage, senderType: number) {

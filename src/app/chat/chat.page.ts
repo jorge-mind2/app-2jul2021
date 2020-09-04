@@ -17,7 +17,7 @@ import * as moment from 'moment'
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit {
+export class ChatPage implements OnInit, OnDestroy {
   // @ViewChild('chatBox') private chatBox: any;
   @ViewChild(IonContent, { read: IonContent }) chatBox: IonContent;
   messages: any[] = [];
@@ -116,11 +116,7 @@ export class ChatPage implements OnInit {
 
   }
 
-
-  ionViewWillEnter() {
-  }
-
-  ionViewWillLeave() {
+  ngOnDestroy() {
     this.cometchat.removeMessageListener(this.receiverUID);
     this.cometchat.removeCallListener(this.receiverUID);
     // this.cometchat.onMessageTextReceived.unsubscribe()
