@@ -22,7 +22,11 @@ export class CheckoutPage implements OnInit {
   view: string = 'card'
   cards: Array<any> = []
   selectedCard: any = {}
-  paymentPending = { status: null }
+  paymentPending = {
+    status: null,
+    expired: true,
+    expiration_date: null
+  }
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertCtrl: AlertController,
@@ -47,7 +51,12 @@ export class CheckoutPage implements OnInit {
     if (dataCards.data) {
       this.cards = dataCards.data.result.cards
       console.log('this.cards', this.cards);
-      if (dataCards.data.result.pending_payment && dataCards.data.result.pending_payment.status == 2) this.paymentPending = dataCards.data.result.pending_payment
+      if (dataCards.data.result.pending_payment && dataCards.data.result.pending_payment.status == 2) {
+        this.paymentPending = dataCards.data.result.pending_payment
+        this.paymentPending.expired = moment(this.paymentPending.expiration_date).isBefore(moment(), 'day')
+      }
+      console.log(this.paymentPending);
+
       this.selectThisCard(this.cards[0])
     }
     this.loadingCtrl.dismiss()
@@ -139,6 +148,8 @@ export class CheckoutPage implements OnInit {
       }
       */
       this.paymentPending = postPayment.data.result
+      console.log('this.paymentPending', this.paymentPending);
+
       this.loadingCtrl.dismiss().finally(() => {
         this.presentSuccessAlert('Recibo generado exitosamente.')
       })

@@ -28,6 +28,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
+    // const p = this.api.getPackasAvailability().then(data => console.log('getPackasAvailability', data))
   }
 
   ionViewWillEnter() {
@@ -35,7 +36,7 @@ export class HomePage implements OnInit {
     this.setUnreadMessages()
   }
 
-  private getUser() {
+  private getUser(event?) {
     this.auth.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()
@@ -45,18 +46,21 @@ export class HomePage implements OnInit {
       // this.user.groupedAppointments = groupedAppointments.data
       const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
       const nextAppointment = nextAppointments.appointments[0]
-      const date = `${nextAppointment.date} ${nextAppointment.start_time}`
+      const date = nextAppointment ? `${nextAppointment.date} ${nextAppointment.start_time}` : undefined
       this.user.nextAppointment = nextAppointment ? {
         date: moment(date).format('DD [de] MMMM, YYYY'),
         start_time: moment(date).format('hh:mm'),
         am_pm: moment(date).format('a')
       } : undefined
-      console.log(this.user.nextAppointment);
+      // console.log(this.user.nextAppointment);
+      if (event) event.target.complete()
+    }).catch(error => {
+      if (event) event.target.complete()
     });
   }
 
   private async setUnreadMessages() {
-    if (!this.user) return
+    if (!this.user || !this.user.role) return
     const unreadMessages = await this.storageService.getUnreadMessages()
 
     if (this.user.therapist) {

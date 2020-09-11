@@ -8,6 +8,7 @@
     <ion-buttons slot="end">
       <ion-button defaultHref="plans"
                   [routerLink]="['/add-card']"
+                  queryParamsHandling="merge"
                   color="light"
                   iconOnly
                   *ngIf="view == 'card'">
@@ -53,7 +54,8 @@
       <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-button color="tertiary"
                     shape="round"
-                    [routerLink]="['/add-card']">Nueva tarjeta <ion-icon slot="start"
+                    [routerLink]="['/add-card']"
+                    queryParamsHandling="merge">Nueva tarjeta <ion-icon slot="start"
                     name="add"></ion-icon>
         </ion-button>
       </ion-row>
@@ -107,12 +109,6 @@
   </div>
   <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
        *ngIf="view == 'store'">
-    <ion-button expand="full"
-                color="secondary"
-                size="large"
-                (click)="getPaymentTicket()"
-                shape="round"
-                *ngIf="!paymentPending.status || paymentPending.status!=2">Obtener recibo de pago</ion-button>
     <ion-card color="light"
               *ngIf="paymentPending.status && paymentPending.status==2">
       <ion-card-content>
@@ -139,11 +135,21 @@
         <h3 class="ion-text-right">
           <a [href]="paymentPending.url"
              class="ion-text-capitalize"
+             *ngIf="!paymentPending.expired"
              target="_blank">Descargar recibo</a>
+          <p style="color: red"
+             *ngIf="paymentPending.expired">Recibo vencido</p>
         </h3>
         <!-- (click)="downloadTicket(paymentPending.url, 'mind2')">Descargar recibo</ion-button> -->
       </ion-card-content>
     </ion-card>
+    <ion-button expand="full"
+                color="secondary"
+                size="large"
+                (click)="getPaymentTicket()"
+                shape="round"
+                *ngIf="!paymentPending.status || paymentPending.status!=2 || paymentPending.expired">Obtener recibo de
+      pago</ion-button>
   </div>
 
 </ion-content>
@@ -151,8 +157,8 @@
   <ion-card color="light">
     <ion-card-content>
       <ion-text class="ion-text-right">
-        <h2><b>Descripción:</b> {{plan.name}}</h2>
-        <h3><b>Costo:</b> {{plan.amount | currency}}</h3>
+        <h2><b>Descripción:</b> {{plan?.name}}</h2>
+        <h3><b>Costo:</b> {{plan?.amount | currency}}</h3>
         <h3><b>Pagar con tarjeta:</b> {{selectedCard.number}}</h3>
       </ion-text>
     </ion-card-content>

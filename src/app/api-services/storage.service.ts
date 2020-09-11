@@ -2,6 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ILocalNotification } from '@ionic-native/local-notifications/ngx';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class StorageService {
 
   onSetUnreadMessages: EventEmitter<any> = new EventEmitter()
   constructor(
-    private storage: Storage
+    private storage: Storage,
+    private auth: AuthService
   ) { }
 
   async setUnreadMessages(message: CometChat.TextMessage, setUnread: boolean): Promise<void> {
@@ -49,5 +51,19 @@ export class StorageService {
   async getNotificationsSchedule(): Promise<ILocalNotification[]> {
     const notificationSchedule = await this.storage.get('notification_schedule')
     return [].concat(notificationSchedule || [])
+  }
+
+  async updateCurrentUser(newUser: any): Promise<any> {
+    let currentUser = await this.auth.getCurrentUser()
+    // console.log('currentUser', currentUser);
+    // console.log('newUser', newUser);
+
+    Array.from(Object.keys(newUser)).forEach((val, indx) => {
+      // console.log(val);
+      // console.log(indx);
+      currentUser[val] = newUser[val]
+    })
+
+    return await this.auth.setCurrentUser(currentUser)
   }
 }

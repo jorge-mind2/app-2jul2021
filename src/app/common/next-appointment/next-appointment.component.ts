@@ -4,6 +4,7 @@ import { ModalController, ToastController, AlertController } from '@ionic/angula
 import { ApiService } from 'src/app/api-services/api.service';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/api-services/auth.service';
+import { StorageService } from 'src/app/api-services/storage.service';
 
 @Component({
   selector: 'app-next-appointment',
@@ -26,6 +27,7 @@ export class NextAppointmentComponent implements OnInit {
   appointment: any = {
     start_time: '',
     end_time: '',
+    real_end_time: '',
     userId: null,
     date: null
   }
@@ -33,10 +35,18 @@ export class NextAppointmentComponent implements OnInit {
   therapistAvailable: boolean = false
   view: string = 'schedule'
   groupedAppointments: any[]
+  packageAvailability: any = {
+    count_appointment: null,
+    package_name: "",
+    package_product_quantity: null,
+    availability: 0
+  }
+  moment = moment
   constructor(
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private storage: StorageService,
     private auth: AuthService,
     private api: ApiService
   ) { }
@@ -44,6 +54,15 @@ export class NextAppointmentComponent implements OnInit {
   ngOnInit() {
     this.therapistAvailable = this.therapist.availability.length
     this.calendarOptions.to = this.todayToFifthDate
+    this.api.getPackasAvailability().then(response => {
+      console.log('getPackasAvailability', response)
+      if (response.data) {
+        this.packageAvailability = response.data
+        this.packageAvailability.availability = +response.data.package_product_quantity - +response.data.count_appointment
+      }
+      console.log('this.package', this.packageAvailability);
+
+    })
     if (this.onlySchedule) {
       this.view = 'appointments'
       return this.getMyAppointments()
@@ -102,6 +121,7 @@ export class NextAppointmentComponent implements OnInit {
     this.hoursAvailability = this.hoursAvailability.map(hour => Object.assign(hour, { color: hour.start_time == selectedHour.start_time ? 'success' : 'tertiary', selected: hour.start_time == selectedHour.start_time }))
     this.appointment.start_time = `${selectedHour.start_time}:00`
     this.appointment.end_time = `${selectedHour.end_time}:00`
+    this.appointment.real_end_time = `${selectedHour.start_time}:50`
   }
 
   public selectCalendarDay(selectedDate: Date): void {
@@ -122,6 +142,10 @@ export class NextAppointmentComponent implements OnInit {
       // return console.log(this.appointment)
       const newAppointment = await this.api.createAppointment(this.appointment)
       console.log(newAppointment);
+      this.patient.appointments.push(newAppointment.data)
+      if (this.patient.id == await this.auth.getCurrentId()) {
+        await this.storage.updateCurrentUser(this.patient)
+      }
       // this.presentToast('Cita guardada')
       this.presentToast('Cita guardada').finally(() => this.closeModal(true))
 

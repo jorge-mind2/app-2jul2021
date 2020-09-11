@@ -40,6 +40,10 @@
               lines="none">
       <ion-text color="light">
         <p>{{patient?.name}} {{patient?.last_name}}</p>
+        <p *ngIf="packageAvailability.availability">Tienes {{packageAvailability.availability}}
+          {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
+          tu plan activo</p>
+        <p *ngIf="!packageAvailability.availability">Obtén un plan de sesiones para poder agendar con tu terapeuta</p>
       </ion-text>
     </ion-item>
 
@@ -79,7 +83,7 @@
           La cita será el día: <b>{{appointmentDateDate | date: 'd MMMM, y'}}</b>
         </p>
         <p>Inicia: <b>{{appointment.start_time}} hrs.</b></p>
-        <p>Finaliza: <b>{{appointment.end_time}} hrs.</b></p>
+        <p>Finaliza: <b>{{appointment.real_end_time}} hrs.</b></p>
       </ion-text>
     </ion-item>
     <ion-button shape="round"
@@ -106,7 +110,7 @@
                         name="calendar"></ion-icon>
               <ion-text color="light"
                         class="ion-padding-start">
-                {{appointment.date}}
+                {{moment(appointment.date).format('LLLL')}}
               </ion-text>
             </ion-row>
             <ion-row>

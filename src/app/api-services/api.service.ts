@@ -115,4 +115,8 @@ export class ApiService {
   public async getUserAppointments(id: number): Promise<any> {
     return await this.http.get(`/users/${id}/appointments`).toPromise()
   }
+
+  public async getPackasAvailability(): Promise<any> {
+    return await this.http.get('/users/packages-availability').toPromise()
+  }
 }

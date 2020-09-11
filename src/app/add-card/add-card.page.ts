@@ -7,6 +7,7 @@ import { SR_PAGO } from "../keys";
 import { AlertController, LoadingController, ToastController, NavController } from '@ionic/angular';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
+import { environment } from "../../environments/environment";
 
 declare var SrPago: any
 declare var $: any
@@ -62,7 +63,8 @@ export class AddCardPage implements OnInit {
         billingPhoneNumber_D: ['', Validators.required]
       })
     })
-    SrPago.setLiveMode(false)
+    const isProd = environment.production
+    SrPago.setLiveMode(isProd)
     SrPago.setPublishableKey(SR_PAGO.APIKEY)
     this.auth.getCurrentUser().then(usr => {
       this.user = usr
@@ -106,12 +108,15 @@ export class AddCardPage implements OnInit {
         console.log(e);
         this.saveCard(e.token)
       }, async error => {
-        throw error.message
+        console.log(error);
+        throw error
       });
     } catch (error) {
       this.loadingCtrl.dismiss();
       await this.presentErrorAlert(error.message);
       console.log(error);
+      console.log(error.code);
+
 
     }
   }
@@ -123,7 +128,7 @@ export class AddCardPage implements OnInit {
       const newCard = await this.api.createCard(this.card)
       console.log(newCard);
       this.loadingCtrl.dismiss();
-      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.pop())
+      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.navigateBack('checkout', { queryParamsHandling: 'merge', preserveQueryParams: true }))
     } catch (error) {
       this.loadingCtrl.dismiss();
     }

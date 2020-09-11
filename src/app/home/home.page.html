@@ -9,6 +9,10 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-refresher slot="fixed"
+                 (ionRefresh)="getUser($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
   <ion-item text-center
             lines="none">
