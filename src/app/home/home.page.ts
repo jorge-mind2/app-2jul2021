@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
     this.setUnreadMessages()
   }
 
-  private getUser(event?) {
+  getUser(event?) {
     this.auth.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()

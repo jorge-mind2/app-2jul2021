@@ -64,7 +64,9 @@ export class AddCardPage implements OnInit {
       })
     })
     const isProd = environment.production
-    SrPago.setLiveMode(isProd)
+    // TODO
+    // Cambiar A producción
+    SrPago.setLiveMode(false)
     SrPago.setPublishableKey(SR_PAGO.APIKEY)
     this.auth.getCurrentUser().then(usr => {
       this.user = usr

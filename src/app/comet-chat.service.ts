@@ -139,6 +139,11 @@ export class CometChatService {
           // Paciente aceptó la llamada - terapeuta inicia la llamada
           console.log("Outgoing call accepted:", call);
           var sessionID = call.sessionId;
+          if (await __self.auth.getUserType() == 'therapist') {
+            await __self.modalCtrl.dismiss({ cancelled: false }).finally(async () => {
+              await __self.presentLoading('Conectando...')
+            })
+          }
           await __self.startCall(sessionID)
         },
         async onOutgoingCallRejected(call: CometChat.Call) {
@@ -184,7 +189,9 @@ export class CometChatService {
   }
 
   private async startCall(sessionID: string): Promise<boolean> {
-    return await this.navCtrl.navigateForward(['video-call'], { queryParams: { sessionID }, queryParamsHandling: "merge" }).finally(() => this.loadingCtrl.dismiss())
+    return await this.navCtrl.navigateForward(['video-call'], { queryParams: { sessionID }, queryParamsHandling: "merge" }).finally(async () => {
+      if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
+    })
   }
 
   async getConversation(receiverUID: string): Promise<CometChat.BaseMessage[] | []> {
@@ -249,7 +256,6 @@ export class CometChatService {
       this.cancelCall(sessionID)
     } else {
       this.acceptCall(sessionID)
-      await this.presentLoading('Conectando...')
     }
   }
 
