@@ -5,7 +5,6 @@ import { AuthGuard } from './auth.guard';
 const routes: Routes = [
   { path: '', loadChildren: './welcome/welcome.module#WelcomePageModule' },
   { path: 'login', loadChildren: './login/login.module#LoginModule', },
-  { path: 'sign-up', loadChildren: './sign-up/sign-up.module#SignUpPageModule' },
   { path: 'sign-up-patient', loadChildren: './sign-up-patient/sign-up-patient.module#SignUpPatientPageModule' },
   { path: 'sign-up-therapist', loadChildren: './sign-up-therapist/sign-up-therapist.module#SignUpTherapistPageModule' },
   { path: 'welcome', loadChildren: './welcome/welcome.module#WelcomePageModule' },
@@ -13,8 +12,6 @@ const routes: Routes = [
   { path: 'home', loadChildren: './home/home.module#HomePageModule', canActivate: [AuthGuard] },
   { path: 'support', loadChildren: './support/support.module#SupportPageModule', canActivate: [AuthGuard] },
   { path: 'home-therapist', loadChildren: './home-therapist/home-therapist.module#HomeTherapistPageModule', canActivate: [AuthGuard] },
-  { path: 'call-patient', loadChildren: './call-patient/call-patient.module#CallPatientPageModule', canActivate: [AuthGuard] },
-  { path: 'call-therapist', loadChildren: './call-therapist/call-therapist.module#CallTherapistPageModule', canActivate: [AuthGuard] },
   { path: 'payment-methods', loadChildren: './payment-methods/payment-methods.module#PaymentMethodsPageModule', canActivate: [AuthGuard] },
   { path: 'add-card', loadChildren: './add-card/add-card.module#AddCardPageModule', canActivate: [AuthGuard] },
   { path: 'plans', loadChildren: './plans/plans.module#PlansPageModule', canActivate: [AuthGuard] },
