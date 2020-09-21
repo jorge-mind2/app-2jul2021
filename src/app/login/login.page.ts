@@ -4,7 +4,7 @@ import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { Route, ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../api-services/auth.service';
-import { CometChatService } from '../comet-chat.service';
+import { CometChatService } from '../api-services/comet-chat.service';
 import { Device } from '@ionic-native/device/ngx';
 
 @Component({

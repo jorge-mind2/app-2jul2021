@@ -4,7 +4,7 @@ import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { CalendarModalOptions } from 'ion2-calendar';
-import { CometChatService } from '../comet-chat.service';
+import { CometChatService } from '../api-services/comet-chat.service';
 import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { ApiService } from '../api-services/api.service';

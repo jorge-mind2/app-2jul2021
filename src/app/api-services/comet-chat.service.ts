@@ -1,11 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
-import { IncomingCallComponent } from './incoming-call/incoming-call.component';
-import { AuthService } from './api-services/auth.service';
-import { COMETCHAT } from './keys';
-import { PushNotificationsService } from './api-services/push-notifications.service';
-import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
+import { IncomingCallComponent } from '../incoming-call/incoming-call.component';
+import { AuthService } from './auth.service';
+import { COMETCHAT } from '../keys';
+import { PushNotificationsService } from './push-notifications.service';
+import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
 
 @Injectable({
   providedIn: 'root'

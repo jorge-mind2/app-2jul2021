@@ -4,7 +4,7 @@ import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './api-services/auth.service';
-import { CometChatService } from './comet-chat.service';
+import { CometChatService } from './api-services/comet-chat.service';
 import { StorageService } from './api-services/storage.service';
 import { PushNotificationsService } from './api-services/push-notifications.service';
 

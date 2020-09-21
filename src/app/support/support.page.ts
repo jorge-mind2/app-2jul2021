@@ -5,7 +5,7 @@ import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
-import { CometChatService } from '../comet-chat.service';
+import { CometChatService } from '../api-services/comet-chat.service';
 
 @Component({
   selector: 'app-support',

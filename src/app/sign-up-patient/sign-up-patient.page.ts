@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController, AlertController, NavController } from '@ionic/angular';
 import { TermsPage } from '../terms/terms.page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CometChatService } from "../comet-chat.service";
+import { CometChatService } from "../api-services/comet-chat.service";
 
 import { appConstants } from "../constants.local";
 import { AuthService } from '../api-services/auth.service';

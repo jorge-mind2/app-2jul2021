@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api-services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
-import { CometChatService } from '../comet-chat.service';
+import { CometChatService } from '../api-services/comet-chat.service';
 import { appConstants } from '../constants.local';
 import { TermsPage } from '../terms/terms.page';
 import * as moment from "moment";
