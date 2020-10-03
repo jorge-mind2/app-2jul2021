@@ -75,12 +75,16 @@ export class HomePage implements OnInit {
       this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, contactanos en el chat de servicio para poder asignarte uno.')
     } else {
       const receiverId = this.user.therapist.cometChatId;
+      this.storageService.setCurrentchatId(`${this.user.id}_chat_therapist_${this.user.therapist.id}`)
+      this.storageService.setCurrentReceiver(this.user.therapist)
       this.navCtrl.navigateForward('chat', { queryParams: { type, receiverId } })
     }
   }
 
   public goToSupportChat() {
     const receiverId = this.user.support.cometChatId;
+    this.storageService.setCurrentchatId(`${this.user.id}_chat_support_${this.user.support.id}`)
+    this.storageService.setCurrentReceiver(this.user.support)
     this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
   }
 

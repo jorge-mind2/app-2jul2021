@@ -7,6 +7,7 @@ import { AuthService } from './api-services/auth.service';
 import { CometChatService } from './api-services/comet-chat.service';
 import { StorageService } from './api-services/storage.service';
 import { PushNotificationsService } from './api-services/push-notifications.service';
+import { TwilioService } from './api-services/twilio.service';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class AppComponent {
     private cometchat: CometChatService,
     private storageService: StorageService,
     private notifications: PushNotificationsService,
+    private twilioService: TwilioService
   ) {
     this.auth.authenticationState.subscribe(async state => {
       console.log('state', state);
@@ -50,6 +52,7 @@ export class AppComponent {
       await this.auth.checkToken()
       this.splashScreen.hide();
       this.cometchat.initializeCometChat()
+      await this.twilioService.login()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
       this.notifications.onNotification.subscribe(async message => {
         await this.storageService.setUnreadMessages(message, true)

@@ -44,6 +44,8 @@ export class HomeTherapistPage implements OnInit {
         patient
       }
     };
+    this.storageService.setCurrentchatId(`${patient.id}_chat_therapist_${this.user.id}`)
+    this.storageService.setCurrentReceiver(patient)
     this.navCtrl.navigateForward('chat', { ...navigationExtras })
   }
 

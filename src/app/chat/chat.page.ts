@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events, IonContent } from '@ionic/angular';
-import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { CalendarModalOptions } from 'ion2-calendar';
@@ -10,32 +9,23 @@ import { NextAppointmentComponent } from '../common/next-appointment/next-appoin
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { OptionsComponent } from './options/options.component';
-import * as moment from 'moment'
+import { TwilioCallComponent } from '../common/twilio-call/twilio-call.component';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit, OnDestroy {
-  // @ViewChild('chatBox') private chatBox: any;
-  @ViewChild(IonContent, { read: IonContent }) chatBox: IonContent;
-  messages: any[] = [];
-  phone_model: string = 'iPhone';
-  input: string = '';
+export class ChatPage implements OnInit {
+  receiverUID: string
   loginType: string = '';
-  receiverUID: string = '';
-  ccUser: any
   therapist: any
   patient: any = {}
-  loggedUser: any = {
-    therapist: {},
-  }
-  receiverName: string
-  receiverPhoto: string
-  senderPhoto: string
+  receiver: any
+  sender: any
+  chatId: string
+
   defaultBackHref: string = 'home'
-  moment = moment
   constructor(
     private platform: Platform,
     private events: Events,
@@ -48,9 +38,9 @@ export class ChatPage implements OnInit, OnDestroy {
     private router: Router,
     private modalCtrl: ModalController,
     private cometchat: CometChatService,
-    private storageService: StorageService,
     private auth: AuthService,
-    private api: ApiService
+    private api: ApiService,
+    private storage: StorageService
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -64,6 +54,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.receiver = await this.storage.getCurrentReceiver()
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
         result => console.log('Has permission?', result.hasPermission),
@@ -86,108 +77,7 @@ export class ChatPage implements OnInit, OnDestroy {
         this.androidPermissions.PERMISSION.RECORD_AUDIO
       ]);
     }
-
-    window.addEventListener('resize', () => {
-      this.scrollToBottom()
-    });
-
-    // get cometchat logged user
-    this.ccUser = await CometChat.getLoggedinUser()
-    this.loggedUser = await this.auth.getCurrentUser()
-    this.loginType = this.loggedUser.role.name || this.loginType;
-    if (this.loginType == 'therapist') this.cometchat.initCallListener(this.receiverUID)
-
-    if (this.loginType == 'patient') {
-      this.receiverPhoto = this.api.getPhotoProfile(this.loggedUser.therapist)
-      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
-      this.receiverName = this.loggedUser.therapist.name
-    } else if (this.loginType == 'therapist') {
-      this.receiverPhoto = this.api.getPhotoProfile(this.patient)
-      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
-      this.receiverName = this.patient.name
-    }
-
-    // init listener cometchat
-    this.cometchat.initMessageListener(
-      this.receiverUID
-    );
-    this.cometchat.onMessageTextReceived.subscribe(data => { if (data.receiverUID == this.receiverUID) this.handlerMessage(data.message, data.senderType) })
-    this.getLastConversation();
-
   }
-
-  ngOnDestroy() {
-    this.cometchat.removeMessageListener(this.receiverUID);
-    this.cometchat.removeCallListener(this.receiverUID);
-    // this.cometchat.onMessageTextReceived.unsubscribe()
-    window.removeEventListener('resize', () => { })
-  }
-
-  private async getLastConversation() {
-    const messages: any[] = await this.cometchat.getConversation(this.receiverUID)
-    const type = this.loginType == 'therapist' ? 'patient' : 'therapist'
-    const selectedMessage = messages.find((message: CometChat.TextMessage) => message.getSender().getRole() == type)
-    console.log('selectedMessage', selectedMessage.getSender().getUid());
-
-    if (selectedMessage) this.storageService.setUnreadMessages(selectedMessage, false)
-
-    this.messages = messages.filter((message: CometChat.BaseMessage): any => message.getType() == 'text').map((message: CometChat.TextMessage) => {
-      return {
-        text: message.getText(),
-        senderType: this.ccUser.uid == message.getSender().getUid() ? 1 : 0,
-        sender: message.getSender().getName(),
-        image: this.ccUser.uid == message.getSender().getUid() ? this.senderPhoto : this.receiverPhoto,
-        sentAt: message.getSentAt()
-      }
-    })
-    console.log('OnInit BEFORE');
-
-    setTimeout(() => {
-      console.log('OnInit');
-
-      this.scrollToBottom(0)
-    }, 50)
-  }
-
-
-  public async sendChatMessage() {
-    if (this.input.replace(/\s/g, '').length <= 0) return
-    const receiverID = this.receiverUID;
-    const messageText = this.input;
-    const receiverType = CometChat.RECEIVER_TYPE.USER;
-    this.input = ''
-    const textMessage = new CometChat.TextMessage(receiverID, messageText, receiverType);
-    const newMessage: any = await CometChat.sendMessage(textMessage)
-    this.handlerMessage(newMessage, 1)
-  }
-
-
-  private handlerMessage(message: CometChat.TextMessage, senderType: number): void {
-    this.messages.push({
-      text: message.getText(),
-      sender: message.getSender().getName(),
-      senderType,
-      image: senderType == 1 ? this.senderPhoto : this.receiverPhoto,
-      sentAt: message.getSentAt()
-    });
-
-    setTimeout(() => {
-      this.scrollToBottom()
-    }, 10)
-  }
-
-
-  printDate(time1, time2?) {
-    if (time2) {
-      if (new Date(time1 * 1000).getDate() - new Date(time2 * 1000).getDate()) {
-        return new Date(time1 * 1000).toLocaleDateString();
-      }
-    } else {
-      return new Date(time1 * 1000).toLocaleDateString();
-    }
-    return undefined;
-  }
-
 
   /**
    * Init CometChat video Call
@@ -196,21 +86,13 @@ export class ChatPage implements OnInit, OnDestroy {
     this.cometchat.initVideoCall(this.receiverUID)
   }
 
-  private async scrollToBottom(duration: number = 300) {
-    let content = window.document.getElementById("chat-container");
-    let parent = window.document.getElementById("chat-parent");
-    /* console.log('content', content);
-    console.log('parent', parent);
-    console.log('this.chatBox', this.chatBox); */
-
-    /* let scrollOptions = {
-      left: 0,
-      top: content.offsetHeight
-    } */
-    await this.chatBox.scrollToBottom(duration)
-
-    // el.scrollTo(scrollOptions)
-    // parent.scrollTo(scrollOptions)
+  async openTwilioScreen(ev) {
+    const modal = await this.modalCtrl.create({
+      component: TwilioCallComponent,
+      componentProps: {
+      }
+    });
+    return await modal.present()
   }
 
   async presentCallAlert() {

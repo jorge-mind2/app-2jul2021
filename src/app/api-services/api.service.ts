@@ -105,7 +105,7 @@ export class ApiService {
   }
 
   public getPhotoProfile(user: any): string {
-    return user.photo ? `${this.getBaseURL()}/users/photo/${user.photo}` : `https://ui-avatars.com/api/?size=128&background=006675&color=fff&name=${user.name.substring(0, 1)}+${user.last_name.substring(0, 1)}`
+    return user.photo ? `${this.getBaseURL()}/users/photo/${user.photo}` : `https://avatar.oxro.io/avatar.svg?size=128&background=006675&color=fff&name=${user.name.substring(0, 1)}+${user.last_name.substring(0, 1)}`
   }
 
   public async setUserSessionPrice(id: number, price: string): Promise<any> {
@@ -118,5 +118,9 @@ export class ApiService {
 
   public async getPackasAvailability(): Promise<any> {
     return await this.http.get('/users/packages-availability').toPromise()
+  }
+
+  public async getTwilioToken(): Promise<any> {
+    return await this.http.get('/users/twilio-token').toPromise()
   }
 }

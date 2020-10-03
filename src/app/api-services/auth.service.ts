@@ -13,7 +13,7 @@ const CURRENT_USER = 'currentUser'
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService implements OnInit {
+export class AuthService {
   private headers
   public token: string
   public userType: string
@@ -21,12 +21,8 @@ export class AuthService implements OnInit {
   constructor(
     private storage: Storage,
     private http: HttpClient,
-    private helper: JwtHelperService
+    private helper: JwtHelperService,
   ) {
-  }
-
-  ngOnInit() {
-
   }
 
   async checkToken() {
