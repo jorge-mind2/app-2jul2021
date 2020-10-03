@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-title>
+      <span>
+        Sesión Mind<sup>2</sup> - Twilio
+      </span>
+      <!-- <span class="timer ion-float-end">{{time}}</span> -->
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #scrollArea
+             fullscreen>
+
+  <div id="video-container">
+
+    <div id="local"
+         #localVideo>
+      <!-- <p>local video</p> -->
+    </div>
+
+    <div id="remote"
+         #remoteVideo>
+      <!-- <p>remote video</p> -->
+    </div>
+    <!-- <ion-input type="text"
+               color="secondary"
+               [(ngModel)]="username"
+               placeholder="username"></ion-input>
+
+    <ion-input type="text"
+               color="secondary"
+               [(ngModel)]="roomName"
+               placeholder="room name"></ion-input>
+
+    <ion-button [disabled]="twilioService.roomObj ? true : false"
+                value="connect"
+                (click)="connect()">Conectar</ion-button>
+
+    <ion-button [disabled]="!twilioService.roomObj ? true : false"
+                value="disconnect"
+                (click)="disconnect()">Desconectar</ion-button> -->
+
+  </div>
+  <ion-fab vertical="top"
+           horizontal="end"
+           edge
+           slot="fixed">
+    <ion-fab-button color="danger"
+                    (click)="disconnect()">
+      <ion-icon name="call"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
