@@ -1,5 +1,5 @@
 import { ElementRef, Injectable } from '@angular/core';
-import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
+import { NavController, AlertController, ModalController, LoadingController, Platform } from '@ionic/angular';
 import * as TwilioVideo from 'twilio-video';
 import * as TwilioChat from 'twilio-chat';
 import { BehaviorSubject } from 'rxjs';
@@ -9,6 +9,7 @@ import { Paginator } from 'twilio-chat/lib/interfaces/paginator';
 import { Message } from 'twilio-chat/lib/message';
 import { IncomingCallComponent } from '../incoming-call/incoming-call.component';
 import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
+import { PushNotificationsService } from './push-notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,20 +23,28 @@ export class TwilioService {
   loading: any;
 
   previewing: boolean;
-  room: any;
+  room: TwilioVideo.Room;
 
   client: TwilioChat.Client
   channel: Channel
   constructor(
+    private platform: Platform,
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     public storage: StorageService,
+    private pushService: PushNotificationsService
   ) {
   }
 
   async login(pushChannel?, registerForPushCallback?, showPushCallback?) {
+    console.log(this.client);
+    if (this.client) {
+      if (this.client.connectionState == 'connected' || this.client.connectionState == 'connecting') {
+        return
+      }
+    }
     const token = await this.getToken(pushChannel)
     // console.log('Token', token)
     this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
@@ -44,21 +53,30 @@ export class TwilioService {
     console.log(loggedUser);
 
     this.client.on('tokenAboutToExpire', () => {
-      console.log('this', 'tokenAboutToExpire');
+      console.log('Twilio tokenAboutToExpire');
       return this.getToken(pushChannel)
         .then(newToken => this.storage.setChatVideoToken(newToken))
     });
     this.client.on('tokenExpired', () => {
+      console.log('Twilio onTokenExpired');
       this.login(pushChannel, registerForPushCallback, showPushCallback);
     });
     this.client.on('pushNotification', (obj) => {
+      console.log('Twilio onPushNotification', obj);
       if (obj && showPushCallback) {
         showPushCallback()
       }
     });
+
     this.subscribeToAllChatClientEvents();
     if (registerForPushCallback) {
       registerForPushCallback();
+    }
+    if (this.platform.is('cordova')) {
+      this.pushService.registerForPushCallback(this.handlePushNotification, (token) => {
+        console.log('this.client', this.client);
+        console.log(token);
+      })
     }
   }
 
@@ -272,8 +290,13 @@ export class TwilioService {
     return channel
   }
 
+  async setPushRegistrationId(token) {
+    console.log('setPushRegistrationId token', token);
+    return this.client.setPushRegistrationId('fcm', token);
+  }
 
-  connectToRoom(accessToken: string, options): void {
+
+  connectToRoom(accessToken: string, options: TwilioVideo.ConnectOptions): void {
     TwilioVideo.connect(accessToken, options).then(room => {
       console.log(room);
       this.room = room
@@ -283,6 +306,29 @@ export class TwilioService {
         this.startLocalVideo();
         this.previewing = true;
       }
+
+      room.on('disconnected', (room: TwilioVideo.Room) => {
+        console.log(room.localParticipant.videoTracks);
+        // Detach the local media elements
+        room.localParticipant.videoTracks.forEach(publication => {
+          const track = publication.track
+          console.log('video track', track);
+          track.stop()
+          track.disable()
+          track.detach()
+          track._attachments.forEach(element => element.remove())
+          publication.unpublish()
+        });
+        room.localParticipant.audioTracks.forEach(publication => {
+          const track = publication.track
+          console.log('audio track', track.mediaStreamTrack);
+          track.stop()
+          track.disable()
+          track.detach()
+          track._attachments.forEach(element => element.remove())
+          publication.unpublish()
+        });
+      });
 
 
       // Attach the Participant's Media to a <div> element.
@@ -336,8 +382,23 @@ export class TwilioService {
 
   startLocalVideo(): void {
     TwilioVideo.createLocalVideoTrack().then(track => {
+      this.room.localParticipant.publishTrack(track)
       this.localVideo.nativeElement.appendChild(track.attach());
     });
+  }
+
+  toggleCamera(active) {
+    this.room.localParticipant.videoTracks.forEach(publication => {
+      if (!active) publication.track.disable();
+      else publication.track.enable()
+    })
+  }
+
+  toggleAudio(active) {
+    this.room.localParticipant.audioTracks.forEach(publication => {
+      if (!active) publication.track.disable();
+      else publication.track.enable()
+    })
   }
 
   private async acceptCall(sessionID: string): Promise<void> {

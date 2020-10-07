@@ -1,14 +1,13 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Headers } from "@angular/http";
 
-import { Storage } from '@ionic/storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
+import { StorageService } from './storage.service';
 
-const TOKEN_KEY = 'accessToken';
-const CURRENT_USER = 'currentUser'
+const TOKEN_KEY = 'accessToken'
 
 @Injectable({
   providedIn: 'root'
@@ -19,14 +18,13 @@ export class AuthService {
   public userType: string
   authenticationState = new BehaviorSubject(true)
   constructor(
-    private storage: Storage,
+    private storage: StorageService,
     private http: HttpClient,
     private helper: JwtHelperService,
-  ) {
-  }
+  ) { }
 
   async checkToken() {
-    const token = await this.storage.get(TOKEN_KEY)
+    const token = await this.storage.service.get(TOKEN_KEY)
     console.log(token);
 
     if (token) {
@@ -39,7 +37,7 @@ export class AuthService {
         /* const currentUser = await this.getServerCurrentUser()
         console.log('currentUser', currentUser); */
 
-        const userType = await this.storage.get('userType')
+        const userType = await this.storage.service.get('userType')
         this.token = token;
         this.userType = userType;
         this.authenticationState.next(true);
@@ -64,30 +62,13 @@ export class AuthService {
   }
 
   public async setToken(accessToken) {
-    await this.storage.set(TOKEN_KEY, accessToken);
+    await this.storage.service.set(TOKEN_KEY, accessToken);
     return this.token = accessToken;
   }
 
   public async isValidToken() {
-    const token = await this.storage.get(TOKEN_KEY)
+    const token = await this.storage.service.get(TOKEN_KEY)
     return this.helper.isTokenExpired(token)
-  }
-
-  public async setUserType(userType) {
-    return await this.storage.set('userType', userType);
-  }
-
-  public async getUserType() {
-    return await this.storage.get('userType');
-  }
-
-  public async setCurrentUser(user) {
-    if (user.role) await this.setUserType(user.role.name)
-    return await this.storage.set(CURRENT_USER, user);
-  }
-
-  public async getCurrentUser() {
-    return await this.storage.get(CURRENT_USER);
   }
 
   public async getServerCurrentUser() {
@@ -99,14 +80,14 @@ export class AuthService {
   }
 
   public async getCurrentId(): Promise<number> {
-    const user = await this.getCurrentUser()
+    const user = await this.storage.getCurrentUser()
     return +user.id;
   }
 
   public async setCurrenUserPhoto(photo: string): Promise<void> {
-    const user = await this.getCurrentUser()
+    const user = await this.storage.getCurrentUser()
     user.photo = photo
-    return await this.setCurrentUser(user)
+    return await this.storage.setCurrentUser(user)
   }
 
   public isAuthenticated(): boolean {
@@ -118,16 +99,15 @@ export class AuthService {
     console.log('login response', newSession);
 
     const loggedUser = newSession.data
-    await this.setCurrentUser(loggedUser.user)
+    await this.storage.setCurrentUser(loggedUser.user)
     await this.setToken(loggedUser.accessToken)
     this.authenticationState.next(true);
     return loggedUser
   }
 
   public logout(next: boolean = true) {
-    this.storage.remove(TOKEN_KEY).then(async () => {
-      await this.storage.remove(CURRENT_USER)
-      await this.storage.remove('userType')
+    this.storage.service.remove(TOKEN_KEY).then(async () => {
+      await this.storage.deleteUserStorage()
       let ccuser = await CometChat.getLoggedinUser()
       if (ccuser) await CometChat.logout()
       this.userType = ''

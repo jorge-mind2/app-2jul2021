@@ -29,10 +29,11 @@ export class AppComponent {
   ) {
     this.auth.authenticationState.subscribe(async state => {
       console.log('state', state);
-      const userType = await this.auth.getUserType();
+      const userType = await this.storageService.getUserType();
       console.log('userType', userType);
 
       if (userType && state) {
+        await this.twilioService.login()
         return true;
       }
       else {
@@ -52,7 +53,6 @@ export class AppComponent {
       await this.auth.checkToken()
       this.splashScreen.hide();
       this.cometchat.initializeCometChat()
-      await this.twilioService.login()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
       this.notifications.onNotification.subscribe(async message => {
         await this.storageService.setUnreadMessages(message, true)
