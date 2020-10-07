@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../api-services/auth.service';
 import * as moment from 'moment'
 import { ApiService } from '../api-services/api.service';
 import { ToastController, NavController } from '@ionic/angular';
 import { isArray, isUndefined } from 'util';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-schedule',
@@ -52,12 +52,12 @@ export class SchedulePage implements OnInit {
   constructor(
     private toastCtrl: ToastController,
     private navCtrl: NavController,
-    private auth: AuthService,
+    private storage: StorageService,
     private api: ApiService
   ) { }
 
   async ngOnInit() {
-    await this.auth.getCurrentUser().then(async user => {
+    await this.storage.getCurrentUser().then(async user => {
       this.user = user
       const userSchedules = await this.api.getUserSchedules(user.id)
       console.log(userSchedules.data);

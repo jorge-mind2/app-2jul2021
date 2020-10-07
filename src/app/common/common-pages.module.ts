@@ -6,12 +6,14 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { TwilioCallComponent } from './twilio-call/twilio-call.component';
 import { ChatComponent } from './chat/chat.component';
+import { VideoCallComponent } from './video-call/video-call.component';
 
 @NgModule({
   declarations: [
     NextAppointmentComponent,
     TwilioCallComponent,
-    ChatComponent
+    ChatComponent,
+    VideoCallComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +22,8 @@ import { ChatComponent } from './chat/chat.component';
     CalendarModule,
   ],
   exports: [
-    ChatComponent
+    ChatComponent,
+    VideoCallComponent
   ]
 })
 export class CommonPagesModule { }

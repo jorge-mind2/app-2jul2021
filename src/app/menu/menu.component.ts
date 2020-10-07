@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../api-services/auth.service';
 import { NavController, AlertController } from '@ionic/angular';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-menu',
@@ -11,16 +12,17 @@ export class MenuComponent implements OnInit {
   loginType: string
   constructor(
     private auth: AuthService,
+    private storage: StorageService,
     private navCtrl: NavController,
     private alertCtrl: AlertController
   ) { }
 
   async ngOnInit() {
-    this.loginType = await this.auth.getUserType()
+    this.loginType = await this.storage.getUserType()
   }
 
   public async navigateHome() {
-    const userType = await this.auth.getUserType()
+    const userType = await this.storage.getUserType()
     let home = userType == 'therapist' ? 'home-therapist' : 'home'
     this.navCtrl.navigateBack(home)
   }

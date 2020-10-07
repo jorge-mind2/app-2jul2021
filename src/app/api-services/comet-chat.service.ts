@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { COMETCHAT } from '../keys';
 import { PushNotificationsService } from './push-notifications.service';
 import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class CometChatService {
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
     private push: PushNotificationsService,
-    private auth: AuthService,
+    private storage: StorageService,
   ) {
   }
 
@@ -31,7 +32,7 @@ export class CometChatService {
       () => {
         console.log("CometChat Initialization completed successfully");
         // You can now call login function.
-        this.auth.getCurrentUser().then(async usr => {
+        this.storage.getCurrentUser().then(async usr => {
           if (usr) await this.login(usr)
         })
 
@@ -70,7 +71,7 @@ export class CometChatService {
   public async login(user: any): Promise<CometChat.User> {
     const logged = await CometChat.login(user.ccUser.auth_token)
     console.log('CometChat USER LOGGED', logged);
-    this.subscribeToCurrentUser(logged.getUid())
+    // this.subscribeToCurrentUser(logged.getUid())
     if (user.therapist) {
       this.initCallListener(`${user.therapist.uuid}`)
     }
@@ -139,7 +140,7 @@ export class CometChatService {
           // Paciente aceptó la llamada - terapeuta inicia la llamada
           console.log("Outgoing call accepted:", call);
           var sessionID = call.sessionId;
-          if (await __self.auth.getUserType() == 'therapist') {
+          if (await __self.storage.getUserType() == 'therapist') {
             await __self.modalCtrl.dismiss({ cancelled: false }).finally(async () => {
               await __self.presentLoading('Conectando...')
             })
@@ -150,14 +151,14 @@ export class CometChatService {
           // Paciente rechazó la llamada - terapeuta ve alerta de llamada no contestada
           console.log("Outgoing call rejected:", call);
           if (await __self.loadingCtrl.getTop()) __self.loadingCtrl.dismiss()
-          else if (await __self.auth.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
+          else if (await __self.storage.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
           if (call.getAction() == "rejected" || call.getStatus() == "rejected") await __self.notAnsweredAlert()
         },
         async onIncomingCallCancelled(call: CometChat.Call) {
           // Paciente no contestó llamada - terapeuta ve alerta de llamada no contestada
           console.log("Incoming call calcelled:", call);
-          if (await __self.auth.getUserType() == 'patient') await __self.modalCtrl.dismiss({ answered: false })
-          else if (await __self.auth.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
+          if (await __self.storage.getUserType() == 'patient') await __self.modalCtrl.dismiss({ answered: false })
+          else if (await __self.storage.getUserType() == 'therapist') await __self.modalCtrl.dismiss({ cancelled: true })
           if (call.getAction() == "rejected" || call.getStatus() == "rejected") await __self.notAnsweredAlert()
         }
       })

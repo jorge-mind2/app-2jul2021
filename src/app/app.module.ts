@@ -26,6 +26,7 @@ import { environment } from "../environments/environment";
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import * as moment from 'moment'
 import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
+import { Push } from '@ionic-native/push/ngx';
 moment.locale('es')
 
 export function jwtOptionsFactory(storage) {
@@ -73,6 +74,7 @@ export function jwtOptionsFactory(storage) {
     File,
     Crop,
     FileTransfer,
+    Push,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

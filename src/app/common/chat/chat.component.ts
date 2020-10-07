@@ -2,7 +2,6 @@ import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import * as moment from 'moment';
 import { ApiService } from 'src/app/api-services/api.service';
-import { AuthService } from 'src/app/api-services/auth.service';
 import { StorageService } from 'src/app/api-services/storage.service';
 import { TwilioService } from 'src/app/api-services/twilio.service';
 
@@ -34,7 +33,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   constructor(
     private twilioService: TwilioService,
     private storage: StorageService,
-    private auth: AuthService,
     private api: ApiService
   ) {
   }
@@ -42,7 +40,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     // console.log('receiver', this.receiver);
     // console.log('sender', this.sender);
-    this.loggedUser = await this.auth.getCurrentUser()
+    this.loggedUser = await this.storage.getCurrentUser()
     this.loginType = this.loggedUser.role.name
     // this.twilioService.login().then(async () => {
     const chatId = await this.storage.getCurrentChatId()
@@ -115,7 +113,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   sendTyping() {
     return this.twilioService.sendTyping()
   }
-
 
   public async sendChatMessage() {
     if (this.input.replace(/\s/g, '').length <= 0) return

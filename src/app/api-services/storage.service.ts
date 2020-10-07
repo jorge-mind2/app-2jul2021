@@ -2,22 +2,21 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ILocalNotification } from '@ionic-native/local-notifications/ngx';
-import { AuthService } from './auth.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { ApiService } from './api.service';
+import { HttpClient } from '@angular/common/http';
+const CURRENT_USER = 'currentUser'
 
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
-
+  service: Storage;
   onSetUnreadMessages: EventEmitter<any> = new EventEmitter()
   constructor(
     private storage: Storage,
-    private auth: AuthService,
-    private api: ApiService,
+    private http: HttpClient,
     private jwtHelper: JwtHelperService
-  ) { }
+  ) { this.service = storage }
 
   async setUnreadMessages(message: CometChat.TextMessage, setUnread: boolean): Promise<void> {
     const scheduledMessages = await this.storage.get('unread_messages') || []
@@ -57,8 +56,25 @@ export class StorageService {
     return [].concat(notificationSchedule || [])
   }
 
+  public async setUserType(userType) {
+    return await this.storage.set('userType', userType);
+  }
+
+  public async getUserType() {
+    return await this.storage.get('userType');
+  }
+
+  public async setCurrentUser(user) {
+    if (user.role) await this.setUserType(user.role.name)
+    return await this.storage.set(CURRENT_USER, user);
+  }
+
+  public async getCurrentUser() {
+    return await this.storage.get(CURRENT_USER);
+  }
+
   async updateCurrentUser(newUser: any): Promise<any> {
-    let currentUser = await this.auth.getCurrentUser()
+    let currentUser = await this.getCurrentUser()
     // console.log('currentUser', currentUser);
     // console.log('newUser', newUser);
 
@@ -68,7 +84,7 @@ export class StorageService {
       currentUser[val] = newUser[val]
     })
 
-    return await this.auth.setCurrentUser(currentUser)
+    return await this.setCurrentUser(currentUser)
   }
 
   async setChatVideoToken(data) {
@@ -82,7 +98,7 @@ export class StorageService {
       return currentToken
     } else {
       console.log('token invalido');
-      const response = await this.api.getTwilioToken()
+      const response: any = await this.http.get('/users/twilio-token').toPromise()
       console.log(response);
       // this.accessToken = response.data.token
       this.setChatVideoToken(response.data.token)
@@ -113,5 +129,22 @@ export class StorageService {
 
   async getChatMessages() {
     return await this.storage.get('chatMessages')
+  }
+
+  async deleteChatStorage() {
+    return this.storage.remove('chat_video_token').then(async () => {
+      await this.storage.remove('currentChatId')
+      await this.storage.remove('currentReceiver')
+      await this.storage.remove('unread_messages')
+      await this.storage.remove('receiverId')
+      return await this.storage.remove('chatMessages')
+
+    })
+  }
+
+  async deleteUserStorage() {
+    await this.storage.remove(CURRENT_USER)
+    await this.storage.remove('userType')
+    await this.deleteChatStorage()
   }
 }

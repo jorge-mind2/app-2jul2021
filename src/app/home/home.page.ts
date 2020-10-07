@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
   }
 
   getUser(event?) {
-    this.auth.getCurrentUser().then(async (user: any) => {
+    this.storageService.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()
       if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
@@ -89,7 +89,7 @@ export class HomePage implements OnInit {
   }
 
   async openNextAppointment() {
-    this.user = await this.auth.getCurrentUser()
+    this.user = await this.storageService.getCurrentUser()
     const modal = await this.modalCtrl.create({
       component: NextAppointmentComponent,
       componentProps: {

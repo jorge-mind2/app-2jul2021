@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { AuthService } from "./auth.service";
 import { environment } from "../../environments/environment";
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class ApiService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthService
+    private storage: StorageService
   ) {
   }
 
@@ -19,9 +19,9 @@ export class ApiService {
   }
 
   public setTherapistDetail(detail: any): void {
-    this.auth.getCurrentUser().then(async user => {
+    this.storage.getCurrentUser().then(async user => {
       user.detail = detail
-      this.auth.setCurrentUser(user)
+      this.storage.setCurrentUser(user)
     })
   }
 

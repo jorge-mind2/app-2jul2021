@@ -1,15 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events, IonContent } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { CalendarModalOptions } from 'ion2-calendar';
 import { CometChatService } from '../api-services/comet-chat.service';
 import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { OptionsComponent } from './options/options.component';
-import { TwilioCallComponent } from '../common/twilio-call/twilio-call.component';
+import { VideoCallComponent } from '../common/video-call/video-call.component';
 
 @Component({
   selector: 'app-chat',
@@ -37,8 +36,6 @@ export class ChatPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalCtrl: ModalController,
-    private cometchat: CometChatService,
-    private auth: AuthService,
     private api: ApiService,
     private storage: StorageService
   ) {
@@ -80,15 +77,11 @@ export class ChatPage implements OnInit {
   }
 
   /**
-   * Init CometChat video Call
+   * Init twilio video Call
   */
-  private initVideoCall() {
-    this.cometchat.initVideoCall(this.receiverUID)
-  }
-
-  async openTwilioScreen(ev) {
+  async openVideoScreen() {
     const modal = await this.modalCtrl.create({
-      component: TwilioCallComponent,
+      component: VideoCallComponent,
       componentProps: {
       }
     });
@@ -98,7 +91,7 @@ export class ChatPage implements OnInit {
   async presentCallAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Iniciar llamada',
-      message: '¿Deseas iniciar la videollamada con tu paciente?',
+      message: '¿Deseas iniciar una videollamada con tu paciente?',
       backdropDismiss: false,
       buttons: [{
         text: 'Cancelar',
@@ -106,7 +99,7 @@ export class ChatPage implements OnInit {
       }, {
         text: 'Aceptar',
         cssClass: 'text-primary',
-        handler: () => this.initVideoCall()
+        handler: value => this.openVideoScreen()
       },]
     })
 
@@ -177,9 +170,6 @@ export class ChatPage implements OnInit {
   }
 
   async presentModal() {
-    const options: CalendarModalOptions = {
-      color: 'primary'
-    };
     const modal = await this.modalCtrl.create({
       component: NextAppointmentComponent,
       componentProps: {
@@ -191,7 +181,7 @@ export class ChatPage implements OnInit {
   }
 
   public async navigateHome() {
-    const userType = await this.auth.getUserType()
+    const userType = await this.storage.getUserType()
     let home = userType == 'therapist' ? 'home-therapist' : 'home'
     this.navCtrl.navigateBack(home)
   }

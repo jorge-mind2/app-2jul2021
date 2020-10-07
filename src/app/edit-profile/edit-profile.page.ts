@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../api-services/api.service';
-import { AuthService } from '../api-services/auth.service';
 import { NavController, ToastController, AlertController } from '@ionic/angular';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -20,7 +20,7 @@ export class EditProfilePage implements OnInit {
     private alertCtrl: AlertController,
     private fb: FormBuilder,
     private api: ApiService,
-    private auth: AuthService,
+    private storage: StorageService,
   ) {
     this.formProfile = this.fb.group({
       cel: ['', Validators.required],
@@ -35,7 +35,7 @@ export class EditProfilePage implements OnInit {
   }
 
   ngOnInit() {
-    this.auth.getCurrentUser().then(usr => {
+    this.storage.getCurrentUser().then(usr => {
       this.user = usr
       const detail = usr.detail
       console.log(usr.detail)

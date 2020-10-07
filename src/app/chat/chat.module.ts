@@ -10,7 +10,7 @@ import { CalendarModule } from 'ion2-calendar';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { CommonPagesModule } from '../common/common-pages.module';
 import { OptionsComponent } from './options/options.component';
-import { TwilioCallComponent } from '../common/twilio-call/twilio-call.component';
+import { VideoCallComponent } from '../common/video-call/video-call.component';
 
 const routes: Routes = [
   {
@@ -31,7 +31,7 @@ const routes: Routes = [
   entryComponents: [
     NextAppointmentComponent,
     OptionsComponent,
-    TwilioCallComponent,
+    VideoCallComponent,
   ],
   declarations: [
     ChatPage,

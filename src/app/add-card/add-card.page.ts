@@ -5,9 +5,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { SR_PAGO } from "../keys";
 import { AlertController, LoadingController, ToastController, NavController } from '@ionic/angular';
-import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { environment } from "../../environments/environment";
+import { StorageService } from '../api-services/storage.service';
 
 declare var SrPago: any
 declare var $: any
@@ -33,7 +33,7 @@ export class AddCardPage implements OnInit {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private navCtrl: NavController,
-    private auth: AuthService,
+    private storage: StorageService,
     private api: ApiService
   ) {
     /*
@@ -68,7 +68,7 @@ export class AddCardPage implements OnInit {
     // Cambiar A producción
     SrPago.setLiveMode(false)
     SrPago.setPublishableKey(SR_PAGO.APIKEY)
-    this.auth.getCurrentUser().then(usr => {
+    this.storage.getCurrentUser().then(usr => {
       this.user = usr
       this.cardForm.patchValue({
         billing: {

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
-import { AuthService } from '../api-services/auth.service';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { CometChatService } from '../api-services/comet-chat.service';
@@ -29,7 +28,6 @@ export class SupportPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private storageService: StorageService,
     private cometchat: CometChatService,
-    private auth: AuthService,
     private api: ApiService
   ) {
     this.route.queryParams.subscribe(params => {
@@ -42,7 +40,7 @@ export class SupportPage implements OnInit, OnDestroy {
   async ngOnInit() {
     // get cometchat logged user
     this.cometchatUser = await CometChat.getLoggedinUser();
-    this.currentUser = await this.auth.getCurrentUser()
+    this.currentUser = await this.storageService.getCurrentUser()
     this.patientPhoto = this.api.getPhotoProfile(this.currentUser)
 
     // init listener cometchat
@@ -137,9 +135,9 @@ export class SupportPage implements OnInit, OnDestroy {
   async getMyTherapist() {
     const therapist = await this.api.getMyTherapist(this.currentUser.id)
     this.currentUser.therapist = therapist
-    await this.auth.setCurrentUser(this.currentUser).then(() => this.presentAlert(`Ahora tu terapeuta es: ${therapist.name} ${therapist.last_name}`))
+    await this.storageService.setCurrentUser(this.currentUser).then(() => this.presentAlert(`Ahora tu terapeuta es: ${therapist.name} ${therapist.last_name}`))
     this.showAssignmentBtn = false
-    await this.auth.getCurrentUser()
+    await this.storageService.getCurrentUser()
   }
 
   private send() {

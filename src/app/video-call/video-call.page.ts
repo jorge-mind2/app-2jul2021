@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, NavController } from '@ionic/angular';
-import { AuthService } from '../api-services/auth.service';
-import { async } from '@angular/core/testing';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-video-call',
@@ -27,7 +26,7 @@ export class VideoCallPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private alertCtrl: AlertController,
     private navCtrl: NavController,
-    private auth: AuthService
+    private storage: StorageService
   ) {
     this.route.queryParams.subscribe(params => this.sessionID = params.sessionID)
   }
@@ -37,7 +36,7 @@ export class VideoCallPage implements OnInit, OnDestroy {
       if (this.sessionID) this.startCall()
       else this.presentAlert('Sin Sesión', 'No tienes sesión programada para hoy.')
     }, 500);
-    this.currentUser = await this.auth.getCurrentUser()
+    this.currentUser = await this.storage.getCurrentUser()
   }
 
   ngOnDestroy() {

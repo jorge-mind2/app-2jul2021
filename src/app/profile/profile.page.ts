@@ -5,6 +5,7 @@ import { ApiService } from '../api-services/api.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Crop } from '@ionic-native/crop/ngx';
+import { StorageService } from '../api-services/storage.service';
 
 @Component({
   selector: 'app-profile',
@@ -31,7 +32,8 @@ export class ProfilePage implements OnInit {
     private file: File,
     private crop: Crop,
     private auth: AuthService,
-    private api: ApiService
+    private api: ApiService,
+    private storage: StorageService
   ) { }
 
   async ngOnInit() {
@@ -39,7 +41,7 @@ export class ProfilePage implements OnInit {
   }
 
   private getUserInfo() {
-    this.auth.getCurrentUser().then(async (user: any) => {
+    this.storage.getCurrentUser().then(async (user: any) => {
       this.photoProfile = await this.api.getPhotoProfile(user)
       if (!user.detail && user.role.name == 'therapist') {
         const info = await this.api.getTherapistProfile(user.id)

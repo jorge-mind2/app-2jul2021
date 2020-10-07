@@ -6,6 +6,8 @@ import { Route, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../api-services/auth.service';
 import { CometChatService } from '../api-services/comet-chat.service';
 import { Device } from '@ionic-native/device/ngx';
+import { TwilioService } from '../api-services/twilio.service';
+import { PushNotificationsService } from '../api-services/push-notifications.service';
 
 @Component({
   selector: 'page-login',
@@ -28,7 +30,9 @@ export class LoginPage implements OnInit {
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private auth: AuthService,
-    private cometchat: CometChatService
+    private cometchat: CometChatService,
+    private twilioService: TwilioService,
+    private notificationsServcie: PushNotificationsService
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -47,7 +51,12 @@ export class LoginPage implements OnInit {
   public async loginUser() {
     await this.presentLoading()
     try {
-      let loginData: any = { email: this.username, password: this.password, device: this.deviceId }
+      let loginData: any = {
+        email: this.username,
+        password: this.password,
+        device: this.deviceId,
+        fcm: await this.notificationsServcie.getFCMToken()
+      }
       if (this.loginType == 'therapist') {
         // if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
         loginData = { ...loginData, code: this.therapistCode }
@@ -57,6 +66,7 @@ export class LoginPage implements OnInit {
       const newSession = await this.auth.loginUser(loginData)
       console.log({ newSession });
 
+      await this.twilioService.login()
       this.cometChatLogin(newSession.user);
     } catch (e) {
       this.loadingCtrl.dismiss()
