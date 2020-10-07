@@ -142,7 +142,7 @@ export class PushNotificationsService implements OnInit {
         'app.registerForPushCallback::setting push registration id',
         registration.registrationId
       );
-      cb();
+      cb(registration.registrationId);
     });
 
     pushObject.on('error').subscribe(error => {
