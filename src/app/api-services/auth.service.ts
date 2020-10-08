@@ -16,7 +16,7 @@ export class AuthService {
   private headers
   public token: string
   public userType: string
-  authenticationState = new BehaviorSubject(true)
+  authenticationState = new BehaviorSubject(null)
   constructor(
     private storage: StorageService,
     private http: HttpClient,

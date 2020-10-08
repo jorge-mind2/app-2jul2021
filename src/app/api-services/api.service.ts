@@ -123,4 +123,8 @@ export class ApiService {
   public async getTwilioToken(): Promise<any> {
     return await this.http.get('/users/twilio-token').toPromise()
   }
+
+  public async sendChatMessagePush(message, type) {
+    return await this.http.post(`/users/${type}/send-chat-message`, message).toPromise()
+  }
 }

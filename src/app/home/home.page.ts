@@ -39,7 +39,7 @@ export class HomePage implements OnInit {
   getUser(event?) {
     this.storageService.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
-      if (!user || !this.auth.isAuthenticated()) return await this.auth.logout()
+      if (!user) return await this.auth.logout()
       if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
       this.user = user;
       const groupedAppointments = await this.api.getUserAppointments(user.id)

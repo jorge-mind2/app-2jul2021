@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { ElementRef, EventEmitter, Injectable } from '@angular/core';
 import { NavController, AlertController, ModalController, LoadingController, Platform } from '@ionic/angular';
 import * as TwilioVideo from 'twilio-video';
 import * as TwilioChat from 'twilio-chat';
@@ -18,9 +18,11 @@ export class TwilioService {
   newMessage = new BehaviorSubject(null);
   isTyping = new BehaviorSubject(false);
   onUserConnect = new BehaviorSubject(null);
+  onMessageReceived: EventEmitter<any> = new EventEmitter()
   remoteVideo: ElementRef;
   localVideo: ElementRef;
   loading: any;
+  public twilioConnected: boolean = false
 
   previewing: boolean;
   room: TwilioVideo.Room;
@@ -38,58 +40,90 @@ export class TwilioService {
   ) {
   }
 
-  async login(pushChannel?, registerForPushCallback?, showPushCallback?) {
-    console.log(this.client);
-    if (this.client) {
-      if (this.client.connectionState == 'connected' || this.client.connectionState == 'connecting') {
-        return
-      }
+  async login(pushChannel?) {
+    if (this.twilioConnected) {
+      console.log('Twilio is connected');
+      return
     }
-    const token = await this.getToken(pushChannel)
+    const token = await this.getToken()
     // console.log('Token', token)
     this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
     console.log('chatClient', this.client)
     const loggedUser = await this.client.user
+    this.twilioConnected = true
     console.log(loggedUser);
 
     this.client.on('tokenAboutToExpire', () => {
       console.log('Twilio tokenAboutToExpire');
-      return this.getToken(pushChannel)
+      return this.getToken()
         .then(newToken => this.storage.setChatVideoToken(newToken))
     });
     this.client.on('tokenExpired', () => {
       console.log('Twilio onTokenExpired');
-      this.login(pushChannel, registerForPushCallback, showPushCallback);
+      this.login(pushChannel);
     });
     this.client.on('pushNotification', (obj) => {
-      console.log('Twilio onPushNotification', obj);
-      if (obj && showPushCallback) {
-        showPushCallback()
+      /*
+        obj = {
+          body: "María: Ese juancho!"
+          data:{
+            body: "María: Ese juancho!"
+            data: "{"score":"3x1"}"
+            from: "378566212104"
+            id: "2"
+            messageType: "data"
+            sent_time: "1602122953600"
+            show_notification: "false"
+            title: "Mind2"
+            ttl: "2419200"
+            twi_body: "María: Ese juancho!"
+            twi_message_id: "RUf4079a2854656f8a917c26782f8ddff9"
+            twi_message_type: "data"
+            twi_title: "Mind2"
+          }
+          from: "378566212104"
+          id: "2"
+          messageType: "data"
+          sent_time: "1602122953600"
+          show_notification: "false"
+          title: "Mind2"
+          ttl: "2419200"
+          twi_body: "María: Ese juancho!"
+          twi_message_id: "RUf4079a2854656f8a917c26782f8ddff9"
+          twi_message_type: "data"
+          twi_title: "Mind2"
+        }
+      */
+      if (obj.data && obj.data.data) {
+        if (typeof obj.data.data == 'string') obj.data.data = JSON.parse(obj.data.data)
       }
+      console.log('Twilio onPushNotification', obj);
+      // this.pushService.showNotification(obj.data.messageIndex, obj.body)
+      this.onMessageReceived.emit(obj.data)
     });
 
     this.subscribeToAllChatClientEvents();
-    if (registerForPushCallback) {
-      registerForPushCallback();
-    }
     if (this.platform.is('cordova')) {
-      this.pushService.registerForPushCallback(this.handlePushNotification, (token) => {
-        console.log('this.client', this.client);
-        console.log(token);
-      })
+      /* this.setPushRegistrationId(await this.pushService.getFCMToken())
+      this.pushService.onMessageRecieved.subscribe(data => {
+        if (this.client !== null) {
+          this.client.handlePushNotification(data);
+          return null;
+        } else {
+          return TwilioChat.Client.parsePushNotification(data);
+        }
+      }) */
     }
   }
 
   async logout() {
     await this.leaveChannel()
     this.channel = null
+    this.twilioConnected = false
     return this.client.shutdown()
   }
 
-  async getToken(pushChannel?) {
-    if (!pushChannel) {
-      pushChannel = 'none';
-    }
+  async getToken() {
     return await this.storage.getChatVideoToken()
   }
 
@@ -168,7 +202,10 @@ export class TwilioService {
 
 
   async sendMessage(message): Promise<number> {
-    return await this.channel.sendMessage(message, {})
+    if (await this.channel.sendMessage(message, {})) {
+      return 1;
+    }
+    return 0;
   }
 
   async retrieveMessages(chatId): Promise<Paginator<Message>> {

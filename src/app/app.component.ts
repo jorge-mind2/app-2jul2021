@@ -33,14 +33,24 @@ export class AppComponent {
       console.log('userType', userType);
 
       if (userType && state) {
-        await this.twilioService.login()
+        console.log('this.twilioService.twilioConnected', this.twilioService.twilioConnected);
+
+        if (!this.twilioService.twilioConnected) await this.twilioService.login()
         return true;
       }
-      else {
+      else if (state === false) {
         this.navCtrl.navigateRoot(this.rootPage)
-
       }
 
+    })
+
+    this.twilioService.onMessageReceived.subscribe(notification => {
+      //TODO
+      /**
+       * Mostrar notificación solo si está fuera de la página de chat o videollamada
+       * Manejar tap de la notificación de chat
+       * Manejar eventos de notificación de llamada
+       */
     })
     this.initializeApp();
 

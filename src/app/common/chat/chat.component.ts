@@ -118,7 +118,17 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.input.replace(/\s/g, '').length <= 0) return
     const messageText = this.input;
     this.input = ''
-    return await this.twilioService.sendMessage(messageText)
+    if (await this.twilioService.sendMessage(messageText)) {
+      const notif = {
+        text: messageText,
+        receiverId: this.receiver.id
+      }
+      const newnotification = await this.api.sendChatMessagePush(notif, this.loginType)
+      console.log('newnotification', newnotification);
+
+    } else {
+      //handleError
+    }
   }
 
 

@@ -52,7 +52,7 @@ export class HomeTherapistPage implements OnInit {
   public getCurrrentUSer(event?) {
     this.storageService.getCurrentUser().then(async (user: any) => {
       console.log('Mind2 user logged', user);
-      if (!user || !this.auth.isAuthenticated()) return this.auth.logout()
+      if (!user) return this.auth.logout()
       this.getPacients(user.id);
       this.user = user;
       const groupedAppointments = await this.api.getUserAppointments(user.id)
