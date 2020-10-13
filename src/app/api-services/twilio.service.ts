@@ -15,17 +15,18 @@ import { PushNotificationsService } from './push-notifications.service';
   providedIn: 'root'
 })
 export class TwilioService {
-  newMessage = new BehaviorSubject(null);
-  isTyping = new BehaviorSubject(false);
-  onUserConnect = new BehaviorSubject(null);
-  onMessageReceived: EventEmitter<any> = new EventEmitter()
-  remoteVideo: ElementRef;
-  localVideo: ElementRef;
-  loading: any;
+  newMessage = new BehaviorSubject(null)
+  isTyping = new BehaviorSubject(false)
+  onUserConnect = new BehaviorSubject(null)
+  onCallAccepted: EventEmitter<boolean> = new EventEmitter()
+  remoteVideo: ElementRef
+  localVideo: ElementRef
+  loading: any
   public twilioConnected: boolean = false
+  incomingCallModal: HTMLIonModalElement
 
-  previewing: boolean;
-  room: TwilioVideo.Room;
+  previewing: boolean
+  room: TwilioVideo.Room
 
   client: TwilioChat.Client
   channel: Channel
@@ -63,43 +64,8 @@ export class TwilioService {
       this.login(pushChannel);
     });
     this.client.on('pushNotification', (obj) => {
-      /*
-        obj = {
-          body: "María: Ese juancho!"
-          data:{
-            body: "María: Ese juancho!"
-            data: "{"score":"3x1"}"
-            from: "378566212104"
-            id: "2"
-            messageType: "data"
-            sent_time: "1602122953600"
-            show_notification: "false"
-            title: "Mind2"
-            ttl: "2419200"
-            twi_body: "María: Ese juancho!"
-            twi_message_id: "RUf4079a2854656f8a917c26782f8ddff9"
-            twi_message_type: "data"
-            twi_title: "Mind2"
-          }
-          from: "378566212104"
-          id: "2"
-          messageType: "data"
-          sent_time: "1602122953600"
-          show_notification: "false"
-          title: "Mind2"
-          ttl: "2419200"
-          twi_body: "María: Ese juancho!"
-          twi_message_id: "RUf4079a2854656f8a917c26782f8ddff9"
-          twi_message_type: "data"
-          twi_title: "Mind2"
-        }
-      */
-      if (obj.data && obj.data.data) {
-        if (typeof obj.data.data == 'string') obj.data.data = JSON.parse(obj.data.data)
-      }
-      console.log('Twilio onPushNotification', obj);
+      // HANDLE LOCAL PUSH NOTIFICATION
       // this.pushService.showNotification(obj.data.messageIndex, obj.body)
-      this.onMessageReceived.emit(obj.data)
     });
 
     this.subscribeToAllChatClientEvents();
@@ -210,7 +176,6 @@ export class TwilioService {
 
   async retrieveMessages(chatId): Promise<Paginator<Message>> {
     await this.connectToChannel(chatId)
-    this.channel.getMembers().then(async members => console.log('members', await members[0].getUser()))
     const messages = await this.channel.getMessages(80)
     return messages
   }
@@ -333,12 +298,14 @@ export class TwilioService {
   }
 
 
-  connectToRoom(accessToken: string, options: TwilioVideo.ConnectOptions): void {
-    TwilioVideo.connect(accessToken, options).then(room => {
+  async connectToRoom(accessToken: string, options: TwilioVideo.ConnectOptions): Promise<void> {
+    await this.presentLoading('Conectando...')
+    TwilioVideo.connect(accessToken, options).then(async room => {
       console.log(room);
       this.room = room
 
       console.log(`Successfully joined a Room: ${room}`);
+      if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
       if (!this.previewing && options['video']) {
         this.startLocalVideo();
         this.previewing = true;
@@ -412,14 +379,17 @@ export class TwilioService {
 
 
 
-    }, error => {
+    }, async error => {
       console.error(`Unable to connect to Room: ${error.message}`);
+      await this.presentAlert(error.message)
+      if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
     });
   }
 
   startLocalVideo(): void {
     TwilioVideo.createLocalVideoTrack().then(track => {
       this.room.localParticipant.publishTrack(track)
+      console.log('LocalParticipant VideoTrack', track);
       this.localVideo.nativeElement.appendChild(track.attach());
     });
   }
@@ -438,11 +408,8 @@ export class TwilioService {
     })
   }
 
-  private async acceptCall(sessionID: string): Promise<void> {
-    /* const newCall = await CometChat.acceptCall(sessionID)
-    setTimeout(async () => {
-      return this.startCall(newCall.getSessionId())
-    }, 3000); */
+  async acceptCall(): Promise<void> {
+    this.onCallAccepted.emit(true)
   }
 
   private async startCall(sessionID: string): Promise<boolean> {
@@ -451,47 +418,35 @@ export class TwilioService {
     })
   }
 
-  async rejectCall(sessionID: string): Promise<any> {
-    /* var status = CometChat.CALL_STATUS.REJECTED;
-
-    const rejected = await CometChat.rejectCall(sessionID, status)
-    console.log({ rejected });
-
-    return rejected */
+  async dismissIncomingCallModal(): Promise<any> {
+    if (this.incomingCallModal) {
+      this.incomingCallModal.dismiss({})
+    }
+    this.incomingCallModal = null
   }
 
-  async cancelCall(sessionID: string): Promise<any> {
-    /* var status = CometChat.CALL_STATUS.CANCELLED;
-
-    const cancelled = await CometChat.rejectCall(sessionID, status)
-    console.log({ cancelled });
-
-    return cancelled */
-  }
-
-  async presentIncomingCallScreen(call): Promise<void> {
-    const caller = call.getSender()
-    const sessionID = call.getSessionId()
-    const modal = await this.modalCtrl.create({
+  async presentIncomingCallScreen(name: string): Promise<void> {
+    const caller = {
+      name
+    }
+    this.incomingCallModal = await this.modalCtrl.create({
       component: IncomingCallComponent,
       componentProps: {
         caller
       },
       keyboardClose: false,
     });
-    await modal.present()
-    const { data } = await modal.onDidDismiss();
+    await this.incomingCallModal.present()
+    const { data } = await this.incomingCallModal.onDidDismiss();
     if (data.answered) {
-      await this.presentLoading('Conectando...')
-      this.acceptCall(sessionID)
-    } else {
-      this.rejectCall(sessionID)
+      this.acceptCall()
     }
   }
 
-  async presentOutcomingCallScreen(call: any): Promise<void> {
-    const receiver = call.getReceiver()
-    const sessionID = call.getSessionId()
+  async presentOutcomingCallScreen(name: string): Promise<void> {
+    const receiver = {
+      name
+    }
     const modal = await this.modalCtrl.create({
       component: OutcomingCallComponent,
       componentProps: {
@@ -500,18 +455,25 @@ export class TwilioService {
       keyboardClose: false,
     });
     await modal.present()
-    const { data } = await modal.onDidDismiss();
-    if (data.cancelled) {
-      this.cancelCall(sessionID)
-    } else {
-      this.acceptCall(sessionID)
-    }
   }
 
   async notAnsweredAlert(): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Cancelada',
       message: 'Llamada no contestada.',
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Aceptar',
+        cssClass: 'secondary'
+      }]
+    });
+
+    alert.present();
+  }
+
+  async presentAlert(message) {
+    const alert = await this.alertCtrl.create({
+      message,
       backdropDismiss: false,
       buttons: [{
         text: 'Aceptar',

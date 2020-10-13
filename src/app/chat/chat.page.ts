@@ -54,17 +54,20 @@ export class ChatPage implements OnInit {
     this.receiver = await this.storage.getCurrentReceiver()
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
-        result => console.log('Has permission?', result.hasPermission),
+        result => {
+          console.log('Has CAMERA permission?', result.hasPermission)
+          if (!result.hasPermission) this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+        },
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
       );
 
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
-        result => console.log('Has permission?', result.hasPermission),
+        result => console.log('Has RECORD_AUDIO permission?', result.hasPermission),
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
       );
 
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT).then(
-        result => console.log('Has permission?', result.hasPermission),
+        result => console.log('Has CAPTURE_AUDIO_OUTPUT permission?', result.hasPermission),
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
       );
 
@@ -86,6 +89,11 @@ export class ChatPage implements OnInit {
       }
     });
     return await modal.present()
+  }
+
+  async callTo() {
+    const receiverId = this.receiver.id
+    // this.api.callTo(receiverId)
   }
 
   async presentCallAlert() {

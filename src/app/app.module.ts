@@ -26,6 +26,7 @@ import { environment } from "../environments/environment";
 import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import * as moment from 'moment'
 import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
+import { VideoCallComponent } from './common/video-call/video-call.component';
 moment.locale('es')
 
 export function jwtOptionsFactory(storage) {
@@ -41,7 +42,8 @@ export function jwtOptionsFactory(storage) {
   declarations: [AppComponent, IncomingCallComponent, OutcomingCallComponent],
   entryComponents: [
     IncomingCallComponent,
-    OutcomingCallComponent
+    OutcomingCallComponent,
+    VideoCallComponent
   ],
   imports: [
     BrowserModule,
