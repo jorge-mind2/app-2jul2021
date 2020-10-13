@@ -4,7 +4,6 @@ import { Headers } from "@angular/http";
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { StorageService } from './storage.service';
 
 const TOKEN_KEY = 'accessToken'
@@ -108,8 +107,6 @@ export class AuthService {
   public logout(next: boolean = true) {
     this.storage.service.remove(TOKEN_KEY).then(async () => {
       await this.storage.deleteUserStorage()
-      let ccuser = await CometChat.getLoggedinUser()
-      if (ccuser) await CometChat.logout()
       this.userType = ''
       this.authenticationState.next(false);
     });

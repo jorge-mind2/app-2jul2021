@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastController, NavController, LoadingController, AlertController } from '@ionic/angular';
-import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
-import { Route, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../api-services/auth.service';
 import { CometChatService } from '../api-services/comet-chat.service';
@@ -67,7 +66,10 @@ export class LoginPage implements OnInit {
       console.log({ newSession });
 
       await this.twilioService.login()
-      this.cometChatLogin(newSession.user);
+      this.loadingCtrl.dismiss()
+      let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
+      this.navCtrl.navigateForward(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
+
     } catch (e) {
       this.loadingCtrl.dismiss()
       console.log(e);
@@ -122,23 +124,6 @@ export class LoginPage implements OnInit {
       message: 'Cargando...'
     })
     await loading.present();
-  }
-
-
-  private async cometChatLogin(loggedUser) {
-    try {
-      const cometchatuser = await this.cometchat.login(loggedUser)
-      console.log('CometChat USER', { cometchatuser });
-
-      this.loadingCtrl.dismiss()
-      let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
-      this.navCtrl.navigateForward(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
-
-    } catch (error) {
-      console.log('Login failed with exception:', { error });
-      this.loadingCtrl.dismiss()
-      this.presentErrorAlert('Error al iniciar sesión')
-    }
   }
 
 }

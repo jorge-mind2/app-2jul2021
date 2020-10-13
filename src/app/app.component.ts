@@ -4,7 +4,6 @@ import { Platform, NavController, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './api-services/auth.service';
-import { CometChatService } from './api-services/comet-chat.service';
 import { StorageService } from './api-services/storage.service';
 import { PushNotificationsService } from './api-services/push-notifications.service';
 import { TwilioService } from './api-services/twilio.service';
@@ -26,7 +25,6 @@ export class AppComponent {
     private modalCtrl: ModalController,
     private auth: AuthService,
     private router: Router,
-    private cometchat: CometChatService,
     private storageService: StorageService,
     private notifications: PushNotificationsService,
     private twilioService: TwilioService
@@ -41,7 +39,6 @@ export class AppComponent {
       this.statusBar.backgroundColorByHexString('#006675')
       await this.auth.checkToken()
       this.splashScreen.hide();
-      this.cometchat.initializeCometChat()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
       this.subscribeToGeneralEvents()
     });

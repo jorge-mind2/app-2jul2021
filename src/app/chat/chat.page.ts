@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { CometChatService } from '../api-services/comet-chat.service';
-import { AuthService } from '../api-services/auth.service';
 import { NextAppointmentComponent } from '../common/next-appointment/next-appointment.component';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
