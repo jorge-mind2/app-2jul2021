@@ -77,12 +77,10 @@ export class VideoCallComponent implements OnInit {
 
 
     return this.twilioService.connectToRoom(currentToken, {
-      name: this.roomName,
+      name: 'abc123',
       audio: true,
       video: {
         facingMode: 'user',
-        width: { min: 640, ideal: 1920, max: 1920 },
-        height: { min: 640, ideal: 1080 },
         aspectRatio: 1.777777778
       }
     })

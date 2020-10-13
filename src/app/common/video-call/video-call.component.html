@@ -2,7 +2,7 @@
   <ion-toolbar color="secondary">
     <ion-title>
       <span>
-        Sesión Mind<sup>2</sup> - Twilio
+        Sesión Mind<sup>2</sup>
       </span>
       <!-- <span class="timer ion-float-end">{{time}}</span> -->
     </ion-title>
@@ -24,20 +24,34 @@
       <!-- <p>remote video</p> -->
     </div>
   </div>
-  <ion-fab vertical="bottom"
-           edge>
-    <ion-fab-button color="danger"
-                    (click)="disconnect()">
-      <ion-icon name="call"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button [color]="videoActived ? 'success' : 'danger'"
-                    (click)="toggleVideo()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-button [color]="!audioActived ? 'success' : 'danger'"
-                    (click)="toggleAudio()">
-      <ion-icon [name]="!audioActived ? 'mic' : 'mic-off'"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+  <ion-row class="call-controls"
+           text-center>
+    <ion-col></ion-col>
+    <ion-col>
+      <ion-fab-button style="margin: auto;"
+                      [color]="videoActived ? 'danger' : 'success'"
+                      (click)="toggleVideo()">
+        <ion-icon name="camera"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+
+    <ion-col class="ion-text-center">
+
+      <ion-fab-button style="margin: auto;"
+                      color="danger"
+                      (click)="disconnect()">
+        <ion-icon name="call"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-fab-button style="margin: auto;"
+                      [color]="!audioActived ? 'success' : 'danger'"
+                      (click)="toggleAudio()">
+        <ion-icon [name]="!audioActived ? 'mic' : 'mic-off'"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+    <ion-col></ion-col>
+  </ion-row>
 
 </ion-content>

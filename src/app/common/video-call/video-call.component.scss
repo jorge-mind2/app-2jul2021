@@ -1,7 +1,11 @@
 #local {
   width: 100vw;
-  height: 100vh;
-  background: rgb(186, 164, 228);
+  height: calc(100vh - 56px);
+  background: rgb(255, 255, 255);
+  background-image: url('/assets/mind2_logo.png');
+  background-position: 50% 30%;
+  background-repeat: no-repeat;
+  background-size: 80%;
 
   video {
     transform: translateX(-20%);
@@ -14,9 +18,17 @@
   width: 50vw;
   height: 25vh;
   bottom: 10%;
-  background: #00bcd4;
+  background: rgba(51, 51, 51, 0.4);
 
   video {
     transform: translateX(-20%);
   }
+}
+
+.call-controls {
+  position: absolute;
+  z-index: 1000;
+  bottom: 3%;
+  left: 0;
+  width: 100vw;
 }
