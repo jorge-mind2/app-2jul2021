@@ -320,6 +320,14 @@ ion-content {
   height: 65px;
 }
 
+.input-box {
+  background: #f2f3f6;
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+  padding: 2px 0;
+}
 
 .dateSeperatorCongtainer {
   text-align: center;

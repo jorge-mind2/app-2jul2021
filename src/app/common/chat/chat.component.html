@@ -1,7 +1,6 @@
 <ion-content #chatBox
              id="chat-parent"
-             padding-vertical
-             fullscreen>
+             padding-vertical>
   <ion-row class="ion-no-margin"
            *ngIf="messages.length<=0">
     <ion-col size="12"
@@ -82,7 +81,8 @@
   <!-- </div>
 </div> -->
 </ion-content>
-<ion-footer [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
+<div class="input-box"
+     [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
   <ion-row class="input-position"
            [ngClass]="{ 'custom-footer-row': phone_model=='iPhone X'}">
     <ion-col size="10">
@@ -111,4 +111,4 @@
       </ion-fab-button>
     </ion-col>
   </ion-row>
-</ion-footer>
+</div>
