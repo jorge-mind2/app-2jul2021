@@ -3,6 +3,7 @@ import { AlertController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
+import { PushNotificationsService } from '../api-services/push-notifications.service';
 
 @Component({
   selector: 'app-support',
@@ -25,7 +26,8 @@ export class SupportPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private route: ActivatedRoute,
     private storageService: StorageService,
-    private api: ApiService
+    private api: ApiService,
+    private notifications: PushNotificationsService
   ) {
     this.route.queryParams.subscribe(params => {
       this.receiverUID = params.receiverId.toLowerCase();
@@ -35,6 +37,7 @@ export class SupportPage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.currentUser = await this.storageService.getCurrentUser()
     this.receiver = await this.storageService.getCurrentReceiver()
+    this.notifications.onAssignedTherapist.subscribe(notification => this.getMyTherapist())
     console.log('this.receiver', this.receiver);
 
   }

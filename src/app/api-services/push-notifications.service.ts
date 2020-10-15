@@ -13,6 +13,7 @@ export class PushNotificationsService implements OnInit {
   onMissedCall: EventEmitter<any> = new EventEmitter()
   onRejectedCall: EventEmitter<any> = new EventEmitter()
   onAcceptedCall: EventEmitter<any> = new EventEmitter()
+  onAssignedTherapist: EventEmitter<any> = new EventEmitter()
   registeredPushChannel: Client.NotificationsChannelType = null
   constructor(
     private fcm: FirebaseX,
@@ -35,37 +36,16 @@ export class PushNotificationsService implements OnInit {
     this.subscribeToNotificationEvents()
     return this.fcm.onMessageReceived().subscribe(async notification => {
       console.log("here you receive the message", notification);
-      /*
-        data = {
-          "channel_id": "CH296f4a24749d4347a2bf7b4a4754ecb4",
-          "message_id": "IM31b349972c644c3184b11ee4dba44169",
-          "author": "juan.pinzon@mail.com",
-          "message_index": "49",
-          "messageType": "data",
-          "message_sid": "IM31b349972c644c3184b11ee4dba44169",
-          "twi_message_type": "twilio.channel.new_message",
-          "id": "2",
-          "ttl": "86400",
-          "from": "378566212104",
-          "channel_sid": "CH296f4a24749d4347a2bf7b4a4754ecb4",
-          "sent_time": "1602006755024",
-          "twi_message_id": "RU4e75224af4dc01b8ae1bc150f74bc6c3",
-          "twi_body": "13_chat_therapist_16;juan.pinzon@mail.com: Quiubo ",
-          "channel_title": "13_chat_therapist_16",
-          "show_notification": "false"
-        }
-      */
       var rawData = this.getRawPushForFCM({ ...notification });
       console.log('notification show_notification', notification.show_notification);
 
       if (notification.show_notification == 'true') {
-        // this.showNotification(data.id, data.twi_body)
         console.log("Received in background");
         rawData.data.show_local_notification = false
       } else {
         console.log("Received in foreground");
+        rawData.data.show_local_notification = true
       }
-      rawData.data.show_local_notification = true
       if (rawData.data.data) {
         if (typeof rawData.data.data == 'string') rawData.data.data = JSON.parse(rawData.data.data)
       }
@@ -89,6 +69,10 @@ export class PushNotificationsService implements OnInit {
       if (type && type == 'call-missed') {
         // el terapeuta colgó al marcar
         return this.onMissedCall.emit(notification)
+      }
+      if (type && type == 'therapist-assigned') {
+        // el terapeuta colgó al marcar
+        return this.onAssignedTherapist.emit(notification)
       }
     })
     this.localNotifications.on('open-chat').subscribe(notification => {

@@ -96,7 +96,7 @@ export class AppComponent {
       if (notificationData.type == 'call') {
         this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
       }
-      if (currentRoute.includes('/chat')) {
+      if (notificationData.type == 'message' && currentRoute.includes('/chat') || currentRoute.includes('/support')) {
         notification.show_local_notification = false
       }
       if (notification.show_local_notification) this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)

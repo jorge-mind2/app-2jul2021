@@ -263,10 +263,11 @@ export class TwilioService {
     if (!existingChannel) {
       const publicPaginator = await this.client.getPublicChannelDescriptors()
       console.log('Public Channel Paginator', publicPaginator);
-      existingChannel = await publicPaginator.items.find(channel => {
+      var channelDescriptior = publicPaginator.items.find(channel => {
         console.log('Public Channel: ' + channel.friendlyName);
         return channel.uniqueName == name
-      }).getChannel()
+      })
+      if (channelDescriptior) existingChannel = await channelDescriptior.getChannel()
     }
     if (existingChannel) return existingChannel
     const newChannel = await this.createChannel(name, name)
