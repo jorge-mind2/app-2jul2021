@@ -63,9 +63,7 @@ export class LoginPage implements OnInit {
       console.log({ loginData });
 
       const newSession = await this.auth.loginUser(loginData)
-      console.log({ newSession });
-
-      await this.twilioService.login()
+      console.log({ newSession })
       this.loadingCtrl.dismiss()
       let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
       this.navCtrl.navigateForward(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))

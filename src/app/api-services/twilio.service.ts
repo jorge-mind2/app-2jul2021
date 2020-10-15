@@ -19,11 +19,12 @@ export class TwilioService {
   isTyping = new BehaviorSubject(false)
   onUserConnect = new BehaviorSubject(null)
   onCallAccepted: EventEmitter<boolean> = new EventEmitter()
-  remoteVideo: ElementRef
-  localVideo: ElementRef
+  remoteVideo: ElementRef<HTMLDivElement>
+  localVideo: ElementRef<HTMLDivElement>
   loading: any
-  public twilioConnected: boolean = false
+  public twilioConnected: boolean
   incomingCallModal: HTMLIonModalElement
+  outcomingCallModal: HTMLIonModalElement
 
   previewing: boolean
   room: TwilioVideo.Room
@@ -181,14 +182,13 @@ export class TwilioService {
   }
 
   async connectToChannel(chatId) {
-    const subscribedChannel = await this.client.getChannelByUniqueName(chatId)
+    /* const subscribedChannel = await this.client.getChannelByUniqueName(chatId)
     console.log('subscribedChannel', subscribedChannel);
-    this.channel = subscribedChannel
-    if (!this.channel) {
-      const channel = await this.getChannel(chatId)
-      if (!this.channel || (this.channel && channel.uniqueName != this.channel.uniqueName)) {
-        this.channel = channel
-      }
+    return this.channel = subscribedChannel */
+
+    const channel = await this.getChannel(chatId)
+    if (!this.channel || (this.channel && channel.uniqueName != this.channel.uniqueName)) {
+      this.channel = channel
     }
     return this.leaveChannel().then(async () => {
       await this.channel.join()
@@ -254,27 +254,19 @@ export class TwilioService {
     // channel name = CurrentUserId_chat_receiverUserId
     const name = `${chatId}`
     let existingChannel: Channel;
-    const publicPaginator = await this.client.getPublicChannelDescriptors()
-    console.log('Public Channel Paginator', publicPaginator);
-    for (let i = 0; i < publicPaginator.items.length; i++) {
-      const channel = publicPaginator.items[i];
-      console.log('Public Channel: ' + channel.friendlyName);
-      if (channel.uniqueName == name) {
-        existingChannel = await channel.getChannel()
-        break
-      }
-    }
+    const paginator = await this.client.getSubscribedChannels()
+    console.log('User Channel Paginator', paginator);
+    existingChannel = paginator.items.find(channel => {
+      console.log('User Channel: ' + channel.friendlyName);
+      return channel.uniqueName == name
+    })
     if (!existingChannel) {
-      const paginator = await this.client.getUserChannelDescriptors()
-      console.log('User Channel Paginator', paginator);
-      for (let i = 0; i < paginator.items.length; i++) {
-        var channel = paginator.items[i];
-        console.log('User Channel: ' + channel.friendlyName);
-        if (channel.uniqueName == name) {
-          existingChannel = await channel.getChannel()
-          break
-        }
-      }
+      const publicPaginator = await this.client.getPublicChannelDescriptors()
+      console.log('Public Channel Paginator', publicPaginator);
+      existingChannel = await publicPaginator.items.find(channel => {
+        console.log('Public Channel: ' + channel.friendlyName);
+        return channel.uniqueName == name
+      }).getChannel()
     }
     if (existingChannel) return existingChannel
     const newChannel = await this.createChannel(name, name)
@@ -285,7 +277,8 @@ export class TwilioService {
     // Create a Channel
     const channel = await this.client.createChannel({
       uniqueName,
-      friendlyName
+      friendlyName,
+      isPrivate: false
     })
     console.log('Created general channel:');
     console.log(channel);
@@ -334,47 +327,22 @@ export class TwilioService {
         });
       });
 
-
-      // Attach the Participant's Media to a <div> element.
-      room.on('participantConnected', participant => {
-        console.log(participant);
-        console.log(`Participant "${participant.identity}" connected`);
-
-        participant.tracks.forEach(publication => {
-          console.log('participant track:', publication);
-
-          if (publication.isSubscribed) {
-            const track = publication.track;
-            this.remoteVideo.nativeElement.appendChild(track.attach());
-          }
-        });
-
-        participant.on('trackSubscribed', track => {
-          this.remoteVideo.nativeElement.appendChild(track.attach());
-        });
-      });
-
       // Log your Client's LocalParticipant in the Room
       const localParticipant = room.localParticipant;
       console.log(`Connected to the Room as LocalParticipant "${localParticipant.identity}"`);
 
-      // Log any Participants already connected to the Room
-      room.participants.forEach(participant => {
-        console.log(`Participant "${participant.identity}" is connected to the Room`);
-        participant.on('trackSubscribed', track => {
-          this.remoteVideo.nativeElement.appendChild(track.attach());
-        });
-
-      });
+      room.participants.forEach(participant => this.participantConnected(participant))
 
       // Log new Participants as they connect to the Room
-      room.once('participantConnected', participant => {
+      room.on('participantConnected', participant => {
         console.log(`Participant "${participant.identity}" has connected to the Room`);
+        this.participantConnected(participant)
       });
 
       // Log Participants as they disconnect from the Room
-      room.once('participantDisconnected', participant => {
+      room.on('participantDisconnected', participant => {
         console.log(`Participant "${participant.identity}" has disconnected from the Room`);
+        this.participantDisconnected(participant)
       });
 
 
@@ -386,11 +354,53 @@ export class TwilioService {
     });
   }
 
+  private participantConnected(participant) {
+    const div = document.createElement('div')
+    div.id = participant.sid;
+    // div.innerText = participant.identity;
+    div.style.backgroundColor = 'rgba(0,0,0,.5)'
+    div.style.width = '100%'
+    div.style.height = 'auto'
+    this.remoteVideo.nativeElement.appendChild(div)
+    participant.on('trackSubscribed', track => this.trackSubscribed(div, track));
+    participant.on('trackUnsubscribed', track => this.trackUnsubscribed(track));
+
+    participant.tracks.forEach(publication => {
+      if (publication.isSubscribed) {
+        this.trackSubscribed(div, publication.track);
+      }
+    });
+  }
+
+  private participantDisconnected(participant) {
+    console.log('Participant "%s" disconnected', participant.identity);
+    document.getElementById(participant.sid).remove();
+  }
+
+  private trackSubscribed(div: HTMLDivElement, track) {
+    const videos = div.getElementsByTagName('video')
+    if (videos.length && track.kind == 'video') {
+      for (let i = 0; i < videos.length; i++) {
+        videos[i].style.maxWidth = '100%'
+        videos[i].style.width = '100%'
+        videos[i].style.height = 'auto'
+      }
+      return
+    }
+    div.appendChild(track.attach());
+    console.log(videos)
+  }
+
+  private trackUnsubscribed(track) {
+    track.detach().forEach(element => element.remove());
+  }
+
   startLocalVideo(): void {
     TwilioVideo.createLocalVideoTrack().then(track => {
       this.room.localParticipant.publishTrack(track)
       console.log('LocalParticipant VideoTrack', track);
       this.localVideo.nativeElement.appendChild(track.attach());
+      this.trackSubscribed(this.localVideo.nativeElement, track)
     });
   }
 
@@ -412,12 +422,6 @@ export class TwilioService {
     this.onCallAccepted.emit(true)
   }
 
-  private async startCall(sessionID: string): Promise<boolean> {
-    return await this.navCtrl.navigateForward(['video-call'], { queryParams: { sessionID }, queryParamsHandling: "merge" }).finally(async () => {
-      if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
-    })
-  }
-
   async dismissIncomingCallModal(): Promise<any> {
     if (this.incomingCallModal) {
       this.incomingCallModal.dismiss({})
@@ -425,9 +429,10 @@ export class TwilioService {
     this.incomingCallModal = null
   }
 
-  async presentIncomingCallScreen(name: string): Promise<void> {
+  async presentIncomingCallScreen(name: string, id: number): Promise<void> {
     const caller = {
-      name
+      name,
+      id
     }
     this.incomingCallModal = await this.modalCtrl.create({
       component: IncomingCallComponent,
@@ -443,18 +448,26 @@ export class TwilioService {
     }
   }
 
-  async presentOutcomingCallScreen(name: string): Promise<void> {
-    const receiver = {
-      name
+  async dismissOutcomingCallModal(): Promise<any> {
+    if (this.outcomingCallModal) {
+      this.outcomingCallModal.dismiss({})
     }
-    const modal = await this.modalCtrl.create({
+    this.outcomingCallModal = null
+  }
+
+  async presentOutcomingCallScreen(name: string, id: number): Promise<void> {
+    const receiver = {
+      name,
+      id
+    }
+    this.outcomingCallModal = await this.modalCtrl.create({
       component: OutcomingCallComponent,
       componentProps: {
         receiver
       },
       keyboardClose: false,
     });
-    await modal.present()
+    await this.outcomingCallModal.present()
   }
 
   async notAnsweredAlert(): Promise<void> {

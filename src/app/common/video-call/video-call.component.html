@@ -9,18 +9,21 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content #scrollArea
-             fullscreen>
+<ion-content #scrollArea>
 
   <div id="video-container">
 
     <div id="local"
-         #localVideo>
+         class="fullscreen-video"
+         #localVideo
+         (click)="toggleFullScreen('local')">
       <!-- <p>local video</p> -->
     </div>
 
     <div id="remote"
-         #remoteVideo>
+         class="small-video"
+         #remoteVideo
+         (click)="toggleFullScreen('remote')">
       <!-- <p>remote video</p> -->
     </div>
   </div>

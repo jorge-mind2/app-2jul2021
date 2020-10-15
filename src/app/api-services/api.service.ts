@@ -127,4 +127,20 @@ export class ApiService {
   public async sendChatMessagePush(message, type) {
     return await this.http.post(`/users/${type}/send-chat-message`, message).toPromise()
   }
+
+  public async callTo(receiverId: number) {
+    return await this.http.post('/users/call-to-user', { receiverId }).toPromise()
+  }
+
+  public async sendEndCall(receiverId: number) {
+    return await this.http.post(`/users/end-call/${receiverId}`, {}).toPromise()
+  }
+
+  public async sendRejectCall(callerId: number) {
+    return await this.http.post(`/users/reject-call/${callerId}`, {}).toPromise()
+  }
+
+  public async sendAcceptCall(callerId: number) {
+    return await this.http.post(`/users/accept-call/${callerId}`, {}).toPromise()
+  }
 }

@@ -7,6 +7,9 @@ import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { OptionsComponent } from './options/options.component';
 import { VideoCallComponent } from '../common/video-call/video-call.component';
+import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
+import { TwilioService } from '../api-services/twilio.service';
+import { PushNotificationsService } from '../api-services/push-notifications.service';
 
 @Component({
   selector: 'app-chat',
@@ -35,7 +38,9 @@ export class ChatPage implements OnInit {
     private router: Router,
     private modalCtrl: ModalController,
     private api: ApiService,
-    private storage: StorageService
+    private storage: StorageService,
+    private twilioService: TwilioService,
+    private notification: PushNotificationsService
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -52,10 +57,7 @@ export class ChatPage implements OnInit {
     this.receiver = await this.storage.getCurrentReceiver()
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
-        result => {
-          console.log('Has CAMERA permission?', result.hasPermission)
-          if (!result.hasPermission) this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
-        },
+        result => console.log('Has CAMERA permission?', result.hasPermission),
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
       );
 
@@ -69,12 +71,39 @@ export class ChatPage implements OnInit {
         err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT)
       );
 
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS).then(
+        result => console.log('Has MODIFY_AUDIO_SETTINGS permission?', result.hasPermission),
+        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
+      );
+
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_NOTIFICATION_POLICY).then(
+        result => console.log('Has ACCESS_NOTIFICATION_POLICY permission?', result.hasPermission),
+        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_NOTIFICATION_POLICY)
+      );
+
+      this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.ACCESS_WIFI_STATE).then(
+        result => console.log('Has ACCESS_WIFI_STATE permission?', result.hasPermission),
+        err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.ACCESS_WIFI_STATE)
+      );
+      /*
+      MODIFY_AUDIO_SETTINGS
+      ACCESS_NOTIFICATION_POLICY
+      ACCESS_WIFI_STATE
+      */
       this.androidPermissions.requestPermissions([
         this.androidPermissions.PERMISSION.CAMERA,
         this.androidPermissions.PERMISSION.CAPTURE_AUDIO_OUTPUT,
-        this.androidPermissions.PERMISSION.RECORD_AUDIO
+        this.androidPermissions.PERMISSION.RECORD_AUDIO,
+        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS,
+        this.androidPermissions.PERMISSION.ACCESS_NOTIFICATION_POLICY,
+        this.androidPermissions.PERMISSION.ACCESS_WIFI_STATE
       ]);
     }
+
+    this.notification.onAcceptedCall.subscribe(async notification => {
+      await this.twilioService.dismissOutcomingCallModal()
+      await this.openVideoScreen()
+    })
   }
 
   /**
@@ -90,8 +119,11 @@ export class ChatPage implements OnInit {
   }
 
   async callTo() {
-    const receiverId = this.receiver.id
-    // this.api.callTo(receiverId)
+    const receiverId = +this.receiver.id
+    this.api.callTo(receiverId).then(notification => {
+      console.log('notification', notification);
+      this.twilioService.presentOutcomingCallScreen(this.receiver.name, receiverId)
+    })
   }
 
   async presentCallAlert() {
@@ -105,7 +137,7 @@ export class ChatPage implements OnInit {
       }, {
         text: 'Aceptar',
         cssClass: 'text-primary',
-        handler: value => this.openVideoScreen()
+        handler: value => this.callTo()
       },]
     })
 

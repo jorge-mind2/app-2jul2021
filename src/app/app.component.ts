@@ -53,8 +53,6 @@ export class AppComponent {
       console.log('userType', userType);
 
       if (userType && state) {
-        console.log('this.twilioService.twilioConnected', this.twilioService.twilioConnected);
-
         if (!this.twilioService.twilioConnected) await this.twilioService.login()
         return true;
       }
@@ -96,12 +94,12 @@ export class AppComponent {
 
       const currentRoute = this.router.url
       if (notificationData.type == 'call') {
-        this.twilioService.presentIncomingCallScreen(notificationData.caller)
+        this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
       }
       if (currentRoute.includes('/chat')) {
-        notification.show_notification = false
+        notification.show_local_notification = false
       }
-      if (notification.show_notification) this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)
+      if (notification.show_local_notification) this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)
 
     })
 
@@ -110,6 +108,15 @@ export class AppComponent {
       if (answered) {
         this.openCallComponent()
       }
+    })
+
+    this.notifications.onMissedCall.subscribe(notification => {
+      this.twilioService.dismissIncomingCallModal()
+    })
+
+    this.notifications.onRejectedCall.subscribe(notification => {
+      console.log('onRejectedCall', notification);
+      this.twilioService.dismissOutcomingCallModal()
     })
 
     this.twilioService.onCallAccepted.subscribe(answered => {

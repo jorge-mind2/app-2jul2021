@@ -10,6 +10,9 @@ import { Client } from 'twilio-chat';
 export class PushNotificationsService implements OnInit {
   onMessageReceived: EventEmitter<string> = new EventEmitter()
   onCallAnswered: EventEmitter<boolean> = new EventEmitter()
+  onMissedCall: EventEmitter<any> = new EventEmitter()
+  onRejectedCall: EventEmitter<any> = new EventEmitter()
+  onAcceptedCall: EventEmitter<any> = new EventEmitter()
   registeredPushChannel: Client.NotificationsChannelType = null
   constructor(
     private fcm: FirebaseX,
@@ -30,8 +33,8 @@ export class PushNotificationsService implements OnInit {
     })
     console.log(perms);
     this.subscribeToNotificationEvents()
-    return this.fcm.onMessageReceived().subscribe(async data => {
-      console.log("here you receive the message", data);
+    return this.fcm.onMessageReceived().subscribe(async notification => {
+      console.log("here you receive the message", notification);
       /*
         data = {
           "channel_id": "CH296f4a24749d4347a2bf7b4a4754ecb4",
@@ -52,16 +55,17 @@ export class PushNotificationsService implements OnInit {
           "show_notification": "false"
         }
       */
-      var rawData = null;
-      rawData = this.getRawPushForFCM(data);
-      if (data.show_notification == 'true') {
+      var rawData = this.getRawPushForFCM({ ...notification });
+      console.log('notification show_notification', notification.show_notification);
+
+      if (notification.show_notification == 'true') {
         // this.showNotification(data.id, data.twi_body)
         console.log("Received in background");
-        rawData.show_local_notification = false
+        rawData.data.show_local_notification = false
       } else {
-        console.log("Received in foreground from fcm onMessageReceived");
-        rawData.show_local_notification = true
+        console.log("Received in foreground");
       }
+      rawData.data.show_local_notification = true
       if (rawData.data.data) {
         if (typeof rawData.data.data == 'string') rawData.data.data = JSON.parse(rawData.data.data)
       }
@@ -71,25 +75,37 @@ export class PushNotificationsService implements OnInit {
   };
 
   private subscribeToNotificationEvents() {
-    this.localNotifications.on('trigger').subscribe(data => {
-      console.log('local notification trigger', data);
+    this.localNotifications.on('trigger').subscribe(notification => {
+      console.log('local notification trigger', notification);
+      const type = notification.data.type
+      console.log('notification type', type);
+      if (type && type == 'call-accepted') {
+        return this.onAcceptedCall.emit(notification)
+      }
+      if (type && type == 'call-rejected') {
+        // el paciente rechazó la llamada
+        return this.onRejectedCall.emit(notification)
+      }
+      if (type && type == 'call-missed') {
+        // el terapeuta colgó al marcar
+        return this.onMissedCall.emit(notification)
+      }
+    })
+    this.localNotifications.on('open-chat').subscribe(notification => {
+      console.log('local notification open-chat', notification);
 
     })
-    this.localNotifications.on('open-chat').subscribe(data => {
-      console.log('local notification open-chat', data);
-
-    })
-    this.localNotifications.on('answer-call').subscribe(data => {
-      console.log('local notification answer-call', data);
+    this.localNotifications.on('answer-call').subscribe(notification => {
+      console.log('local notification answer-call', notification);
       this.onCallAnswered.emit(true)
 
     })
-    this.localNotifications.on('reject-call').subscribe(data => {
-      console.log('local notification reject-call', data);
+    this.localNotifications.on('reject-call').subscribe(notification => {
+      console.log('local notification reject-call', notification);
       this.onCallAnswered.emit(false)
     })
-    this.localNotifications.on('click').subscribe(data => {
-      console.log('local notification tap', data);
+    this.localNotifications.on('click').subscribe(notification => {
+      console.log('local notification tap', notification);
 
     })
   }
