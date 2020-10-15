@@ -24,8 +24,6 @@ export class AuthService {
 
   async checkToken() {
     const token = await this.storage.service.get(TOKEN_KEY)
-    console.log(token);
-
     if (token) {
       // let decoded = this.helper.decodeToken(token);
       let isExpired = this.helper.isTokenExpired(token);

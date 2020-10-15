@@ -26,7 +26,7 @@ export class HomeTherapistPage implements OnInit {
 
   ngOnInit() {
     this.getCurrrentUSer();
-    this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
+    // this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
   }
 
   /* ionViewDidEnter() {
@@ -81,10 +81,10 @@ export class HomeTherapistPage implements OnInit {
       patient.avatar = this.api.getPhotoProfile(patient)
     }
     this.patients = patients
-    this.setUnreadMessages()
+    // this.setUnreadMessages()
   }
 
-  private async setUnreadMessages() {
+  /* private async setUnreadMessages() {
     const unreadMessages = await this.storageService.getUnreadMessages()
     console.log('unreadMessages', unreadMessages);
 
@@ -95,7 +95,7 @@ export class HomeTherapistPage implements OnInit {
         }
       }
     }
-  }
+  } */
 
   async showSchedule() {
     const patient = {}

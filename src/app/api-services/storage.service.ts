@@ -1,6 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { CometChat } from '@cometchat-pro/cordova-ionic-chat';
 import { ILocalNotification } from '@ionic-native/local-notifications/ngx';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
@@ -18,7 +17,7 @@ export class StorageService {
     private jwtHelper: JwtHelperService
   ) { this.service = storage }
 
-  async setUnreadMessages(message: CometChat.TextMessage, setUnread: boolean): Promise<void> {
+  /* async setUnreadMessages(message: CometChat.TextMessage, setUnread: boolean): Promise<void> {
     const scheduledMessages = await this.storage.get('unread_messages') || []
 
     const scheduledMessage = scheduledMessages.find(smessage => smessage.id == message.getSender().getUid())
@@ -42,7 +41,7 @@ export class StorageService {
     const scheduledMessages = await this.storage.get('unread_messages')
     if (user_id) return scheduledMessages.find(scheduled => scheduled.id == user_id)
     return [].concat(scheduledMessages || [])
-  }
+  } */
 
   async setNotificationsSchedule(notification: ILocalNotification): Promise<any> {
     const notificationSchedule = await this.storage.get('notification_schedule')

@@ -3,7 +3,6 @@ import { ToastController, NavController, LoadingController, AlertController } fr
 import { ActivatedRoute } from '@angular/router';
 
 import { AuthService } from '../api-services/auth.service';
-import { CometChatService } from '../api-services/comet-chat.service';
 import { Device } from '@ionic-native/device/ngx';
 import { TwilioService } from '../api-services/twilio.service';
 import { PushNotificationsService } from '../api-services/push-notifications.service';
@@ -29,8 +28,6 @@ export class LoginPage implements OnInit {
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private auth: AuthService,
-    private cometchat: CometChatService,
-    private twilioService: TwilioService,
     private notificationsServcie: PushNotificationsService
   ) {
     this.route.queryParams.subscribe(params => {

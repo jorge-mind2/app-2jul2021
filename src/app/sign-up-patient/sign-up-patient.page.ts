@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, LoadingController, AlertController, NavController } from '@ionic/angular';
 import { TermsPage } from '../terms/terms.page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CometChatService } from "../api-services/comet-chat.service";
 
 import { appConstants } from "../constants.local";
 import { AuthService } from '../api-services/auth.service';
@@ -22,7 +21,6 @@ export class SignUpPatientPage implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private navCtrl: NavController,
-    private cometChat: CometChatService,
     private auth: AuthService
   ) {
     this.form = this.fb.group({
@@ -65,7 +63,6 @@ export class SignUpPatientPage implements OnInit {
       data.age = `${data.age}`
       let newUser = await this.auth.signupUser(data)
       console.log(newUser);
-      // this.createCometChatUser(newUser.data)
       this.loadingCtrl.dismiss()
       const alert = await this.alertCtrl.create({
         header: 'Registro con éxito',
@@ -86,31 +83,6 @@ export class SignUpPatientPage implements OnInit {
     }
 
   }
-
-  //Poisble deshuso, se pasó la creación de usuarios de cometchat al api
-  /* private createCometChatUser(newUser) {
-    this.cometChat.createCCUser(newUser, 'patient').then(
-      async (user) => {
-        console.log("CometChat user created", user)
-        this.loadingCtrl.dismiss()
-        const alert = await this.alertCtrl.create({
-          header: 'Registro con éxito',
-          message: 'Verifica tu email por favor.',
-          backdropDismiss: false,
-          buttons: [{
-            text: 'Aceptar',
-            cssClass: 'secondary',
-            handler: () => this.goBack()
-          }]
-        });
-
-        alert.present();
-      }, error => {
-        console.log("error", error)
-        this.loadingCtrl.dismiss()
-      }
-    )
-  } */
 
   private goBack() {
     this.navCtrl.navigateBack('welcome')

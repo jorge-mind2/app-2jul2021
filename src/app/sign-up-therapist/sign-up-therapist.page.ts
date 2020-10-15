@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../api-services/api.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavController, AlertController, ModalController, LoadingController } from '@ionic/angular';
-import { CometChatService } from '../api-services/comet-chat.service';
 import { appConstants } from '../constants.local';
 import { TermsPage } from '../terms/terms.page';
 import * as moment from "moment";
@@ -25,7 +24,6 @@ export class SignUpTherapistPage implements OnInit {
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
-    private cometChat: CometChatService,
     private api: ApiService,
     private auth: AuthService
   ) {
@@ -87,7 +85,6 @@ export class SignUpTherapistPage implements OnInit {
       data.detail.birthdate = moment(data.detail.birthdate).format('YYYY-MM-DD')
       let newUser = await this.auth.signupUser(data)
       // console.log(newUser);
-      // this.createCometChatUser(newUser.data)
       this.loadingCtrl.dismiss()
       const alert = await this.alertCtrl.create({
         header: 'Registro hecho',
@@ -107,31 +104,6 @@ export class SignUpTherapistPage implements OnInit {
       // this.presentErrorAlert(e.error.message[0])
     }
   }
-
-  //Poisble deshuso, se pasó la creación de usuarios de cometchat al api
-  /*  private createCometChatUser(newUser) {
-     this.cometChat.createCCUser(newUser, 'therapist').then(
-       async (user) => {
-         console.log("CometChat user created", user)
-         this.loadingCtrl.dismiss()
-         const alert = await this.alertCtrl.create({
-           header: 'Registro con éxito',
-           message: 'Verifica tu email por favor.',
-           backdropDismiss: false,
-           buttons: [{
-             text: 'Aceptar',
-             cssClass: 'secondary',
-             handler: () => this.goBack()
-           }]
-         });
-
-         alert.present();
-       }, error => {
-         console.log("error", error)
-         this.loadingCtrl.dismiss()
-       }
-     )
-   } */
 
   selectIonDate() {
     let bd = this.form.value.detail.birthdate

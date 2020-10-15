@@ -61,12 +61,12 @@ export class HomePage implements OnInit {
 
   private async setUnreadMessages() {
     if (!this.user || !this.user.role) return
-    const unreadMessages = await this.storageService.getUnreadMessages()
+    // const unreadMessages = await this.storageService.getUnreadMessages()
 
     if (this.user.therapist) {
-      this.therapistMessagesUnread = unreadMessages.some(message => message.id == this.user.therapist.cometChatId && message.unread)
+      // this.therapistMessagesUnread = unreadMessages.some(message => message.id == this.user.therapist.cometChatId && message.unread)
     }
-    if (this.user.role.name == 'patient') this.supportMessagesUnread = unreadMessages.some(message => message.id == this.user.support.cometChatId && message.unread)
+    // if (this.user.role.name == 'patient') this.supportMessagesUnread = unreadMessages.some(message => message.id == this.user.support.cometChatId && message.unread)
 
   }
 

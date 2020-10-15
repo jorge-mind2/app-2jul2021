@@ -17,7 +17,6 @@ const routes: Routes = [
   { path: 'plans', loadChildren: './plans/plans.module#PlansPageModule', canActivate: [AuthGuard] },
   { path: 'my-patients', loadChildren: './my-patients/my-patients.module#MyPatientsPageModule', canActivate: [AuthGuard] },
   { path: 'chat', loadChildren: './chat/chat.module#ChatPageModule', canActivate: [AuthGuard] },
-  { path: 'video-call', loadChildren: './video-call/video-call.module#VideoCallPageModule', canActivate: [AuthGuard] },
   { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule', canActivate: [AuthGuard] },
   { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule', canActivate: [AuthGuard] },
   { path: 'edit-profile', loadChildren: './edit-profile/edit-profile.module#EditProfilePageModule', canActivate: [AuthGuard] },
