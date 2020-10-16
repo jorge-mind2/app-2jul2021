@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import * as moment from 'moment';
 import { ApiService } from 'src/app/api-services/api.service';
@@ -29,15 +30,18 @@ export class ChatComponent implements OnInit, OnDestroy {
   isTyping: boolean = false
   receiverConnected = false
   moment = moment
+  isSupportChat: boolean = false
 
   constructor(
     private twilioService: TwilioService,
     private storage: StorageService,
+    private router: Router,
     private api: ApiService
   ) {
   }
 
   async ngOnInit() {
+    this.isSupportChat = this.router.url.includes('/support')
     // console.log('receiver', this.receiver);
     // console.log('sender', this.sender);
     this.loggedUser = await this.storage.getCurrentUser()
@@ -53,7 +57,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   prepareChat(messages) {
     // console.log(this.loggedUser);
     if (this.loginType == 'patient') {
-      this.receiverPhoto = this.api.getPhotoProfile(this.loggedUser.therapist)
+      this.receiverPhoto = this.isSupportChat ? 'assets/support.png' : this.api.getPhotoProfile(this.loggedUser.therapist)
       this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
       this.receiverName = this.loggedUser.therapist.name
     } else if (this.loginType == 'therapist') {
@@ -64,11 +68,17 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.messages = messages.items.map(message => this.parseMessage(message))
     this.twilioService.newMessage.subscribe(newMessage => this.handlerMessage(this.parseMessage(newMessage)))
-    this.twilioService.isTyping.subscribe(typing => {
-      if (typing) this.receiverConnected = true
-      return this.isTyping = typing
+    const typingBox = document.getElementById('is-typing-message')
+    this.twilioService.isTyping.subscribe(async typing => {
+      this.setRecieverStatus(true)
+      if (typing) {
+        typingBox.classList.remove('hide')
+      } else {
+        typingBox.classList.add('hide')
+      }
+      console.log('chat member typing', this.isTyping);
     })
-    this.twilioService.onUserConnect.subscribe(connected => this.onReceiverConnectionChange(connected))
+    this.twilioService.onUserConnect.subscribe(async connected => this.onReceiverConnectionChange(connected))
     setTimeout(() => {
       this.scrollToBottom()
     }, 10)
@@ -93,9 +103,22 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   onReceiverConnectionChange(connected) {
-    this.receiverConnected = connected
     console.log(this.receiverConnected);
+    this.setRecieverStatus(connected)
+  }
 
+  setRecieverStatus(connected) {
+    // this.receiverConnected = connected
+    const indicators = document.querySelectorAll('.online-indicator')
+    for (const indicator of Array.from(indicators)) {
+      if (connected) {
+        indicator.classList.add('online')
+        indicator.classList.remove('offline')
+      } else {
+        indicator.classList.add('offline')
+        indicator.classList.remove('online')
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -111,6 +134,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendTyping() {
+    console.log('send typing...');
     return this.twilioService.sendTyping()
   }
 

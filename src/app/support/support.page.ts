@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { PushNotificationsService } from '../api-services/push-notifications.service';
@@ -15,7 +14,6 @@ export class SupportPage implements OnInit, OnDestroy {
   conversation: any[] = [];
   input: string = ''
   loginType: string = ''
-  receiverUID: string = ''
   currentUser: any
   receiver: any
   sender: any = {}
@@ -24,15 +22,10 @@ export class SupportPage implements OnInit, OnDestroy {
 
   constructor(
     private alertCtrl: AlertController,
-    private route: ActivatedRoute,
     private storageService: StorageService,
     private api: ApiService,
     private notifications: PushNotificationsService
-  ) {
-    this.route.queryParams.subscribe(params => {
-      this.receiverUID = params.receiverId.toLowerCase();
-    })
-  }
+  ) { }
 
   async ngOnInit() {
     this.currentUser = await this.storageService.getCurrentUser()

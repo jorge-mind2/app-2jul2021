@@ -37,11 +37,6 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.deviceId = this.device.uuid
-    if (!this.deviceId) { // si es navegador, o no tiene deviceId, toma el deviceId que setea cometChat en el localstorage
-      new Array(window.localStorage.length).fill(null).forEach((val, index) => {
-        if (window.localStorage.key(index).includes(':keys_store/deviceId')) this.deviceId = window.localStorage.getItem(window.localStorage.key(index))
-      })
-    }
   }
 
   public async loginUser() {

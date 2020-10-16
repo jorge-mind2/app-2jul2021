@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { IonContent, ModalController } from '@ionic/angular';
-import { ApiService } from 'src/app/api-services/api.service';
 import { TwilioService } from 'src/app/api-services/twilio.service';
 
 @Component({
@@ -31,7 +30,6 @@ export class VideoCallComponent implements OnInit {
   constructor(
     public modalCtrl: ModalController,
     public twilioService: TwilioService,
-    public api: ApiService,
   ) {
 
     /* this.twilioService.msgSubject.subscribe(r => {
@@ -87,7 +85,7 @@ export class VideoCallComponent implements OnInit {
   }
 
   async connect() {
-    const currentToken = await this.twilioService.getToken()
+    const currentToken = await this.twilioService.getVideoToken('mind2')
     this.accessToken = currentToken;
     const height = document.getElementById('local').offsetHeight
     const width = document.getElementById('local').clientWidth
@@ -96,7 +94,7 @@ export class VideoCallComponent implements OnInit {
 
 
     return this.twilioService.connectToRoom(currentToken, {
-      name: 'abc123',
+      name: 'mind2',
       audio: true,
       video: {
         facingMode: 'user',

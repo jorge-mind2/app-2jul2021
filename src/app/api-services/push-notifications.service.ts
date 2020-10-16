@@ -40,9 +40,11 @@ export class PushNotificationsService implements OnInit {
       console.log('notification show_notification', notification.show_notification);
 
       if (notification.show_notification == 'true') {
+        // se muestra cuando la app está cerrada (FireBasePlugin la gestiona)
         console.log("Received in background");
         rawData.data.show_local_notification = false
       } else {
+        // se muestra cuando la app está abierta o en segundo plano
         console.log("Received in foreground");
         rawData.data.show_local_notification = true
       }

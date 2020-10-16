@@ -33,11 +33,11 @@ export class HomeTherapistPage implements OnInit {
     this.setUnreadMessages()
   } */
 
-  public goToSessionPage(type, receiverId, patient) {
+  public goToSessionPage(type, patient) {
     const navigationExtras: NavigationExtras = {
       queryParams: {
         type,
-        receiverId
+        receiverId: patient.id
       },
       state: {
         therapist: this.user,

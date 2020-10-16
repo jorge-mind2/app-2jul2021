@@ -86,21 +86,41 @@ export class StorageService {
     return await this.setCurrentUser(currentUser)
   }
 
-  async setChatVideoToken(data) {
-    return await this.storage.set('chat_video_token', data)
+  async setVideoToken(token, room) {
+    return await this.storage.set(`${room}_video_token`, token)
   }
 
-  async getChatVideoToken() {
-    const currentToken = await this.storage.get('chat_video_token')
+  async setChatToken(token) {
+    return await this.storage.set('chat_token', token)
+  }
+
+  async getVideoToken(room) {
+    const currentToken = await this.storage.get(`${room}_video_token`)
     if (currentToken && !this.jwtHelper.isTokenExpired(currentToken)) {
       console.log('token valido');
       return currentToken
     } else {
       console.log('token invalido');
-      const response: any = await this.http.get('/users/twilio-token').toPromise()
+      const response: any = await this.http.get(`/users/video-token?room=${room}`).toPromise()
       console.log(response);
       // this.accessToken = response.data.token
-      this.setChatVideoToken(response.data.token)
+      this.setVideoToken(response.data.token, room)
+      return response.data.token
+    }
+    return
+  }
+
+  async getChatToken() {
+    const currentToken = await this.storage.get('chat_token')
+    if (currentToken && !this.jwtHelper.isTokenExpired(currentToken)) {
+      console.log('token valido');
+      return currentToken
+    } else {
+      console.log('token invalido');
+      const response: any = await this.http.get('/users/chat-token').toPromise()
+      console.log(response);
+      // this.accessToken = response.data.token
+      this.setChatToken(response.data.token)
       return response.data.token
     }
     return
@@ -131,7 +151,10 @@ export class StorageService {
   }
 
   async deleteChatStorage() {
-    return this.storage.remove('chat_video_token').then(async () => {
+    return this.storage.remove('chat_token').then(async () => {
+      await this.storage.forEach((val, key) => {
+        if (key.includes('_video_token')) this.storage.remove(key)
+      })
       await this.storage.remove('currentChatId')
       await this.storage.remove('currentReceiver')
       await this.storage.remove('unread_messages')

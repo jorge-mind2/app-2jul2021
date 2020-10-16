@@ -58,7 +58,7 @@ export class TwilioCallComponent implements OnInit {
 
 
   async connect() {
-    const currentToken = await this.twilioService.getToken()
+    const currentToken = await this.twilioService.getVideoToken('mind2')
     this.accessToken = currentToken;
     const height = document.getElementById('local').offsetHeight
     const width = document.getElementById('local').clientWidth

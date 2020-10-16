@@ -2,7 +2,7 @@
              id="chat-parent"
              padding-vertical>
   <ion-row class="ion-no-margin"
-           *ngIf="messages.length<=0">
+           *ngIf="messages.length<=0 && !isSupportChat">
     <ion-col size="12"
              size-md>
       <ion-card>
@@ -32,8 +32,7 @@
         <div class="avatar-border"></div>
         <img [src]="message.image"
              class="avatar">
-        <span class="online-indicator"
-              [ngClass]="{'offline': !receiverConnected, 'online': receiverConnected}"
+        <span class="online-indicator offline"
               *ngIf="!message.senderType">
         </span>
       </div>
@@ -74,7 +73,11 @@
     <ion-col size="12"
              size-md>
       <ion-text>
-        <span>&nbsp;<small *ngIf="isTyping">{{receiver?.name}} está escribiendo...</small></span>
+        <span id="is-typing-box">&nbsp;
+          <small id="is-typing-message"
+                 class="hide">{{receiver?.name}} está
+            escribiendo...</small>
+        </span>
       </ion-text>
     </ion-col>
   </ion-row>
@@ -83,6 +86,7 @@
 </ion-content>
 <div class="input-box"
      [ngClass]="{ 'custom-footer': phone_model=='iPhone X'}">
+
   <ion-row class="input-position"
            [ngClass]="{ 'custom-footer-row': phone_model=='iPhone X'}">
     <ion-col size="10">

@@ -57,9 +57,10 @@ export class AppComponent {
         return true;
       }
       else if (state === false) {
+        await this.twilioService.logout()
         this.navCtrl.navigateRoot(this.rootPage)
       }
-
+      return this.navCtrl.navigateRoot(this.rootPage)
     })
 
     this.notifications.onMessageReceived.subscribe(notification => {

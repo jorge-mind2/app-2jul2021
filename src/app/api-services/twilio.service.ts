@@ -15,8 +15,8 @@ import { PushNotificationsService } from './push-notifications.service';
   providedIn: 'root'
 })
 export class TwilioService {
-  newMessage = new BehaviorSubject(null)
-  isTyping = new BehaviorSubject(false)
+  newMessage: EventEmitter<any> = new EventEmitter()
+  isTyping: EventEmitter<boolean> = new EventEmitter(true)
   onUserConnect = new BehaviorSubject(null)
   onCallAccepted: EventEmitter<boolean> = new EventEmitter()
   remoteVideo: ElementRef<HTMLDivElement>
@@ -47,8 +47,8 @@ export class TwilioService {
       console.log('Twilio is connected');
       return
     }
-    const token = await this.getToken()
-    // console.log('Token', token)
+    const token = await this.getChatToken()
+    console.log('ChatToken', token)
     this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
     console.log('chatClient', this.client)
     const loggedUser = await this.client.user
@@ -57,8 +57,8 @@ export class TwilioService {
 
     this.client.on('tokenAboutToExpire', () => {
       console.log('Twilio tokenAboutToExpire');
-      return this.getToken()
-        .then(newToken => this.storage.setChatVideoToken(newToken))
+      return this.getChatToken()
+        .then(newToken => this.storage.setChatToken(newToken))
     });
     this.client.on('tokenExpired', () => {
       console.log('Twilio onTokenExpired');
@@ -90,8 +90,12 @@ export class TwilioService {
     return this.client.shutdown()
   }
 
-  async getToken() {
-    return await this.storage.getChatVideoToken()
+  async getChatToken() {
+    return await this.storage.getChatToken()
+  }
+
+  async getVideoToken(room) {
+    return await this.storage.getVideoToken(room)
   }
 
   subscribeToAllChatClientEvents() {
@@ -120,8 +124,8 @@ export class TwilioService {
     this.client.on('channelLeft', channel => {
       console.log('channelLeft', channel.uniqueName)
     })
-    this.client.on('channelUpdated', () => {
-      console.log('channelUpdated')
+    this.client.on('channelUpdated', channel => {
+      console.log('channelUpdated', channel)
     })
     this.client.on('memberJoined', member => {
       console.log('memberJoined', member.identity)
@@ -141,11 +145,11 @@ export class TwilioService {
     this.client.on('messageRemoved', message => {
       console.log('messageRemoved', message)
     })
-    this.client.on('typingStarted', typing => {
-      console.log('typingStarted', typing)
+    this.client.on('typingStarted', member => {
+      console.log('typingStarted', member)
     })
-    this.client.on('typingEnded', typing => {
-      console.log('typingEnded', typing)
+    this.client.on('typingEnded', member => {
+      console.log('typingEnded', member)
     })
     this.client.on('connectionError', () => {
       console.log('connectionError')
@@ -226,7 +230,7 @@ export class TwilioService {
 
   addMessageToList(message) {
     console.log('new Message', message)
-    return this.newMessage.next(message)
+    return this.newMessage.emit(message)
   };
 
   notifyMemberJoined(member) {
@@ -242,12 +246,14 @@ export class TwilioService {
   }
 
   showTypingStarted(member) {
-    this.isTyping.next(true)
+    console.log(member.identity + ' start typing')
+    this.isTyping.emit(true)
 
   }
 
   hideTypingStarted(member) {
-    this.isTyping.next(false)
+    console.log(member.identity + ' end typing')
+    this.isTyping.emit(false)
   }
 
   async getChannel(chatId): Promise<Channel> {

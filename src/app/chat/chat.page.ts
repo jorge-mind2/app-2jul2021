@@ -45,7 +45,6 @@ export class ChatPage implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
       if (this.loginType == 'therapist') this.defaultBackHref = 'home-therapist'
-      this.receiverUID = params.receiverId.toLowerCase();
       if (this.router.getCurrentNavigation().extras.state) {
         this.therapist = this.router.getCurrentNavigation().extras.state.therapist
         this.patient = this.router.getCurrentNavigation().extras.state.patient
