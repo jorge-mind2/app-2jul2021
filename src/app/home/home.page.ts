@@ -40,6 +40,10 @@ export class HomePage implements OnInit {
     this.storageService.getCurrentUser().then(async (user: any) => {
       console.log('currentUser', user);
       if (!user) return await this.auth.logout()
+      if (event) {
+        const therapistUpdated = await this.api.getMyTherapist()
+        if (therapistUpdated) user.therapist = therapistUpdated
+      }
       if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
       this.user = user;
       const groupedAppointments = await this.api.getUserAppointments(user.id)
@@ -75,7 +79,8 @@ export class HomePage implements OnInit {
       this.presentErrorAlert('Aviso', 'Aún no tienes un terapeuta asignado, contactanos en el chat de servicio para poder asignarte uno.')
     } else {
       const receiverId = this.user.therapist.id;
-      this.storageService.setCurrentchatId(`${this.user.id}_chat_therapist_${this.user.therapist.id}`)
+      const channel = this.user.channels.find(channel => channel.type == 'therapist')
+      this.storageService.setCurrentchatId(channel.unique_name)
       this.storageService.setCurrentReceiver(this.user.therapist)
       this.navCtrl.navigateForward('chat', { queryParams: { type, receiverId } })
     }
@@ -83,7 +88,8 @@ export class HomePage implements OnInit {
 
   public goToSupportChat() {
     const receiverId = this.user.support.id;
-    this.storageService.setCurrentchatId(`${this.user.id}_chat_support_${this.user.support.id}`)
+    const channel = this.user.channels.find(channel => channel.type == 'support')
+    this.storageService.setCurrentchatId(channel.unique_name)
     this.storageService.setCurrentReceiver(this.user.support)
     this.navCtrl.navigateForward('support', { queryParams: { receiverId } })
   }

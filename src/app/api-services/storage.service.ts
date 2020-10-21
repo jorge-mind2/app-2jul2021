@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { ILocalNotification } from '@ionic-native/local-notifications/ngx';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { HttpClient } from '@angular/common/http';
+import { TwilioService } from './twilio.service';
 const CURRENT_USER = 'currentUser'
 
 @Injectable({
@@ -142,13 +143,45 @@ export class StorageService {
     return await this.storage.get('currentReceiver')
   }
 
-  async setChatMessages(messages) {
-    return await this.storage.set('chatMessages', messages)
+  async getChatMessages(channel) {
+    const messagesData: [] = await this.storage.get('chat_messages')
+    /*
+      messagesData = [
+        {
+          channel: string,
+          messages: messages[]
+        }
+      ]
+    */
+    if (messagesData && messagesData.length) {
+      const searchedMessages: any = messagesData.find((data: any) => data.channel == channel)
+      if (searchedMessages) return searchedMessages.messages
+    }
+    return null;
   }
 
-  async getChatMessages() {
-    return await this.storage.get('chatMessages')
+  async setChatMessages(messagesToSave: { channel: string, messages: { items: any[] } }): Promise<any> {
+    /*
+      messagesToSave = {
+          channel: string,
+          messages: messages[]
+        }
+    */
+    let messagesData: any[] = await this.storage.get('chat_messages')
+    console.log('messagesData', messagesData);
+
+    if (!messagesData) messagesData = []
+    const existingChannel = messagesData.findIndex((data: any) => messagesToSave.channel == data.channel)
+    console.log('existingChannel', existingChannel);
+
+    if (existingChannel > -1) {
+      messagesData[existingChannel] = messagesToSave
+    } else {
+      messagesData.push(messagesToSave)
+    }
+    return await this.storage.set('chat_messages', messagesData)
   }
+
 
   async deleteChatStorage() {
     return this.storage.remove('chat_token').then(async () => {
@@ -159,7 +192,7 @@ export class StorageService {
       await this.storage.remove('currentReceiver')
       await this.storage.remove('unread_messages')
       await this.storage.remove('receiverId')
-      return await this.storage.remove('chatMessages')
+      return await this.storage.remove('chat_messages')
 
     })
   }

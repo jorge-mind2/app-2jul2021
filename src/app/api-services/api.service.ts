@@ -30,15 +30,13 @@ export class ApiService {
     return await this.http.get(`/users/${id}`, opts).toPromise()
   }
 
-  public async getMyPacients(id): Promise<any> {
-    const opts = { params: new HttpParams({ fromString: "join=patients&join=patients.appointments" }) };
-    const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
+  public async getMyPatients(id): Promise<any> {
+    const { data } = await this.http.get<any>(`/users/my-patients`).toPromise()
     return data.patients;
   }
 
-  public async getMyTherapist(id: number): Promise<any> {
-    const opts = { params: new HttpParams({ fromString: "join=therapist&join=schedules&join=appointments" }) };
-    const { data } = await this.http.get<any>(`/users/${id}`, opts).toPromise()
+  public async getMyTherapist(): Promise<any> {
+    const { data } = await this.http.get<any>(`/users/my-therapist`).toPromise()
     return data.therapist;
   }
 
@@ -142,5 +140,9 @@ export class ApiService {
 
   public async sendAcceptCall(callerId: number) {
     return await this.http.post(`/users/accept-call/${callerId}`, {}).toPromise()
+  }
+
+  public async subscribeToChannel(channel: string) {
+    return await this.http.get(`/users/channel-subscribe/${channel}`).toPromise()
   }
 }

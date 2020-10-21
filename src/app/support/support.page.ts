@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
@@ -9,7 +9,7 @@ import { PushNotificationsService } from '../api-services/push-notifications.ser
   templateUrl: './support.page.html',
   styleUrls: ['../chat/chat.page.scss', './support.page.scss'],
 })
-export class SupportPage implements OnInit, OnDestroy {
+export class SupportPage implements OnInit {
 
   conversation: any[] = [];
   input: string = ''
@@ -24,7 +24,7 @@ export class SupportPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private storageService: StorageService,
     private api: ApiService,
-    private notifications: PushNotificationsService
+    private notifications: PushNotificationsService,
   ) { }
 
   async ngOnInit() {
@@ -32,14 +32,10 @@ export class SupportPage implements OnInit, OnDestroy {
     this.receiver = await this.storageService.getCurrentReceiver()
     this.notifications.onAssignedTherapist.subscribe(notification => this.getMyTherapist())
     console.log('this.receiver', this.receiver);
-
-  }
-
-  ngOnDestroy() {
   }
 
   async getMyTherapist() {
-    const therapist = await this.api.getMyTherapist(this.currentUser.id)
+    const therapist = await this.api.getMyTherapist()
     this.currentUser.therapist = therapist
     await this.storageService.setCurrentUser(this.currentUser).then(() => this.presentAlert(`Ahora tu terapeuta es: ${therapist.name} ${therapist.last_name}`))
     this.showAssignmentBtn = false

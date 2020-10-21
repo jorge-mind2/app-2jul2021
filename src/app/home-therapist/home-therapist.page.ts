@@ -44,7 +44,8 @@ export class HomeTherapistPage implements OnInit {
         patient
       }
     };
-    this.storageService.setCurrentchatId(`${patient.id}_chat_therapist_${this.user.id}`)
+    const channel = patient.channels.find(channel => channel.type == 'therapist')
+    this.storageService.setCurrentchatId(channel.unique_name)
     this.storageService.setCurrentReceiver(patient)
     this.navCtrl.navigateForward('chat', { ...navigationExtras })
   }
@@ -53,7 +54,7 @@ export class HomeTherapistPage implements OnInit {
     this.storageService.getCurrentUser().then(async (user: any) => {
       console.log('Mind2 user logged', user);
       if (!user) return this.auth.logout()
-      this.getPacients(user.id);
+      this.getMyPatients(user.id);
       this.user = user;
       const groupedAppointments = await this.api.getUserAppointments(user.id)
       // this.user.groupedAppointments = groupedAppointments.data
@@ -74,8 +75,8 @@ export class HomeTherapistPage implements OnInit {
     });
   }
 
-  public async getPacients(id) {
-    const patients = await this.api.getMyPacients(id);
+  public async getMyPatients(id) {
+    const patients = await this.api.getMyPatients(id);
     console.log(patients);
     for (const patient of patients) {
       patient.avatar = this.api.getPhotoProfile(patient)

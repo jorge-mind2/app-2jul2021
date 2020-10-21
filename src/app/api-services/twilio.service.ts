@@ -84,7 +84,7 @@ export class TwilioService {
   }
 
   async logout() {
-    await this.leaveChannel()
+    await this.removeChannelEvents()
     this.channel = null
     this.twilioConnected = false
     return this.client.shutdown()
@@ -180,24 +180,48 @@ export class TwilioService {
   }
 
   async retrieveMessages(chatId): Promise<Paginator<Message>> {
-    await this.connectToChannel(chatId)
-    const messages = await this.channel.getMessages(80)
+    let messages = await this.storage.getChatMessages(chatId)
+    // await this.connectToChannel(chatId)
+    if (messages) return messages
+    if (!this.channel || this.channel.uniqueName != chatId) await this.connectToChannel(chatId)
+    messages = await this.channel.getMessages(80)
+    await this.saveMessagesOnStorage(messages.items)
     return messages
   }
 
-  async connectToChannel(chatId) {
-    /* const subscribedChannel = await this.client.getChannelByUniqueName(chatId)
-    console.log('subscribedChannel', subscribedChannel);
-    return this.channel = subscribedChannel */
-
-    const channel = await this.getChannel(chatId)
-    if (!this.channel || (this.channel && channel.uniqueName != this.channel.uniqueName)) {
-      this.channel = channel
-    }
-    return this.leaveChannel().then(async () => {
-      await this.channel.join()
-      return this.initChannelEvents()
+  async saveMessagesOnStorage(messages) {
+    const messagesArray = messages.map(message => {
+      return {
+        author: message.author,
+        dateCreated: message.dateCreated,
+        body: message.body,
+        index: message.index,
+        memberSid: message.memberSid,
+        sid: message.sid,
+        type: message.type
+      }
     })
+    const messagesToSave = {
+      channel: this.channel.uniqueName,
+      messages: {
+        items: messagesArray
+      }
+    }
+    console.log('messagesToSave', messagesToSave);
+
+    this.storage.setChatMessages(messagesToSave)
+  }
+
+  async connectToChannel(chatId) {
+    return this.client.getChannelByUniqueName(chatId)
+      .then(async channel => {
+        this.channel = channel
+        this.initChannelEvents()
+        return Promise.resolve(channel)
+      }).catch(error => {
+        console.log('error on getChannel', error);
+        return Promise.reject(error)
+      })
   }
 
   initChannelEvents() {
@@ -209,18 +233,14 @@ export class TwilioService {
     this.channel.on('memberLeft', member => this.notifyMemberLeft(member));
   }
 
-  leaveChannel() {
+  removeChannelEvents() {
     if (this.channel) {
-      return this.channel.leave().then((leftChannel: Channel) => {
-        leftChannel.removeAllListeners('messageAdded');
-        leftChannel.removeAllListeners('typingStarted');
-        leftChannel.removeAllListeners('typingEnded');
-        leftChannel.removeAllListeners('memberJoined');
-        leftChannel.removeAllListeners('memberLeft');
-      });
-    }
-    else {
-      return Promise.resolve();
+      (this.channel).removeAllListeners('messageAdded');
+      (this.channel).removeAllListeners('typingStarted');
+      (this.channel).removeAllListeners('typingEnded');
+      (this.channel).removeAllListeners('memberJoined');
+      (this.channel).removeAllListeners('memberLeft');
+      this.channel = null
     }
   }
 

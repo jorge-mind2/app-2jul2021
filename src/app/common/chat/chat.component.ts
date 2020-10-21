@@ -24,7 +24,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     therapist: {},
   }
   loginType: string
-  receiverName: string
   receiverPhoto: string
   senderPhoto: string
   isTyping: boolean = false
@@ -41,17 +40,34 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.isSupportChat = this.router.url.includes('/support')
-    // console.log('receiver', this.receiver);
-    // console.log('sender', this.sender);
-    this.loggedUser = await this.storage.getCurrentUser()
-    this.loginType = this.loggedUser.role.name
-    // this.twilioService.login().then(async () => {
     const chatId = await this.storage.getCurrentChatId()
     console.log('chatId', chatId);
+    this.twilioService.connectToChannel(chatId).then(async (channel) => {
+      await this.onChannelConnected(chatId)
+    }).catch(async error => {
+      console.log('error', error.message)
+      if (error.message == 'Forbidden') {
+        const response: any = await this.api.subscribeToChannel(chatId)
+        console.log('subscribe response', response);
+        if (response.data.subscribed) await this.onChannelConnected(chatId)
+      }
+    })
+  }
+
+  async onChannelConnected(chatId) {
+    this.isSupportChat = this.router.url.includes('/support')
+    this.loggedUser = await this.storage.getCurrentUser()
+    this.loginType = this.loggedUser.role.name
     const messages = await this.twilioService.retrieveMessages(chatId)
     this.prepareChat(messages)
-    // })
+
+  }
+
+  ngOnDestroy() {
+    console.log('chat destroyed');
+    this.twilioService.removeChannelEvents()
+    if (this.messages.length) this.twilioService.saveMessagesOnStorage(this.messages)
+    window.removeEventListener('resize', () => { })
   }
 
   prepareChat(messages) {
@@ -59,11 +75,9 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.loginType == 'patient') {
       this.receiverPhoto = this.isSupportChat ? 'assets/support.png' : this.api.getPhotoProfile(this.loggedUser.therapist)
       this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
-      this.receiverName = this.loggedUser.therapist.name
     } else if (this.loginType == 'therapist') {
       this.receiverPhoto = this.api.getPhotoProfile(this.receiver)
       this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
-      this.receiverName = this.receiver.name
     }
 
     this.messages = messages.items.map(message => this.parseMessage(message))
@@ -119,12 +133,6 @@ export class ChatComponent implements OnInit, OnDestroy {
         indicator.classList.remove('online')
       }
     }
-  }
-
-  ngOnDestroy() {
-    console.log('chat destroyed');
-    this.twilioService.leaveChannel()
-    window.removeEventListener('resize', () => { })
   }
 
   private async scrollToBottom(duration: number = 300) {

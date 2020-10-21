@@ -52,7 +52,7 @@ export class LoginPage implements OnInit {
         // if (!this.therapistCode) return this.presentErrorAlert('Falta código de terapeuta.')
         loginData = { ...loginData, code: this.therapistCode }
       }
-      console.log({ loginData });
+      // console.log({ loginData });
 
       const newSession = await this.auth.loginUser(loginData)
       console.log({ newSession })
