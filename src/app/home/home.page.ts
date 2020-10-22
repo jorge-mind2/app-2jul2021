@@ -42,7 +42,19 @@ export class HomePage implements OnInit {
       if (!user) return await this.auth.logout()
       if (event) {
         const therapistUpdated = await this.api.getMyTherapist()
-        if (therapistUpdated) user.therapist = therapistUpdated
+        if (therapistUpdated) {
+          user.therapist = therapistUpdated
+          const newData: any = {
+            therapist: therapistUpdated
+          }
+          if (therapistUpdated.channel) {
+            newData.channels = [
+              therapistUpdated.channel,
+              user.channels.find(channel => channel.type == 'support')
+            ]
+          }
+          await this.storageService.updateCurrentUser(newData)
+        }
       }
       if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
       this.user = user;

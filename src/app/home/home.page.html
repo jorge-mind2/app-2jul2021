@@ -1,5 +1,5 @@
+<div class="background-1"></div>
 <ion-content fullscreen>
-  <div class="background-1"></div>
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="presentLogoutAlert()"
@@ -10,8 +10,9 @@
     </ion-buttons>
   </ion-toolbar>
   <ion-refresher slot="fixed"
+                 color="light"
                  (ionRefresh)="getUser($event)">
-    <ion-refresher-content></ion-refresher-content>
+    <ion-refresher-content color="light"></ion-refresher-content>
   </ion-refresher>
 
   <ion-item text-center

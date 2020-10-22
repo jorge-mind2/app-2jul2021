@@ -57,7 +57,7 @@ export class PushNotificationsService implements OnInit {
   };
 
   private subscribeToNotificationEvents() {
-    this.localNotifications.on('trigger').subscribe(notification => {
+    this.localNotifications.on('trigger').subscribe(async notification => {
       console.log('local notification trigger', notification);
       const type = notification.data.type
       console.log('notification type', type);
@@ -69,11 +69,12 @@ export class PushNotificationsService implements OnInit {
         return this.onRejectedCall.emit(notification)
       }
       if (type && type == 'call-missed') {
+        await this.clearNotifications()
         // el terapeuta colgó al marcar
         return this.onMissedCall.emit(notification)
       }
       if (type && type == 'therapist-assigned') {
-        // el terapeuta colgó al marcar
+        // al paciente se le asignó terapeuta
         return this.onAssignedTherapist.emit(notification)
       }
     })
@@ -83,6 +84,7 @@ export class PushNotificationsService implements OnInit {
     })
     this.localNotifications.on('answer-call').subscribe(notification => {
       console.log('local notification answer-call', notification);
+      this.clearNotifications()
       this.onCallAnswered.emit(true)
 
     })
@@ -135,6 +137,10 @@ export class PushNotificationsService implements OnInit {
       }
     }
     this.localNotifications.schedule(notif)
+  }
+
+  clearNotifications() {
+    return this.localNotifications.clearAll()
   }
 
 }
