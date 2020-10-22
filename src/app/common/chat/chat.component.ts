@@ -30,6 +30,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   receiverConnected = false
   moment = moment
   isSupportChat: boolean = false
+  originalMessages: any
 
   constructor(
     private twilioService: TwilioService,
@@ -55,18 +56,22 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async onChannelConnected(chatId) {
+    await this.twilioService.initChannelEvents()
     this.isSupportChat = this.router.url.includes('/support')
     this.loggedUser = await this.storage.getCurrentUser()
     this.loginType = this.loggedUser.role.name
     const messages = await this.twilioService.retrieveMessages(chatId)
+    this.originalMessages = [...messages.items]
     this.prepareChat(messages)
 
   }
 
-  ngOnDestroy() {
+  async ngOnDestroy() {
     console.log('chat destroyed');
+    console.log(this.messages);
+
+    if (this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
     this.twilioService.removeChannelEvents()
-    if (this.messages.length) this.twilioService.saveMessagesOnStorage(this.messages)
     window.removeEventListener('resize', () => { })
   }
 
@@ -81,7 +86,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
 
     this.messages = messages.items.map(message => this.parseMessage(message))
-    this.twilioService.newMessage.subscribe(newMessage => this.handlerMessage(this.parseMessage(newMessage)))
+    this.twilioService.newMessage.subscribe(newMessage => {
+      this.originalMessages.push(newMessage)
+      this.handlerMessage(this.parseMessage(newMessage))
+    })
     const typingBox = document.getElementById('is-typing-message')
     this.twilioService.isTyping.subscribe(async typing => {
       this.setRecieverStatus(true)

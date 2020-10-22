@@ -99,8 +99,8 @@ export class TwilioService {
   }
 
   subscribeToAllChatClientEvents() {
-    this.client.on('userSubscribed', () => {
-      console.log('userSubscribed')
+    this.client.on('userSubscribed', user => {
+      console.log('userSubscribed', user)
     })
     this.client.on('userUpdated', () => {
       console.log('userUpdated')
@@ -118,7 +118,6 @@ export class TwilioService {
       console.log('channelInvited')
     })
     this.client.on('channelJoined', channel => {
-      channel
       console.log('channelJoined', channel.uniqueName)
     })
     this.client.on('channelLeft', channel => {
@@ -216,7 +215,6 @@ export class TwilioService {
     return this.client.getChannelByUniqueName(chatId)
       .then(async channel => {
         this.channel = channel
-        this.initChannelEvents()
         return Promise.resolve(channel)
       }).catch(error => {
         console.log('error on getChannel', error);
