@@ -19,6 +19,7 @@ export class TwilioService {
   isTyping: EventEmitter<boolean> = new EventEmitter(true)
   onUserConnect = new BehaviorSubject(null)
   onCallAccepted: EventEmitter<boolean> = new EventEmitter()
+  onChannelUpdated: EventEmitter<any> = new EventEmitter()
   remoteVideo: ElementRef<HTMLDivElement>
   localVideo: ElementRef<HTMLDivElement>
   loading: any
@@ -123,8 +124,15 @@ export class TwilioService {
     this.client.on('channelLeft', channel => {
       console.log('channelLeft', channel.uniqueName)
     })
-    this.client.on('channelUpdated', channel => {
-      console.log('channelUpdated', channel)
+    this.client.on('channelUpdated', updateData => {
+      console.log('channelUpdated', updateData)
+      if (updateData.updateReasons.includes('lastMessage')) {
+        const channel = updateData.channel.uniqueName
+        const data = {
+          channel
+        }
+        this.onChannelUpdated.emit(data)
+      }
     })
     this.client.on('memberJoined', member => {
       console.log('memberJoined', member.identity)
@@ -133,7 +141,7 @@ export class TwilioService {
       console.log('memberLeft', member.identity)
     })
     this.client.on('memberUpdated', member => {
-      console.log('memberUpdated', member.identity)
+      console.log('memberUpdated', member)
     })
     this.client.on('messageAdded', message => {
       console.log('messageAdded', message)
@@ -180,8 +188,9 @@ export class TwilioService {
 
   async retrieveMessages(chatId): Promise<Paginator<Message>> {
     let messages = await this.storage.getChatMessages(chatId)
-    // await this.connectToChannel(chatId)
-    if (messages) return messages
+    if (!await this.storage.existUnreadMessages(chatId)) {
+      if (messages) return messages
+    }
     if (!this.channel || this.channel.uniqueName != chatId) await this.connectToChannel(chatId)
     messages = await this.channel.getMessages(80)
     await this.saveMessagesOnStorage(messages.items)
@@ -404,7 +413,7 @@ export class TwilioService {
 
   private trackSubscribed(div: HTMLDivElement, track) {
     const videos = div.getElementsByTagName('video')
-    if (videos.length && track.kind == 'video') {
+    if (videos.length && track.kind == 'video' && !this.platform.is('cordova')) {
       for (let i = 0; i < videos.length; i++) {
         videos[i].style.maxWidth = '100%'
         videos[i].style.width = '100%'

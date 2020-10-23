@@ -90,7 +90,8 @@
   <ion-row class="input-position"
            [ngClass]="{ 'custom-footer-row': phone_model=='iPhone X'}">
     <ion-col size="10">
-      <ion-input class="input restrict ion-padding-start"
+      <ion-input #inputMessage
+                 class="input restrict ion-padding-start"
                  type="text"
                  placeholder="Type a message"
                  [(ngModel)]="input"

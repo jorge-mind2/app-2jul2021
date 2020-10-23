@@ -18,32 +18,6 @@ export class StorageService {
     private jwtHelper: JwtHelperService
   ) { this.service = storage }
 
-  /* async setUnreadMessages(message: CometChat.TextMessage, setUnread: boolean): Promise<void> {
-    const scheduledMessages = await this.storage.get('unread_messages') || []
-
-    const scheduledMessage = scheduledMessages.find(smessage => smessage.id == message.getSender().getUid())
-
-    if (scheduledMessage) {
-      scheduledMessage.unread = setUnread
-    } else {
-      scheduledMessages.push({
-        type: message.getSender().getRole(),
-        id: message.getSender().getUid(),
-        unread: setUnread
-      })
-    }
-    console.log('scheduledMessages', scheduledMessages);
-
-    await this.storage.set('unread_messages', scheduledMessages)
-    return this.onSetUnreadMessages.emit(true)
-  }
-
-  async getUnreadMessages(user_id?: string, message_id?: string): Promise<any[]> {
-    const scheduledMessages = await this.storage.get('unread_messages')
-    if (user_id) return scheduledMessages.find(scheduled => scheduled.id == user_id)
-    return [].concat(scheduledMessages || [])
-  } */
-
   async setNotificationsSchedule(notification: ILocalNotification): Promise<any> {
     const notificationSchedule = await this.storage.get('notification_schedule')
     console.log('notification to Schedule', notification);
@@ -85,6 +59,16 @@ export class StorageService {
     })
 
     return await this.setCurrentUser(currentUser)
+  }
+
+  async setUnreadMessages(channel: string, unreadMessages: boolean) {
+    this.onSetUnreadMessages.emit({ channel, status: unreadMessages })
+    return this.storage.set(channel, unreadMessages)
+  }
+
+  async existUnreadMessages(channel: string) {
+    const val = await this.storage.get(channel)
+    return Boolean(val)
   }
 
   async setVideoToken(token, room) {

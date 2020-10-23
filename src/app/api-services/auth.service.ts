@@ -5,6 +5,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { StorageService } from './storage.service';
+import { LoadingController } from '@ionic/angular';
 
 const TOKEN_KEY = 'accessToken'
 
@@ -16,10 +17,12 @@ export class AuthService {
   public token: string
   public userType: string
   authenticationState = new BehaviorSubject(null)
+  loading
   constructor(
     private storage: StorageService,
     private http: HttpClient,
     private helper: JwtHelperService,
+    private loadingCtrl: LoadingController
   ) { }
 
   async checkToken() {
@@ -102,7 +105,12 @@ export class AuthService {
     return loggedUser
   }
 
-  public logout(next: boolean = true) {
+  public async logout(next: boolean = true) {
+    const loading = await this.loadingCtrl.create({
+      cssClass: 'custom-loading',
+      message: 'Cerrando sesión...'
+    })
+    await loading.present();
     this.storage.service.remove(TOKEN_KEY).then(async () => {
       await this.storage.deleteUserStorage()
       this.userType = ''

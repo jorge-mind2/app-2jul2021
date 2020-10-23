@@ -15,6 +15,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   @Input('receiver') receiver
   @Input('sender') sender
   @ViewChild(IonContent, { read: IonContent }) chatBox: IonContent;
+  @ViewChild('inputMessage') inputMessage: HTMLInputElement
   messages: any[] = [];
   phone_model: string = 'iPhone';
   input: string = '';
@@ -62,6 +63,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.loginType = this.loggedUser.role.name
     const messages = await this.twilioService.retrieveMessages(chatId)
     this.originalMessages = [...messages.items]
+    await this.twilioService.channel.setAllMessagesConsumed()
+    this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
     this.prepareChat(messages)
 
   }
@@ -69,7 +72,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   async ngOnDestroy() {
     console.log('chat destroyed');
     console.log(this.messages);
-
+    this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
     if (this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
     this.twilioService.removeChannelEvents()
     window.removeEventListener('resize', () => { })
@@ -158,6 +161,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.input.replace(/\s/g, '').length <= 0) return
     const messageText = this.input;
     this.input = ''
+    document.getElementsByTagName('input')[0].focus()
     if (await this.twilioService.sendMessage(messageText)) {
       const notif = {
         text: messageText,

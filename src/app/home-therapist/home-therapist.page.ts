@@ -26,12 +26,12 @@ export class HomeTherapistPage implements OnInit {
 
   ngOnInit() {
     this.getCurrrentUSer();
-    // this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
+    this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
   }
 
-  /* ionViewDidEnter() {
-    this.setUnreadMessages()
-  } */
+  async ionViewDidEnter() {
+    await this.setUnreadMessages()
+  }
 
   public goToSessionPage(type, patient) {
     const navigationExtras: NavigationExtras = {
@@ -82,21 +82,17 @@ export class HomeTherapistPage implements OnInit {
       patient.avatar = this.api.getPhotoProfile(patient)
     }
     this.patients = patients
-    // this.setUnreadMessages()
+    await this.setUnreadMessages()
   }
 
-  /* private async setUnreadMessages() {
-    const unreadMessages = await this.storageService.getUnreadMessages()
-    console.log('unreadMessages', unreadMessages);
-
-    for (const message of unreadMessages) {
-      for (const patient of this.patients) {
-        if (message.id == patient.cometChatId) {
-          patient.unreadMessages = message.unread
-        }
+  private async setUnreadMessages() {
+    if (this.patients) {
+      for await (const patient of this.patients) {
+        const channel = patient.channels.find(channel => channel.type == 'therapist')
+        if (channel) patient.unreadMessages = await this.storageService.existUnreadMessages(channel.unique_name)
       }
     }
-  } */
+  }
 
   async showSchedule() {
     const patient = {}

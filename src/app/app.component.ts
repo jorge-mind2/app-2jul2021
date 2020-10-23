@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, NavController, ModalController } from '@ionic/angular';
+import { Platform, NavController, ModalController, LoadingController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './api-services/auth.service';
@@ -27,7 +27,8 @@ export class AppComponent {
     private router: Router,
     private storageService: StorageService,
     private notifications: PushNotificationsService,
-    private twilioService: TwilioService
+    private twilioService: TwilioService,
+    private loadingCtrl: LoadingController
   ) {
     this.initializeApp();
 
@@ -57,38 +58,15 @@ export class AppComponent {
         return true;
       }
       else if (state === false) {
+        const loader = await this.loadingCtrl.getTop()
         await this.twilioService.logout()
-        this.navCtrl.navigateRoot(this.rootPage)
+        return this.navCtrl.navigateRoot(this.rootPage).finally(() => { if (loader) loader.dismiss() })
       }
       return this.navCtrl.navigateRoot(this.rootPage)
     })
 
     this.notifications.onMessageReceived.subscribe(notification => {
-      //TODO
-      /**
-       * Mostrar notificación solo si está fuera de la página de chat o videollamada
-       * Manejar tap de la notificación de chat
-       * Manejar eventos de notificación de llamada
-       */
       console.log('notification', notification);
-      /*
-      notification = {
-          body: "María: Qué onda juan"
-          data: {
-            senderId: 13,
-            type: "message"
-          }
-          from: "378566212104"
-          id: "14"
-          messageType: "data"
-          sent_time: "1602352156070"
-          show_notification: "false"
-          ttl: "2419200"
-          twi_body: "María: Qué onda juan"
-          twi_message_id: "RU302519c83173eccd9dc534bd794aa690"
-          twi_message_type: "data"
-        }
-      */
 
       // recive notificación si está corriendo en foreground la app
       const notificationData = notification.data || null
@@ -125,6 +103,10 @@ export class AppComponent {
       if (answered) {
         this.openCallComponent()
       }
+    })
+
+    this.twilioService.onChannelUpdated.subscribe(data => {
+      this.storageService.setUnreadMessages(data.channel, true)
     })
   }
 

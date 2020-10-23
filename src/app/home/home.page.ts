@@ -17,6 +17,8 @@ export class HomePage implements OnInit {
   supportUser: any
   therapistMessagesUnread: boolean = false
   supportMessagesUnread: boolean = false
+  therapistChannel: string
+  supportChannel: string
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -26,14 +28,11 @@ export class HomePage implements OnInit {
     private api: ApiService
   ) { }
 
-  ngOnInit() {
-    this.storageService.onSetUnreadMessages.subscribe(message => this.setUnreadMessages())
-    // const p = this.api.getPackasAvailability().then(data => console.log('getPackasAvailability', data))
+  async ngOnInit() {
   }
 
   ionViewWillEnter() {
     this.getUser();
-    this.setUnreadMessages()
   }
 
   getUser(event?) {
@@ -58,8 +57,8 @@ export class HomePage implements OnInit {
       }
       if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
       this.user = user;
+      this.setChannels()
       const groupedAppointments = await this.api.getUserAppointments(user.id)
-      // this.user.groupedAppointments = groupedAppointments.data
       const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
       const nextAppointment = nextAppointments.appointments[0]
       const date = nextAppointment ? `${nextAppointment.date} ${nextAppointment.start_time}` : undefined
@@ -75,15 +74,25 @@ export class HomePage implements OnInit {
     });
   }
 
-  private async setUnreadMessages() {
-    if (!this.user || !this.user.role) return
-    // const unreadMessages = await this.storageService.getUnreadMessages()
-
-    if (this.user.therapist) {
-      // this.therapistMessagesUnread = unreadMessages.some(message => message.id == this.user.therapist.cometChatId && message.unread)
+  async setChannels() {
+    const therapistChannel = this.user.channels.find(channel => channel.type == 'therapist')
+    const supportChannel = this.user.channels.find(channel => channel.type == 'support')
+    if (therapistChannel) {
+      this.therapistChannel = therapistChannel.unique_name
     }
-    // if (this.user.role.name == 'patient') this.supportMessagesUnread = unreadMessages.some(message => message.id == this.user.support.cometChatId && message.unread)
-
+    if (supportChannel) {
+      this.supportChannel = supportChannel.unique_name
+    }
+    this.therapistMessagesUnread = await this.storageService.existUnreadMessages(this.therapistChannel)
+    this.supportMessagesUnread = await this.storageService.existUnreadMessages(this.supportChannel)
+    this.storageService.onSetUnreadMessages.subscribe(data => {
+      if (this.therapistChannel == data.channel) {
+        this.therapistMessagesUnread = data.status
+      }
+      if (this.supportChannel == data.channel) {
+        this.supportMessagesUnread = data.status
+      }
+    })
   }
 
   public goToSessionPage(type) {

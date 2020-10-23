@@ -369,6 +369,12 @@ ion-content {
   display: none;
 }
 
+@media screen and (max-height: 500px) {
+  ion-content {
+    --padding-bottom: var(--ion-padding, 46px)
+  }
+}
+
 // .reverse-msg-arc-left{
 //     position: absolute;
 //     left: -19px;
