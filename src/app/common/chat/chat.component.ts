@@ -72,8 +72,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   async ngOnDestroy() {
     console.log('chat destroyed');
     console.log(this.messages);
-    this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
-    if (this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
+    if (this.twilioService.channel) this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
+    if (this.originalMessages && this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
     this.twilioService.removeChannelEvents()
     window.removeEventListener('resize', () => { })
   }

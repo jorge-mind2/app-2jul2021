@@ -7,13 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { TwilioCallComponent } from './twilio-call/twilio-call.component';
 import { ChatComponent } from './chat/chat.component';
 import { VideoCallComponent } from './video-call/video-call.component';
+import { ViewProfileComponent } from './view-profile/view-profile.component';
 
 @NgModule({
   declarations: [
     NextAppointmentComponent,
     TwilioCallComponent,
     ChatComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    ViewProfileComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +25,8 @@ import { VideoCallComponent } from './video-call/video-call.component';
   ],
   exports: [
     ChatComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    ViewProfileComponent
   ]
 })
 export class CommonPagesModule { }

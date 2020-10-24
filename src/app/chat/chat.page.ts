@@ -7,9 +7,9 @@ import { ApiService } from '../api-services/api.service';
 import { StorageService } from '../api-services/storage.service';
 import { OptionsComponent } from './options/options.component';
 import { VideoCallComponent } from '../common/video-call/video-call.component';
-import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
 import { TwilioService } from '../api-services/twilio.service';
 import { PushNotificationsService } from '../api-services/push-notifications.service';
+import { ViewProfileComponent } from '../common/view-profile/view-profile.component';
 
 @Component({
   selector: 'app-chat',
@@ -101,14 +101,14 @@ export class ChatPage implements OnInit {
 
     this.notification.onAcceptedCall.subscribe(async notification => {
       await this.twilioService.dismissOutcomingCallModal()
-      await this.openVideoScreen()
+      await this.openVideoCallScreen()
     })
   }
 
   /**
    * Init twilio video Call
   */
-  async openVideoScreen() {
+  async openVideoCallScreen() {
     const modal = await this.modalCtrl.create({
       component: VideoCallComponent,
       componentProps: {
@@ -204,6 +204,17 @@ export class ChatPage implements OnInit {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async showProfile() {
+    console.log(this.receiver.id)
+    const modal = await this.modalCtrl.create({
+      component: ViewProfileComponent,
+      componentProps: {
+        id: +this.receiver.id
+      }
+    });
+    return await modal.present()
   }
 
   async presentModal() {

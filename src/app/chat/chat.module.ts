@@ -11,6 +11,7 @@ import { NextAppointmentComponent } from '../common/next-appointment/next-appoin
 import { CommonPagesModule } from '../common/common-pages.module';
 import { OptionsComponent } from './options/options.component';
 import { VideoCallComponent } from '../common/video-call/video-call.component';
+import { ViewProfileComponent } from '../common/view-profile/view-profile.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,7 @@ const routes: Routes = [
     NextAppointmentComponent,
     OptionsComponent,
     VideoCallComponent,
+    ViewProfileComponent,
   ],
   declarations: [
     ChatPage,

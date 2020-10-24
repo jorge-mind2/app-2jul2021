@@ -145,4 +145,9 @@ export class ApiService {
   public async subscribeToChannel(channel: string) {
     return await this.http.get(`/users/channel-subscribe/${channel}`).toPromise()
   }
+
+  public async getProfile(id: number) {
+    const { data } = await this.http.get<any>(`/users/${id}/profile`).toPromise()
+    return data.profile
+  }
 }

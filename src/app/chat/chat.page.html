@@ -26,12 +26,13 @@
        </ion-button>
      </ion-buttons> -->
      <ion-title>
-       <div class="title-block">
-         <!-- <ion-icon name="user"
-                   color="secondary"
-                   class="title-icon"></ion-icon> -->
-         <ion-text class="title-text">{{receiver?.name}} {{receiver?.last_name}}</ion-text>
-       </div>
+       <ion-buttons>
+         <ion-button (click)="showProfile()"
+                     size="large"
+                     style="font-size: 19px; text-transform: capitalize;">
+           {{receiver?.name}} {{receiver?.last_name}}
+         </ion-button>
+       </ion-buttons>
      </ion-title>
    </ion-toolbar>
  </ion-header>

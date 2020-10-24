@@ -118,8 +118,10 @@ export class TwilioService {
     this.client.on('channelInvited', () => {
       console.log('channelInvited')
     })
-    this.client.on('channelJoined', channel => {
+    this.client.on('channelJoined', async channel => {
       console.log('channelJoined', channel.uniqueName)
+      const messages = await channel.getMessages(80)
+      await this.saveMessagesOnStorage(messages.items, channel)
     })
     this.client.on('channelLeft', channel => {
       console.log('channelLeft', channel.uniqueName)
@@ -197,7 +199,8 @@ export class TwilioService {
     return messages
   }
 
-  async saveMessagesOnStorage(messages) {
+  async saveMessagesOnStorage(messages, channel?) {
+    const channelSelected = channel ? channel : this.channel
     const messagesArray = messages.map(message => {
       return {
         author: message.author,
@@ -210,7 +213,7 @@ export class TwilioService {
       }
     })
     const messagesToSave = {
-      channel: this.channel.uniqueName,
+      channel: channelSelected.uniqueName,
       messages: {
         items: messagesArray
       }
@@ -413,11 +416,13 @@ export class TwilioService {
 
   private trackSubscribed(div: HTMLDivElement, track) {
     const videos = div.getElementsByTagName('video')
-    if (videos.length && track.kind == 'video' && !this.platform.is('cordova')) {
-      for (let i = 0; i < videos.length; i++) {
-        videos[i].style.maxWidth = '100%'
-        videos[i].style.width = '100%'
-        videos[i].style.height = 'auto'
+    if (videos.length && track.kind == 'video') {
+      if (!this.platform.is('cordova')) {
+        for (let i = 0; i < videos.length; i++) {
+          videos[i].style.maxWidth = '100%'
+          videos[i].style.width = '100%'
+          videos[i].style.height = 'auto'
+        }
       }
       return
     }
