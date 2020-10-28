@@ -4,7 +4,6 @@ import { NextAppointmentComponent } from './next-appointment/next-appointment.co
 import { CalendarModule } from 'ion2-calendar';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
-import { TwilioCallComponent } from './twilio-call/twilio-call.component';
 import { ChatComponent } from './chat/chat.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
@@ -12,7 +11,6 @@ import { ViewProfileComponent } from './view-profile/view-profile.component';
 @NgModule({
   declarations: [
     NextAppointmentComponent,
-    TwilioCallComponent,
     ChatComponent,
     VideoCallComponent,
     ViewProfileComponent

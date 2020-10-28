@@ -114,6 +114,7 @@ export class AuthService {
     this.storage.service.remove(TOKEN_KEY).then(async () => {
       await this.storage.deleteUserStorage()
       this.userType = ''
+      await loading.dismiss()
       this.authenticationState.next(false);
     });
   }

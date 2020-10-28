@@ -58,7 +58,7 @@ export class TwilioService {
 
     this.client.on('tokenAboutToExpire', () => {
       console.log('Twilio tokenAboutToExpire');
-      return this.getChatToken()
+      return this.getChatToken(true)
         .then(newToken => this.storage.setChatToken(newToken))
     });
     this.client.on('tokenExpired', () => {
@@ -91,8 +91,8 @@ export class TwilioService {
     return this.client.shutdown()
   }
 
-  async getChatToken() {
-    return await this.storage.getChatToken()
+  async getChatToken(isNewToken?) {
+    return await this.storage.getChatToken(isNewToken)
   }
 
   async getVideoToken(room) {
@@ -327,7 +327,6 @@ export class TwilioService {
     return this.client.setPushRegistrationId('fcm', token);
   }
 
-
   async connectToRoom(accessToken: string, options: TwilioVideo.ConnectOptions): Promise<void> {
     await this.presentLoading('Conectando...')
     TwilioVideo.connect(accessToken, options).then(async room => {
@@ -399,12 +398,12 @@ export class TwilioService {
     div.style.width = '100%'
     div.style.height = 'auto'
     this.remoteVideo.nativeElement.appendChild(div)
-    participant.on('trackSubscribed', track => this.trackSubscribed(div, track));
+    participant.on('trackSubscribed', track => this.trackSubscribed(div, track, true));
     participant.on('trackUnsubscribed', track => this.trackUnsubscribed(track));
 
     participant.tracks.forEach(publication => {
       if (publication.isSubscribed) {
-        this.trackSubscribed(div, publication.track);
+        this.trackSubscribed(div, publication.track, true);
       }
     });
   }
@@ -414,10 +413,10 @@ export class TwilioService {
     document.getElementById(participant.sid).remove();
   }
 
-  private trackSubscribed(div: HTMLDivElement, track) {
+  private trackSubscribed(div: HTMLDivElement, track, resize?) {
     const videos = div.getElementsByTagName('video')
     if (videos.length && track.kind == 'video') {
-      if (!this.platform.is('cordova')) {
+      if (!this.platform.is('cordova') || resize) {
         for (let i = 0; i < videos.length; i++) {
           videos[i].style.maxWidth = '100%'
           videos[i].style.width = '100%'

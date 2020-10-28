@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CalendarComponentOptions } from 'ion2-calendar';
-import { ModalController, ToastController, AlertController } from '@ionic/angular';
+import { ModalController, ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { ApiService } from 'src/app/api-services/api.service';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/api-services/auth.service';
@@ -46,6 +46,7 @@ export class NextAppointmentComponent implements OnInit {
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
     private storage: StorageService,
     private auth: AuthService,
     private api: ApiService
@@ -94,6 +95,7 @@ export class NextAppointmentComponent implements OnInit {
   }
 
   public closeModal(updated: boolean = false) {
+    this.loadingCtrl.dismiss()
     this.modalCtrl.dismiss({
       'dismissed': true,
       updated
@@ -137,6 +139,7 @@ export class NextAppointmentComponent implements OnInit {
   }
 
   public async createAppointment() {
+    await this.presentLoading()
     try {
       // this.appointment.date = moment(this.appointmentDateStr).format('YYYY-MM-DD')
       // return console.log(this.appointment)
@@ -151,11 +154,18 @@ export class NextAppointmentComponent implements OnInit {
 
     } catch (error) {
       console.log(error);
-
+      this.loadingCtrl.dismiss()
     }
 
   }
 
+  async presentLoading() {
+    const loading = await this.loadingCtrl.create({
+      cssClass: 'custom-loading',
+      message: 'Guardando...'
+    })
+    await loading.present();
+  }
 
   async presentToast(text) {
     const toast = await this.toastCtrl.create({

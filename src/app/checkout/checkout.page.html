@@ -33,7 +33,7 @@
         <ion-label color="light">
           <p class="notification-wrapper">
             <ion-icon name="cash"></ion-icon> OXXO <span class="notification-badge"
-                  *ngIf="paymentPending.status&&paymentPending.status==2">1</span>
+                  *ngIf="paymentPending.status&&paymentPending.status==2&&!paymentPending.expired">1</span>
           </p>
         </ion-label>
       </ion-segment-button>
@@ -71,7 +71,8 @@
           <ion-row>
             <ion-col>
               <h2 style="font-size: 1.2em;; margin-top: 15;"
-                  class="ion-padding-horizontal">Tarjeta</h2>
+                  class="ion-padding-horizontal">Tarjeta <span *ngIf="card.funding=='DEBIT'">de débito</span><span
+                      *ngIf="card.funding=='CREDIT'">de crédito</span></h2>
               <h2
                   style="font-size: 1.2em; margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: space-around;">
                 <span>

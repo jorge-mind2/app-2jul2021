@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, NavController, ModalController, LoadingController } from '@ionic/angular';
+import { Platform, NavController, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './api-services/auth.service';
@@ -28,7 +28,6 @@ export class AppComponent {
     private storageService: StorageService,
     private notifications: PushNotificationsService,
     private twilioService: TwilioService,
-    private loadingCtrl: LoadingController
   ) {
     this.initializeApp();
 
@@ -58,9 +57,7 @@ export class AppComponent {
         return true;
       }
       else if (state === false) {
-        const loader = await this.loadingCtrl.getTop()
         await this.twilioService.logout()
-        return this.navCtrl.navigateRoot(this.rootPage).finally(() => { if (loader) loader.dismiss() })
       }
       return this.navCtrl.navigateRoot(this.rootPage)
     })

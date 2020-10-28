@@ -150,4 +150,8 @@ export class ApiService {
     const { data } = await this.http.get<any>(`/users/${id}/profile`).toPromise()
     return data.profile
   }
+
+  public async checkSessionTime() {
+    return await this.http.get('/users/check-session-time').toPromise()
+  }
 }

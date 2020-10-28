@@ -95,9 +95,9 @@ export class StorageService {
     return
   }
 
-  async getChatToken() {
+  async getChatToken(newToken?) {
     const currentToken = await this.storage.get('chat_token')
-    if (currentToken && !this.jwtHelper.isTokenExpired(currentToken)) {
+    if (currentToken && !this.jwtHelper.isTokenExpired(currentToken) && !newToken) {
       console.log('token valido');
       return currentToken
     } else {
@@ -171,6 +171,7 @@ export class StorageService {
     return this.storage.remove('chat_token').then(async () => {
       await this.storage.forEach((val, key) => {
         if (key.includes('_video_token')) this.storage.remove(key)
+        if (key.includes('_channel_')) this.storage.remove(key)
       })
       await this.storage.remove('currentChatId')
       await this.storage.remove('currentReceiver')
