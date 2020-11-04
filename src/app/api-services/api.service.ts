@@ -130,6 +130,10 @@ export class ApiService {
     return await this.http.post('/users/call-to-user', { receiverId }).toPromise()
   }
 
+  public async cancelCall(receiverId: number) {
+    return await this.http.post(`/users/cancel-call/${receiverId}`, {}).toPromise()
+  }
+
   public async sendEndCall(receiverId: number) {
     return await this.http.post(`/users/end-call/${receiverId}`, {}).toPromise()
   }

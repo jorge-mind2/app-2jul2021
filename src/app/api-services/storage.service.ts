@@ -72,31 +72,32 @@ export class StorageService {
   }
 
   async setVideoToken(token, room) {
-    return await this.storage.set(`${room}_video_token`, token)
+    return await this.storage.set(`${room}_videoToken`, token)
   }
 
   async setChatToken(token) {
-    return await this.storage.set('chat_token', token)
+    return await this.storage.set('chatToken', token)
   }
 
-  async getVideoToken(room) {
-    const currentToken = await this.storage.get(`${room}_video_token`)
+  async getVideoToken() {
+    const room = await this.getCurrentRoom()
+    const currentToken = await this.storage.get(`${room}_videoToken`)
     if (currentToken && !this.jwtHelper.isTokenExpired(currentToken)) {
       console.log('token valido');
       return currentToken
     } else {
       console.log('token invalido');
-      const response: any = await this.http.get(`/users/video-token?room=${room}`).toPromise()
+      const response: any = await this.http.get(`/users/video-token`).toPromise()
       console.log(response);
       // this.accessToken = response.data.token
-      this.setVideoToken(response.data.token, room)
+      await this.setCurrentRoom(response.data.room)
+      await this.setVideoToken(response.data.token, response.data.room)
       return response.data.token
     }
-    return
   }
 
   async getChatToken(newToken?) {
-    const currentToken = await this.storage.get('chat_token')
+    const currentToken = await this.storage.get('chatToken')
     if (currentToken && !this.jwtHelper.isTokenExpired(currentToken) && !newToken) {
       console.log('token valido');
       return currentToken
@@ -109,6 +110,14 @@ export class StorageService {
       return response.data.token
     }
     return
+  }
+
+  async setCurrentRoom(room: string) {
+    return await this.storage.set('currentRoom', room)
+  }
+
+  async getCurrentRoom() {
+    return await this.storage.get('currentRoom')
   }
 
   async setCurrentchatId(currentChatId) {
@@ -128,7 +137,7 @@ export class StorageService {
   }
 
   async getChatMessages(channel) {
-    const messagesData: [] = await this.storage.get('chat_messages')
+    const messagesData: [] = await this.storage.get('chatMessages')
     /*
       messagesData = [
         {
@@ -151,7 +160,7 @@ export class StorageService {
           messages: messages[]
         }
     */
-    let messagesData: any[] = await this.storage.get('chat_messages')
+    let messagesData: any[] = await this.storage.get('chatMessages')
     console.log('messagesData', messagesData);
 
     if (!messagesData) messagesData = []
@@ -163,12 +172,12 @@ export class StorageService {
     } else {
       messagesData.push(messagesToSave)
     }
-    return await this.storage.set('chat_messages', messagesData)
+    return await this.storage.set('chatMessages', messagesData)
   }
 
 
   async deleteChatStorage() {
-    return this.storage.remove('chat_token').then(async () => {
+    return this.storage.remove('chatToken').then(async () => {
       await this.storage.forEach((val, key) => {
         if (key.includes('_video_token')) this.storage.remove(key)
         if (key.includes('_channel_')) this.storage.remove(key)
@@ -177,7 +186,7 @@ export class StorageService {
       await this.storage.remove('currentReceiver')
       await this.storage.remove('unread_messages')
       await this.storage.remove('receiverId')
-      return await this.storage.remove('chat_messages')
+      return await this.storage.remove('chatMessages')
 
     })
   }

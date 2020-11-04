@@ -18,7 +18,7 @@ export class OutcomingCallComponent implements OnInit {
   ngOnInit() { }
 
   dismiss(cancelled) {
-    this.api.sendEndCall(this.receiver.id)
+    this.api.cancelCall(this.receiver.id)
     this.modalCtrl.dismiss({
       cancelled
     });

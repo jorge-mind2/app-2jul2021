@@ -63,6 +63,7 @@ export class TwilioService {
     });
     this.client.on('tokenExpired', () => {
       console.log('Twilio onTokenExpired');
+      this.twilioConnected = false
       this.login(pushChannel);
     });
     this.client.on('pushNotification', (obj) => {
@@ -95,8 +96,8 @@ export class TwilioService {
     return await this.storage.getChatToken(isNewToken)
   }
 
-  async getVideoToken(room) {
-    return await this.storage.getVideoToken(room)
+  async getVideoToken() {
+    return await this.storage.getVideoToken()
   }
 
   subscribeToAllChatClientEvents() {
@@ -220,7 +221,7 @@ export class TwilioService {
     }
     console.log('messagesToSave', messagesToSave);
 
-    this.storage.setChatMessages(messagesToSave)
+    await this.storage.setChatMessages(messagesToSave)
   }
 
   async connectToChannel(chatId) {
@@ -398,12 +399,12 @@ export class TwilioService {
     div.style.width = '100%'
     div.style.height = 'auto'
     this.remoteVideo.nativeElement.appendChild(div)
-    participant.on('trackSubscribed', track => this.trackSubscribed(div, track, true));
+    participant.on('trackSubscribed', track => this.trackSubscribed(div, track));
     participant.on('trackUnsubscribed', track => this.trackUnsubscribed(track));
 
     participant.tracks.forEach(publication => {
       if (publication.isSubscribed) {
-        this.trackSubscribed(div, publication.track, true);
+        this.trackSubscribed(div, publication.track);
       }
     });
   }
@@ -438,7 +439,7 @@ export class TwilioService {
       this.room.localParticipant.publishTrack(track)
       console.log('LocalParticipant VideoTrack', track);
       this.localVideo.nativeElement.appendChild(track.attach());
-      this.trackSubscribed(this.localVideo.nativeElement, track)
+      this.trackSubscribed(this.localVideo.nativeElement, track, true)
     });
   }
 

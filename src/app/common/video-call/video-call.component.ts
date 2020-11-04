@@ -1,5 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { IonContent, ModalController } from '@ionic/angular';
+import { ApiService } from 'src/app/api-services/api.service';
+import { StorageService } from 'src/app/api-services/storage.service';
 import { TwilioService } from 'src/app/api-services/twilio.service';
 
 @Component({
@@ -9,12 +11,12 @@ import { TwilioService } from 'src/app/api-services/twilio.service';
 })
 export class VideoCallComponent implements OnInit {
   message1: string;
-  accessToken: string;
   roomName: string;
   username: string;
   @ViewChild('scrollArea') content: IonContent;
   @ViewChild('localVideo') localVideo: ElementRef;
   @ViewChild('remoteVideo') remoteVideo: ElementRef;
+  @Input() isHost: boolean
 
   video_token: any;
   videoActived = true
@@ -30,6 +32,8 @@ export class VideoCallComponent implements OnInit {
   constructor(
     public modalCtrl: ModalController,
     public twilioService: TwilioService,
+    private storage: StorageService,
+    private api: ApiService
   ) {
 
     /* this.twilioService.msgSubject.subscribe(r => {
@@ -59,6 +63,9 @@ export class VideoCallComponent implements OnInit {
       this.twilioService.room = null;
       this.twilioService.previewing = false
     }
+    if (this.isHost) {
+      this.api.sendEndCall(0)
+    }
     this.dismiss()
   }
 
@@ -85,16 +92,15 @@ export class VideoCallComponent implements OnInit {
   }
 
   async connect() {
-    const currentToken = await this.twilioService.getVideoToken('mind2')
-    this.accessToken = currentToken;
+    const currentToken = await this.twilioService.getVideoToken()
+    const currentRoom = await this.storage.getCurrentRoom()
     const height = document.getElementById('local').offsetHeight
     const width = document.getElementById('local').clientWidth
     console.log('height', height);
     console.log('width', width);
 
-
     return this.twilioService.connectToRoom(currentToken, {
-      name: 'mind2',
+      name: currentRoom,
       audio: true,
       video: {
         facingMode: 'user',

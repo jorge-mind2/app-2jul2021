@@ -112,17 +112,10 @@ export class ChatPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: VideoCallComponent,
       componentProps: {
+        isHost: true
       }
     });
     return await modal.present()
-  }
-
-  async callTo() {
-    const receiverId = +this.receiver.id
-    this.api.callTo(receiverId).then(notification => {
-      console.log('notification', notification);
-      this.twilioService.presentOutcomingCallScreen(this.receiver.name, receiverId)
-    })
   }
 
   async presentCallAlert() {
@@ -136,11 +129,27 @@ export class ChatPage implements OnInit {
       }, {
         text: 'Aceptar',
         cssClass: 'text-primary',
-        handler: value => this.callTo()
+        handler: value => this.initSession()
       },]
     })
 
     alert.present();
+  }
+
+  async initSession() {
+    const checkPermissionData: any = await this.api.checkSessionTime()
+    if (checkPermissionData.data) {
+      await this.initCall()
+    }
+  }
+
+  async initCall() {
+    const receiverId = +this.receiver.id
+    this.api.callTo(receiverId).then((response: any) => {
+      console.log('response callTo', response);
+      const call = response.data
+      this.twilioService.presentOutcomingCallScreen(this.receiver.name, receiverId)
+    })
   }
 
   async presentOptions(ev: any) {
