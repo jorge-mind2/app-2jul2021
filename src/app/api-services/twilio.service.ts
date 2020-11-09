@@ -346,20 +346,16 @@ export class TwilioService {
         // Detach the local media elements
         room.localParticipant.videoTracks.forEach(publication => {
           const track = publication.track
-          console.log('video track', track);
           track.stop()
           track.disable()
-          track.detach()
-          track._attachments.forEach(element => element.remove())
+          track.detach().forEach(element => element.remove())
           publication.unpublish()
         });
         room.localParticipant.audioTracks.forEach(publication => {
           const track = publication.track
-          console.log('audio track', track.mediaStreamTrack);
           track.stop()
           track.disable()
-          track.detach()
-          track._attachments.forEach(element => element.remove())
+          track.detach().forEach(element => element.remove())
           publication.unpublish()
         });
       });

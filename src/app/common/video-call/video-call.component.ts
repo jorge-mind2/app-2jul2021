@@ -63,6 +63,7 @@ export class VideoCallComponent implements OnInit {
       this.twilioService.room = null;
       this.twilioService.previewing = false
     }
+    this.storage.setCurrentRoom(null)
     if (this.isHost) {
       this.api.sendEndCall(0)
     }
