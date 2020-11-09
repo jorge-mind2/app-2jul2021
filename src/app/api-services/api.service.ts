@@ -158,4 +158,8 @@ export class ApiService {
   public async checkSessionTime() {
     return await this.http.get('/users/check-session-time').toPromise()
   }
+
+  public async requestRecoveryPassword(email) {
+    return await this.http.post('/users/password-recovery', { email }).toPromise()
+  }
 }
