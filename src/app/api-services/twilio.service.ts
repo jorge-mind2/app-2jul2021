@@ -37,7 +37,7 @@ export class TwilioService {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
-    private loadingCtrl: LoadingController,
+    public loadingCtrl: LoadingController,
     public storage: StorageService,
     private pushService: PushNotificationsService
   ) {
@@ -329,7 +329,6 @@ export class TwilioService {
   }
 
   async connectToRoom(accessToken: string, options: TwilioVideo.ConnectOptions): Promise<void> {
-    await this.presentLoading('Conectando...')
     TwilioVideo.connect(accessToken, options).then(async room => {
       console.log(room);
       this.room = room
@@ -393,14 +392,14 @@ export class TwilioService {
     // div.innerText = participant.identity;
     div.style.backgroundColor = 'rgba(0,0,0,.5)'
     div.style.width = '100%'
-    div.style.height = 'auto'
+    div.style.height = 'calc(100vh - 56px)'
     this.remoteVideo.nativeElement.appendChild(div)
-    participant.on('trackSubscribed', track => this.trackSubscribed(div, track));
+    participant.on('trackSubscribed', track => this.trackSubscribed(div, track, true));
     participant.on('trackUnsubscribed', track => this.trackUnsubscribed(track));
 
     participant.tracks.forEach(publication => {
       if (publication.isSubscribed) {
-        this.trackSubscribed(div, publication.track);
+        this.trackSubscribed(div, publication.track, true);
       }
     });
   }

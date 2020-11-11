@@ -58,7 +58,7 @@ export class LoginPage implements OnInit {
       console.log({ newSession })
       this.loadingCtrl.dismiss()
       let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
-      this.navCtrl.navigateForward(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
+      this.navCtrl.navigateRoot(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
 
     } catch (e) {
       this.loadingCtrl.dismiss()

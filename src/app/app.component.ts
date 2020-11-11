@@ -70,40 +70,40 @@ export class AppComponent {
 
       const currentRoute = this.router.url
       if (notificationData.type == 'call') {
-        this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
+        return this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
       }
       if (notificationData.type == 'message' && currentRoute.includes('/chat') || currentRoute.includes('/support')) {
         notification.show_local_notification = false
       }
-      if (notification.show_local_notification) this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)
+      if (notification.show_local_notification) return this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)
 
     })
 
-    this.notifications.onCallAnswered.subscribe(answered => {
-      this.twilioService.dismissIncomingCallModal()
+    this.notifications.onCallAnswered.subscribe(async answered => {
+      await this.twilioService.dismissIncomingCallModal()
       if (answered) {
-        this.openCallComponent()
+        await this.openCallComponent()
       }
     })
 
-    this.notifications.onMissedCall.subscribe(notification => {
-      this.twilioService.dismissIncomingCallModal()
+    this.notifications.onMissedCall.subscribe(async notification => {
+      await this.twilioService.dismissIncomingCallModal()
     })
 
-    this.notifications.onRejectedCall.subscribe(notification => {
+    this.notifications.onRejectedCall.subscribe(async notification => {
       console.log('onRejectedCall', notification);
-      this.twilioService.dismissOutcomingCallModal()
+      await this.twilioService.dismissOutcomingCallModal()
     })
 
-    this.twilioService.onCallAccepted.subscribe(answered => {
-      this.twilioService.dismissIncomingCallModal()
+    this.twilioService.onCallAccepted.subscribe(async answered => {
+      await this.twilioService.dismissIncomingCallModal()
       if (answered) {
-        this.openCallComponent()
+        await this.openCallComponent()
       }
     })
 
-    this.twilioService.onChannelUpdated.subscribe(data => {
-      this.storageService.setUnreadMessages(data.channel, true)
+    this.twilioService.onChannelUpdated.subscribe(async data => {
+      await this.storageService.setUnreadMessages(data.channel, true)
     })
   }
 

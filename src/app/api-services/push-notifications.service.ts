@@ -3,6 +3,7 @@ import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { LocalNotifications, ILocalNotification } from '@ionic-native/local-notifications/ngx';
 import { Platform } from '@ionic/angular';
 import { Client } from 'twilio-chat';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class PushNotificationsService implements OnInit {
     private fcm: FirebaseX,
     private localNotifications: LocalNotifications,
     private platform: Platform,
+    private api: ApiService
   ) { }
 
   ngOnInit() {
@@ -62,6 +64,7 @@ export class PushNotificationsService implements OnInit {
       const type = notification.data.type
       console.log('notification type', type);
       if (type && type == 'call-accepted') {
+        await this.clearNotifications()
         return this.onAcceptedCall.emit(notification)
       }
       if (type && type == 'call-rejected') {
@@ -69,7 +72,6 @@ export class PushNotificationsService implements OnInit {
         return this.onRejectedCall.emit(notification)
       }
       if (type && type == 'call-missed') {
-        await this.clearNotifications()
         // el terapeuta colgó al marcar
         return this.onMissedCall.emit(notification)
       }
@@ -80,21 +82,20 @@ export class PushNotificationsService implements OnInit {
     })
     this.localNotifications.on('open-chat').subscribe(notification => {
       console.log('local notification open-chat', notification);
-
     })
-    this.localNotifications.on('answer-call').subscribe(notification => {
+    this.localNotifications.on('answer-call').subscribe(async notification => {
       console.log('local notification answer-call', notification);
-      this.clearNotifications()
-      this.onCallAnswered.emit(true)
-
+      await this.api.sendAcceptCall(notification.data.callerId)
+      await this.clearNotifications()
+      return this.onCallAnswered.emit(true)
     })
     this.localNotifications.on('reject-call').subscribe(notification => {
       console.log('local notification reject-call', notification);
-      this.onCallAnswered.emit(false)
+      return this.onCallAnswered.emit(false)
     })
     this.localNotifications.on('click').subscribe(notification => {
+      this.clearNotifications()
       console.log('local notification tap', notification);
-
     })
   }
 

@@ -8,7 +8,7 @@
       </ion-button>
     </ion-buttons>
     <!-- <ion-title color="light">
-      Agendar próxima cita
+      {{today}}
     </ion-title> -->
   </ion-toolbar>
   <ion-toolbar>
@@ -39,11 +39,14 @@
     <ion-item class="ion-padding-horizontal"
               lines="none">
       <ion-text color="light">
-        <p>{{patient?.name}} {{patient?.last_name}}</p>
+        <p>Agendar cita para {{patient?.name}} {{patient?.last_name}}</p>
         <p *ngIf="packageAvailability.availability">Tienes {{packageAvailability.availability}}
           {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
           tu plan activo</p>
-        <p *ngIf="!packageAvailability.availability">Obtén un plan de sesiones para poder agendar con tu terapeuta</p>
+        <p *ngIf="!packageAvailability.availability && loginType=='patient'">Obtén un plan de sesiones para poder
+          agendar con tu terapeuta. No tienes citas disponibles para agendar.</p>
+        <p *ngIf="!packageAvailability.availability && loginType=='therapist'">{{patient?.name}} {{patient?.last_name}}
+          no tiene citas disponibles para agendar.</p>
       </ion-text>
     </ion-item>
 
@@ -60,11 +63,14 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-text color="light"
-                    *ngIf="!therapist.availability.length">
-            <h4 class="ion-text-center">
+          <ion-text color="light">
+            <h4 class="ion-text-center"
+                *ngIf="!therapist.availability.length">
               El terapeuta aún no tiene horarios disponibles
             </h4>
+            <p *ngIf="hoursAvailability.length">
+              Horarios en la Ciudad de México
+            </p>
           </ion-text>
           <ion-button [color]="hour.color"
                       [disabled]="!hour.available"
@@ -82,7 +88,7 @@
         <p>
           La cita será el día: <b>{{appointmentDateDate | date: 'd MMMM, y'}}</b>
         </p>
-        <p>Inicia: <b>{{appointment.start_time}} hrs.</b></p>
+        <p>Inicia: <b>{{appointment.start_time}} hrs. <small>(Hora de la Ciudad de México)</small></b></p>
         <p>Finaliza: <b>{{appointment.real_end_time}} hrs.</b></p>
       </ion-text>
     </ion-item>

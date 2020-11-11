@@ -34,7 +34,7 @@ export class StorageService {
     return await this.storage.set('userType', userType);
   }
 
-  public async getUserType() {
+  public async getUserType(): Promise<'therapist' | 'patient'> {
     return await this.storage.get('userType');
   }
 

@@ -88,6 +88,21 @@
   }
 }
 
+ion-refresher-content {
+  --color: white;
+  .refresher-pulling,
+  .refresher-refreshing,
+  .refresher-md .refresher-pulling-icon,
+  .refresher-md .refresher-pulling-text,
+  .refresher-md .refresher-refreshing-icon,
+  .refresher-md .refresher-refreshing-text,
+  div.refresher-pulling > div > ion-icon {
+    --color: white;
+    color: var(--ion-text-color,#fff) !important;
+  }
+}
+
+
 @keyframes custom-loader {
   0% {
     background-position: 0% 50%

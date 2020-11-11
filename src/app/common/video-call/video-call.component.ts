@@ -80,6 +80,16 @@ export class VideoCallComponent implements OnInit {
     smallVideo.classList.remove('small-video')
     fullscreenVideo.classList.add('small-video')
     fullscreenVideo.classList.remove('fullscreen-video')
+    var smallVideos = smallVideo.querySelectorAll('video')
+    var bigVideos = fullscreenVideo.querySelectorAll('video')
+    for (let i = 0; i < smallVideos.length; i++) {
+      var video = smallVideos[i]
+      video.style.width = 'auto';
+    }
+    for (let i = 0; i < bigVideos.length; i++) {
+      var video = bigVideos[i]
+      video.style.width = '100%';
+    }
   }
 
   toggleVideo() {
@@ -93,21 +103,50 @@ export class VideoCallComponent implements OnInit {
   }
 
   async connect() {
-    const currentToken = await this.twilioService.getVideoToken()
-    const currentRoom = await this.storage.getCurrentRoom()
-    const height = document.getElementById('local').offsetHeight
-    const width = document.getElementById('local').clientWidth
-    console.log('height', height);
-    console.log('width', width);
+    try {
+      this.twilioService.presentLoading('Conectando...')
+      const currentToken = await this.twilioService.getVideoToken()
+      const currentRoom = await this.storage.getCurrentRoom()
+      const height = document.getElementById('local').offsetHeight
+      const width = document.getElementById('local').clientWidth
+      console.log('height', height);
+      console.log('width', width);
 
-    return this.twilioService.connectToRoom(currentToken, {
-      name: currentRoom,
-      audio: true,
-      video: {
-        facingMode: 'user',
-        aspectRatio: 1.777777778
-      }
-    })
+      return this.twilioService.connectToRoom(currentToken, {
+        name: currentRoom,
+        audio: true,
+        video: {
+          height: 720,
+          frameRate: 24,
+          width: 1280,
+          facingMode: 'user',
+          aspectRatio: 1.777777778
+        },
+        bandwidthProfile: {
+          video: {
+            mode: 'collaboration',
+            renderDimensions: {
+              high: {
+                height: 1080,
+                width: 1980
+              },
+              standard: {
+                height: 720,
+                width: 1280
+              },
+              low: {
+                height: 176,
+                width: 144
+              }
+            }
+          }
+        }
+      })
+
+    } catch (error) {
+      if (await this.twilioService.loadingCtrl.getTop()) this.twilioService.loadingCtrl.dismiss()
+      this.dismiss()
+    }
   }
 
   start(): void {

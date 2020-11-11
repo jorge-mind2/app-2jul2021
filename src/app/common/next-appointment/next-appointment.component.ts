@@ -20,7 +20,7 @@ export class NextAppointmentComponent implements OnInit {
   appointmentDateDate: Date = this.appointmentDate.toDate()
   calendarOptions: CalendarComponentOptions = {}
   type: string = 'js-date'
-  today: string = moment().toISOString()
+  today: any = new Date().toString()
   todayToFifth: moment.Moment = moment().add('M', 5)
   todayToFifthStr: string = this.todayToFifth.toISOString()
   todayToFifthDate: Date = this.todayToFifth.toDate()
@@ -42,6 +42,7 @@ export class NextAppointmentComponent implements OnInit {
     availability: 0
   }
   moment = moment
+  loginType: string
   constructor(
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
@@ -52,7 +53,8 @@ export class NextAppointmentComponent implements OnInit {
     private api: ApiService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.loginType = await this.storage.getUserType()
     this.therapistAvailable = this.therapist.availability.length
     this.calendarOptions.to = this.todayToFifthDate
     this.api.getPackasAvailability().then(response => {
@@ -94,17 +96,17 @@ export class NextAppointmentComponent implements OnInit {
     this.view = e.detail.value
   }
 
-  public closeModal(updated: boolean = false) {
-    this.loadingCtrl.dismiss()
+  public async closeModal(updated: boolean = false) {
     this.modalCtrl.dismiss({
       'dismissed': true,
       updated
+    }).finally(async () => {
+      if (await this.loadingCtrl.getTop()) await this.loadingCtrl.dismiss()
     });
   }
 
   public async getMyAppointments() {
     const appointments = await this.api.getUserAppointments(await this.auth.getCurrentId())
-    console.log('appointments', appointments.data);
     const currentUserId = await this.auth.getCurrentId()
     this.groupedAppointments = appointments.data.map(a => {
       a.order = a.group == 'today' ? 0 : a.group == 'next' ? 1 : 2
@@ -115,8 +117,6 @@ export class NextAppointmentComponent implements OnInit {
       })
       return a
     }).sort((a, b) => a.order - b.order)
-    console.log('this.groupedAppointments', this.groupedAppointments);
-
   }
 
   public selectTime(selectedHour): void {
