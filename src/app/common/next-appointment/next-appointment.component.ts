@@ -63,7 +63,7 @@ export class NextAppointmentComponent implements OnInit {
     console.log('therapist', this.therapist);
     this.prepareCalendar()
     this.view = 'schedule'
-    this.api.getPackasAvailability().then(response => {
+    this.api.getPackagesAvailability(this.patient.id).then(response => {
       console.log('getPackasAvailability', response)
       if (response.data) {
         this.packageAvailability = response.data

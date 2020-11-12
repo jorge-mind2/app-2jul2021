@@ -114,8 +114,8 @@ export class ApiService {
     return await this.http.get(`/users/${id}/appointments`).toPromise()
   }
 
-  public async getPackasAvailability(): Promise<any> {
-    return await this.http.get('/users/packages-availability').toPromise()
+  public async getPackagesAvailability(id: number): Promise<any> {
+    return await this.http.get(`/users/${id}/packages-availability`).toPromise()
   }
 
   public async getTwilioToken(): Promise<any> {
