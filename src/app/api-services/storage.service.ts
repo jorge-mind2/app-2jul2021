@@ -161,11 +161,11 @@ export class StorageService {
         }
     */
     let messagesData: any[] = await this.storage.get('chatMessages')
-    console.log('messagesData', messagesData);
+    // console.log('messagesData', messagesData);
 
     if (!messagesData) messagesData = []
     const existingChannel = messagesData.findIndex((data: any) => messagesToSave.channel == data.channel)
-    console.log('existingChannel', existingChannel);
+    // console.log('existingChannel', existingChannel);
 
     if (existingChannel > -1) {
       messagesData[existingChannel] = messagesToSave

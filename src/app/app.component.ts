@@ -17,6 +17,8 @@ import { VideoCallComponent } from './common/video-call/video-call.component';
 export class AppComponent {
   private rootPage: string = 'welcome';
   loddgerUser: any
+  videoCallModal: HTMLIonModalElement
+  callInProgress: boolean = false
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -48,7 +50,6 @@ export class AppComponent {
   subscribeToGeneralEvents() {
 
     this.auth.authenticationState.subscribe(async state => {
-      console.log('state', state);
       const userType = await this.storageService.getUserType();
       console.log('userType', userType);
 
@@ -62,15 +63,16 @@ export class AppComponent {
       return this.navCtrl.navigateRoot(this.rootPage)
     })
 
-    this.notifications.onMessageReceived.subscribe(notification => {
-      console.log('notification', notification);
+    this.notifications.onMessageReceived.subscribe(async notification => {
+      console.log('this.notifications.onMessageReceived', notification);
 
       // recive notificación si está corriendo en foreground la app
       const notificationData = notification.data || null
 
       const currentRoute = this.router.url
-      if (notificationData.type == 'call') {
-        return this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
+      if (notificationData.type == 'call' && !this.callInProgress) {
+        this.callInProgress = true;
+        return await this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
       }
       if (notificationData.type == 'message' && currentRoute.includes('/chat') || currentRoute.includes('/support')) {
         notification.show_local_notification = false
@@ -82,6 +84,7 @@ export class AppComponent {
     this.notifications.onCallAnswered.subscribe(async answered => {
       await this.twilioService.dismissIncomingCallModal()
       if (answered) {
+        console.log('onCallAnswered');
         await this.openCallComponent()
       }
     })
@@ -98,6 +101,7 @@ export class AppComponent {
     this.twilioService.onCallAccepted.subscribe(async answered => {
       await this.twilioService.dismissIncomingCallModal()
       if (answered) {
+        console.log('onCallAccepted');
         await this.openCallComponent()
       }
     })
@@ -108,12 +112,18 @@ export class AppComponent {
   }
 
   async openCallComponent() {
-    const modal = await this.modalCtrl.create({
+    if (this.videoCallModal) return
+    console.log('PRESENT VIDEO CALL MODAL');
+    this.videoCallModal = await this.modalCtrl.create({
       component: VideoCallComponent,
       componentProps: {
       }
     });
-    return await modal.present()
+    this.videoCallModal.onDidDismiss().finally(() => {
+      this.videoCallModal = null
+      this.callInProgress = false
+    })
+    return await this.videoCallModal.present()
   }
 
 }

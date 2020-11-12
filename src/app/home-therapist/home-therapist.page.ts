@@ -91,6 +91,7 @@ export class HomeTherapistPage implements OnInit {
         const channel = patient.channels.find(channel => channel.type == 'therapist')
         if (channel) patient.unreadMessages = await this.storageService.existUnreadMessages(channel.unique_name)
       }
+      this.patients = this.patients.sort((a, b) => (a.unreadMessages === b.unreadMessages) ? 0 : a.unreadMessages ? -1 : b.unreadMessages)
     }
   }
 

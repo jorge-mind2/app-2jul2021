@@ -1,6 +1,5 @@
 <div class="background-1"></div>
-<ion-content fullscreen>
-
+<ion-header translucent>
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="presentLogoutAlert()"
@@ -10,6 +9,8 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
   <ion-item text-center
             lines="none">
     <ion-label color="light"
@@ -93,5 +94,7 @@
     &nbsp;
   </div>
 
-  <app-menu></app-menu>
 </ion-content>
+<ion-footer>
+  <app-menu></app-menu>
+</ion-footer>

@@ -21,9 +21,6 @@ export class NextAppointmentComponent implements OnInit {
   calendarOptions: CalendarComponentOptions = {}
   type: string = 'js-date'
   today: any = new Date().toString()
-  todayToFifth: moment.Moment = moment().add('M', 5)
-  todayToFifthStr: string = this.todayToFifth.toISOString()
-  todayToFifthDate: Date = this.todayToFifth.toDate()
   appointment: any = {
     start_time: '',
     end_time: '',
@@ -33,7 +30,7 @@ export class NextAppointmentComponent implements OnInit {
   }
   hoursAvailability: any[] = []
   therapistAvailable: boolean = false
-  view: string = 'schedule'
+  view: 'schedule' | 'appointments'
   groupedAppointments: any[]
   packageAvailability: any = {
     count_appointment: null,
@@ -54,9 +51,18 @@ export class NextAppointmentComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    await this.getMyAppointments()
+    if (this.onlySchedule) {
+      this.view = 'appointments'
+      return
+    }
     this.loginType = await this.storage.getUserType()
     this.therapistAvailable = this.therapist.availability.length
-    this.calendarOptions.to = this.todayToFifthDate
+    this.appointment.userId = '' + this.patient.id
+    console.log('patient', this.patient);
+    console.log('therapist', this.therapist);
+    this.prepareCalendar()
+    this.view = 'schedule'
     this.api.getPackasAvailability().then(response => {
       console.log('getPackasAvailability', response)
       if (response.data) {
@@ -64,13 +70,13 @@ export class NextAppointmentComponent implements OnInit {
         this.packageAvailability.availability = +response.data.package_product_quantity - +response.data.count_appointment
       }
       console.log('this.package', this.packageAvailability);
-
     })
-    if (this.onlySchedule) {
-      this.view = 'appointments'
-      return this.getMyAppointments()
-    }
-    this.appointment.userId = '' + this.patient.id
+
+  }
+
+  private prepareCalendar() {
+    this.calendarOptions.to = moment().add('M', 5).toDate()
+    const daysArray: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
     this.calendarOptions.daysConfig = this.patient.appointments.map(appointment => {
       return {
         date: moment(appointment.date).toDate(),
@@ -80,16 +86,14 @@ export class NextAppointmentComponent implements OnInit {
         cssClass: 'scheduled',
       }
     })
-    console.log('patient', this.patient);
-    console.log('therapist', this.therapist);
-    this.getMyAppointments()
-    var daysArray: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
     this.calendarOptions.disableWeeks = this.therapistAvailable ?
       daysArray.reduce<number[]>((acc, val): number[] => {
         if (!this.therapist.availability.some(s => s.day == val)) return acc.concat(val)
         return acc
       }, []) :
       daysArray
+    console.log('this.calendarOptions', this.calendarOptions);
+
   }
 
   public setView(e) {

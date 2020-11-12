@@ -49,20 +49,18 @@ export class TwilioService {
       return
     }
     const token = await this.getChatToken()
-    console.log('ChatToken', token)
     this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
-    console.log('chatClient', this.client)
     const loggedUser = await this.client.user
     this.twilioConnected = true
     console.log(loggedUser);
 
     this.client.on('tokenAboutToExpire', () => {
-      console.log('Twilio tokenAboutToExpire');
+      // console.log('Twilio tokenAboutToExpire');
       return this.getChatToken(true)
         .then(newToken => this.storage.setChatToken(newToken))
     });
     this.client.on('tokenExpired', () => {
-      console.log('Twilio onTokenExpired');
+      // console.log('Twilio onTokenExpired');
       this.twilioConnected = false
       this.login(pushChannel);
     });
@@ -409,7 +407,7 @@ export class TwilioService {
     document.getElementById(participant.sid).remove();
   }
 
-  private trackSubscribed(div: HTMLDivElement, track, resize?) {
+  private trackSubscribed(div: HTMLDivElement, track: TwilioVideo.RemoteAudioTrack | TwilioVideo.RemoteVideoTrack | TwilioVideo.LocalVideoTrack, resize?) {
     const videos = div.getElementsByTagName('video')
     if (videos.length && track.kind == 'video') {
       if (!this.platform.is('cordova') || resize) {
@@ -422,7 +420,8 @@ export class TwilioService {
       return
     }
     div.appendChild(track.attach());
-    console.log(videos)
+    this.handleTrackDisabled(track)
+    // console.log(videos)
   }
 
   private trackUnsubscribed(track) {
@@ -452,6 +451,22 @@ export class TwilioService {
     })
   }
 
+  handleTrackDisabled(track) {
+    track.on('disabled', track_dsabled => {
+      /* Hide the associated <video> element and show an avatar image. */
+      console.log('Track Disabled', track);
+      console.log('track_dsabled', track_dsabled);
+
+    });
+    track.on('enabled', track_enabled => {
+      /* Hide the avatar image and show the associated <video> element. */
+      console.log('Track Enabled', track);
+      console.log('track_enabled', track_enabled);
+
+    });
+  }
+
+
   async acceptCall(): Promise<void> {
     this.onCallAccepted.emit(true)
   }
@@ -464,6 +479,9 @@ export class TwilioService {
   }
 
   async presentIncomingCallScreen(name: string, id: number): Promise<void> {
+    if (this.incomingCallModal) return
+    console.log('PRESENT INCOMING CALL');
+
     const caller = {
       name,
       id

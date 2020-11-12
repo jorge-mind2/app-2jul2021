@@ -1,5 +1,5 @@
 <div class="background-1"></div>
-<ion-content fullscreen>
+<ion-header translucent>
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="presentLogoutAlert()"
@@ -9,6 +9,17 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <!-- <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="presentLogoutAlert()"
+                  color="light"
+                  iconOnly>
+        <ion-icon name="power"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar> -->
   <ion-refresher slot="fixed"
                  color="light"
                  (ionRefresh)="getUser($event)">
@@ -91,5 +102,7 @@
       </ion-card>
     </ion-row>
   </ion-grid>
-  <app-menu></app-menu>
 </ion-content>
+<ion-footer>
+  <app-menu></app-menu>
+</ion-footer>
