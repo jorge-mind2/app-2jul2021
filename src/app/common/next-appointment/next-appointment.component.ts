@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CalendarComponentOptions } from 'ion2-calendar';
-import { ModalController, ToastController, AlertController, LoadingController } from '@ionic/angular';
+import { ModalController, ToastController, AlertController, LoadingController, NavController } from '@ionic/angular';
 import { ApiService } from 'src/app/api-services/api.service';
 import * as moment from 'moment';
 import { AuthService } from 'src/app/api-services/auth.service';
@@ -44,6 +44,7 @@ export class NextAppointmentComponent implements OnInit {
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
+    private navCtrl: NavController,
     private loadingCtrl: LoadingController,
     private storage: StorageService,
     private auth: AuthService,
@@ -64,14 +65,18 @@ export class NextAppointmentComponent implements OnInit {
     this.prepareCalendar()
     this.view = 'schedule'
     this.api.getPackagesAvailability(this.patient.id).then(response => {
-      console.log('getPackasAvailability', response)
+      // console.log('getPackasAvailability', response)
       if (response.data) {
         this.packageAvailability = response.data
         this.packageAvailability.availability = +response.data.package_product_quantity - +response.data.count_appointment
       }
-      console.log('this.package', this.packageAvailability);
     })
 
+  }
+
+  goToPlans() {
+    // this.navCtrl.navigateForward('plans').finally(async () => this.modalCtrl.dismiss({}))
+    this.modalCtrl.dismiss({}).finally(async () => this.navCtrl.navigateForward('plans'))
   }
 
   private prepareCalendar() {
@@ -92,8 +97,6 @@ export class NextAppointmentComponent implements OnInit {
         return acc
       }, []) :
       daysArray
-    console.log('this.calendarOptions', this.calendarOptions);
-
   }
 
   public setView(e) {
@@ -140,6 +143,15 @@ export class NextAppointmentComponent implements OnInit {
       const color = available ? 'tertiary' : 'medium'
       return { ...hour, available, appointment, color }
     }).sort((a, b) => a.start_time - b.start_time)
+    const todayMexico = new Date().toLocaleString('es-MX')
+    const isSameDay = moment(selectedDate).isSame(todayMexico, 'date')
+    if (isSameDay) {
+      const currentTime = moment(todayMexico).format('HH')
+      const offsetHours = 2
+      this.hoursAvailability = this.hoursAvailability.filter(hour => {
+        return hour.start_time + offsetHours >= +currentTime
+      })
+    }
   }
 
   public async createAppointment() {

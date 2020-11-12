@@ -43,14 +43,47 @@
         <p *ngIf="packageAvailability.availability">Tienes {{packageAvailability.availability}}
           {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
           tu plan activo</p>
-        <p *ngIf="!packageAvailability.availability && loginType=='patient'">Obtén un plan de sesiones para poder
-          agendar con tu terapeuta. No tienes citas disponibles para agendar.</p>
         <p *ngIf="!packageAvailability.availability && loginType=='therapist'">{{patient?.name}} {{patient?.last_name}}
           no tiene citas disponibles para agendar.</p>
       </ion-text>
     </ion-item>
 
-    <ion-card color="primary">
+    <ion-card color="tertiary"
+              class="ion-margin-bottom"
+              *ngIf="!packageAvailability.availability && loginType=='patient'">
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">
+          No tienes citas disponibles para agendar
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-text color="light">
+          <p><b>
+              Obtén un plan de sesiones para poder
+              agendar con tu terapeuta.
+            </b></p>
+        </ion-text>
+        <ion-grid>
+          <ion-col></ion-col>
+          <ion-col>
+            <ion-button color="primary"
+                        shape="round"
+                        expand="full"
+                        size="default"
+                        (click)="goToPlans()">Adquirir Plan</ion-button>
+
+          </ion-col>
+          <ion-col></ion-col>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card color="secondary">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Disponibilidad de {{therapist?.name}} {{therapist?.last_name}}
+        </ion-card-subtitle>
+      </ion-card-header>
       <ion-calendar [(ngModel)]="appointmentDateDate"
                     (change)="selectCalendarDay($event)"
                     #calendar

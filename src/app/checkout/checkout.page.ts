@@ -92,7 +92,7 @@ export class CheckoutPage implements OnInit {
       const postPayment = await this.api.payPlan(paymentData)
       console.log(postPayment)
       this.loadingCtrl.dismiss().finally(() => {
-        this.presentSuccessAlert('Tu pago ha sido exitoso, ahora ya pudes agendar tus citas.').finally(() => this.navCtrl.navigateRoot('/home'))
+        this.presentSuccessAlert('Tu pago ha sido exitoso, ahora ya pudes agendar tus citas.', '¡Pago hecho!').finally(() => this.navCtrl.navigateRoot('/home'))
       })
     } catch (error) {
       console.log(error);
@@ -151,7 +151,7 @@ export class CheckoutPage implements OnInit {
       console.log('this.paymentPending', this.paymentPending);
 
       this.loadingCtrl.dismiss().finally(() => {
-        this.presentSuccessAlert('Recibo generado exitosamente.')
+        this.presentSuccessAlert('Recibo generado exitosamente.', 'Pago Pendiente')
       })
     } catch (error) {
       console.log(error);
@@ -241,9 +241,9 @@ export class CheckoutPage implements OnInit {
     alert.present();
   }
 
-  async presentSuccessAlert(message) {
+  async presentSuccessAlert(message, header) {
     const alert = await this.alertCtrl.create({
-      header: '¡Pago hecho!',
+      header,
       message,
       backdropDismiss: false,
       buttons: [{
