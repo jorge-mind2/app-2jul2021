@@ -49,11 +49,8 @@ export class StorageService {
 
   async updateCurrentUser(newUserProperties: any): Promise<any> {
     let currentUser = await this.getCurrentUser()
-    // console.log('currentUser', currentUser);
-    // console.log('newUserProperties', newUserProperties);
 
     Array.from(Object.keys(newUserProperties)).forEach((val, indx) => {
-      // console.log(val);
       // console.log(indx);
       currentUser[val] = newUserProperties[val]
     })

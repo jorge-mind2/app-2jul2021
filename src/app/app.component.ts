@@ -9,6 +9,7 @@ import { PushNotificationsService } from './api-services/push-notifications.serv
 import { TwilioService } from './api-services/twilio.service';
 import { Router } from '@angular/router';
 import { VideoCallComponent } from './common/video-call/video-call.component';
+import { ApiService } from './api-services/api.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class AppComponent {
     private storageService: StorageService,
     private notifications: PushNotificationsService,
     private twilioService: TwilioService,
+    private api: ApiService
   ) {
     this.initializeApp();
 
@@ -39,10 +41,11 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       console.log('Platform ready');
       this.statusBar.backgroundColorByHexString('#006675')
-      await this.auth.checkToken()
-      this.splashScreen.hide();
-      if (this.platform.is('cordova')) this.notifications.initFirebase()
+      this.statusBar.hide()
       this.subscribeToGeneralEvents()
+      await this.auth.checkToken()
+      if (this.platform.is('cordova')) this.notifications.initFirebase()
+      this.splashScreen.hide()
     });
 
   }
@@ -62,6 +65,7 @@ export class AppComponent {
       }
       return this.navCtrl.navigateRoot(this.rootPage)
     })
+    this.notifications.onAssignedTherapist.subscribe(notification => this.getMyTherapist())
 
     this.notifications.onMessageReceived.subscribe(async notification => {
       console.log('this.notifications.onMessageReceived', notification);
@@ -80,7 +84,6 @@ export class AppComponent {
       if (notification.show_local_notification) return this.notifications.showLocalNotification(notification.id, notification.body, notification.title, notificationData)
 
     })
-
     this.notifications.onCallAnswered.subscribe(async answered => {
       await this.twilioService.dismissIncomingCallModal()
       if (answered) {
@@ -88,7 +91,6 @@ export class AppComponent {
         await this.openCallComponent()
       }
     })
-
     this.notifications.onMissedCall.subscribe(async notification => {
       await this.twilioService.dismissIncomingCallModal()
     })
@@ -109,6 +111,16 @@ export class AppComponent {
     this.twilioService.onChannelUpdated.subscribe(async data => {
       await this.storageService.setUnreadMessages(data.channel, true)
     })
+  }
+
+  async getMyTherapist() {
+    const therapist = await this.api.getMyTherapist()
+    const currentUser = await this.storageService.getCurrentUser()
+    const channels = [
+      currentUser.channels.find(channel => channel.type == 'support'),
+      therapist.channel
+    ]
+    await this.storageService.updateCurrentUser({ therapist, channels })
   }
 
   async openCallComponent() {

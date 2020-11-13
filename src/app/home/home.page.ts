@@ -12,7 +12,6 @@ import * as moment from 'moment'
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-
   user: any = {}
   supportUser: any
   therapistMessagesUnread: boolean = false
@@ -29,44 +28,28 @@ export class HomePage implements OnInit {
   ) { }
 
   async ngOnInit() {
-  }
-
-  ionViewWillEnter() {
-    this.getUser();
+    await this.getUser();
   }
 
   getUser(event?) {
     this.storageService.getCurrentUser().then(async (user: any) => {
-      console.log('currentUser', user);
       if (!user) return await this.auth.logout()
       if (event) {
-        const therapistUpdated = await this.api.getMyTherapist()
-        if (therapistUpdated) {
-          user.therapist = therapistUpdated
-          const newData: any = {
-            therapist: therapistUpdated
-          }
-          if (therapistUpdated.channel) {
-            newData.channels = [
-              therapistUpdated.channel,
-              user.channels.find(channel => channel.type == 'support')
-            ]
-          }
-          await this.storageService.updateCurrentUser(newData)
-        }
+        const dataServerUser = await this.auth.getServerCurrentUser()
+        user = dataServerUser.data
       }
-      if (user.therapist) user.therapist.photo = this.api.getPhotoProfile(user.therapist)
-      this.user = user;
-      this.setChannels()
       const groupedAppointments = await this.api.getUserAppointments(user.id)
       const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
       const nextAppointment = nextAppointments.appointments[0]
       const date = nextAppointment ? `${nextAppointment.date} ${nextAppointment.start_time}` : undefined
-      this.user.nextAppointment = nextAppointment ? {
+      user.nextAppointment = nextAppointment ? {
         date: moment(date).format('DD [de] MMMM, YYYY'),
         start_time: moment(date).format('hh:mm'),
         am_pm: moment(date).format('a')
       } : undefined
+      await this.storageService.updateCurrentUser(user)
+      this.user = user;
+      this.setChannels()
       // console.log(this.user.nextAppointment);
       if (event) event.target.complete()
     }).catch(error => {
@@ -116,7 +99,6 @@ export class HomePage implements OnInit {
   }
 
   async openNextAppointment() {
-    this.user = await this.storageService.getCurrentUser()
     const modal = await this.modalCtrl.create({
       component: NextAppointmentComponent,
       componentProps: {

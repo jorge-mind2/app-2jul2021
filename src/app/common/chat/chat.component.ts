@@ -44,27 +44,28 @@ export class ChatComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     const chatId = await this.storage.getCurrentChatId()
     console.log('chatId', chatId);
+    const messages = await this.twilioService.retrieveMessages(chatId)
     this.twilioService.connectToChannel(chatId).then(async (channel) => {
-      await this.onChannelConnected(chatId)
+      await this.onChannelConnected(chatId, messages)
     }).catch(async error => {
       console.log('error', error.message)
       if (error.message == 'Forbidden') {
         const response: any = await this.api.subscribeToChannel(chatId)
         console.log('subscribe response', response);
-        if (response.data.subscribed) await this.onChannelConnected(chatId)
+        if (response.data.subscribed) await this.onChannelConnected(chatId, messages)
       }
     })
   }
 
-  async onChannelConnected(chatId) {
+  async onChannelConnected(chatId: number, messages: any) {
+    if (!messages) messages = await this.twilioService.retrieveMessages(chatId)
     await this.twilioService.initChannelEvents()
     this.isSupportChat = this.router.url.includes('/support')
     this.loggedUser = await this.storage.getCurrentUser()
     this.loginType = this.loggedUser.role.name
-    const messages = await this.twilioService.retrieveMessages(chatId)
     this.originalMessages = [...messages.items]
     await this.twilioService.channel.setAllMessagesConsumed()
-    this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
+    await this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
     this.prepareChat(messages)
 
   }
@@ -72,7 +73,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   async ngOnDestroy() {
     console.log('chat destroyed');
     console.log(this.messages);
-    if (this.twilioService.channel) this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
+    if (this.twilioService.channel) await this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
     if (this.originalMessages && this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
     this.twilioService.removeChannelEvents()
     window.removeEventListener('resize', () => { })

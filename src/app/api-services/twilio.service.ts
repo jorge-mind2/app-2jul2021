@@ -1,5 +1,5 @@
 import { ElementRef, EventEmitter, Injectable } from '@angular/core';
-import { NavController, AlertController, ModalController, LoadingController, Platform } from '@ionic/angular';
+import { AlertController, ModalController, LoadingController, Platform } from '@ionic/angular';
 import * as TwilioVideo from 'twilio-video';
 import * as TwilioChat from 'twilio-chat';
 import { BehaviorSubject } from 'rxjs';
@@ -9,12 +9,12 @@ import { Paginator } from 'twilio-chat/lib/interfaces/paginator';
 import { Message } from 'twilio-chat/lib/message';
 import { IncomingCallComponent } from '../incoming-call/incoming-call.component';
 import { OutcomingCallComponent } from '../outcoming-call/outcoming-call.component';
-import { PushNotificationsService } from './push-notifications.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TwilioService {
+  onTwilioConnected: EventEmitter<boolean> = new EventEmitter()
   newMessage: EventEmitter<any> = new EventEmitter()
   isTyping: EventEmitter<boolean> = new EventEmitter(true)
   onUserConnect = new BehaviorSubject(null)
@@ -22,7 +22,7 @@ export class TwilioService {
   onChannelUpdated: EventEmitter<any> = new EventEmitter()
   remoteVideo: ElementRef<HTMLDivElement>
   localVideo: ElementRef<HTMLDivElement>
-  loading: any
+  loading: HTMLIonLoadingElement
   public twilioConnected: boolean
   incomingCallModal: HTMLIonModalElement
   outcomingCallModal: HTMLIonModalElement
@@ -34,12 +34,10 @@ export class TwilioService {
   channel: Channel
   constructor(
     private platform: Platform,
-    private navCtrl: NavController,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
     public loadingCtrl: LoadingController,
     public storage: StorageService,
-    private pushService: PushNotificationsService
   ) {
   }
 
@@ -48,38 +46,32 @@ export class TwilioService {
       console.log('Twilio is connected');
       return
     }
-    const token = await this.getChatToken()
-    this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
-    const loggedUser = await this.client.user
-    this.twilioConnected = true
-    console.log(loggedUser);
+    try {
+      const token = await this.getChatToken()
+      this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
+      const loggedUser = await this.client.user
+      this.twilioConnected = true
+      console.log(loggedUser);
+      this.onTwilioConnected.emit(true)
 
-    this.client.on('tokenAboutToExpire', () => {
-      // console.log('Twilio tokenAboutToExpire');
-      return this.getChatToken(true)
-        .then(newToken => this.storage.setChatToken(newToken))
-    });
-    this.client.on('tokenExpired', () => {
-      // console.log('Twilio onTokenExpired');
-      this.twilioConnected = false
-      this.login(pushChannel);
-    });
-    this.client.on('pushNotification', (obj) => {
-      // HANDLE LOCAL PUSH NOTIFICATION
-      // this.pushService.showNotification(obj.data.messageIndex, obj.body)
-    });
-
-    this.subscribeToAllChatClientEvents();
-    if (this.platform.is('cordova')) {
-      /* this.setPushRegistrationId(await this.pushService.getFCMToken())
-      this.pushService.onMessageRecieved.subscribe(data => {
-        if (this.client !== null) {
-          this.client.handlePushNotification(data);
-          return null;
-        } else {
-          return TwilioChat.Client.parsePushNotification(data);
-        }
-      }) */
+      this.client.on('tokenAboutToExpire', () => {
+        // console.log('Twilio tokenAboutToExpire');
+        return this.getChatToken(true)
+          .then(newToken => this.storage.setChatToken(newToken))
+      });
+      this.client.on('tokenExpired', () => {
+        // console.log('Twilio onTokenExpired');
+        this.twilioConnected = false
+        this.login(pushChannel);
+      });
+      this.client.on('pushNotification', (obj) => {
+        // HANDLE LOCAL PUSH NOTIFICATION
+        // this.pushService.showNotification(obj.data.messageIndex, obj.body)
+      });
+      this.subscribeToAllChatClientEvents();
+    } catch (error) {
+      if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
+      this.presentAlert(error.message)
     }
   }
 

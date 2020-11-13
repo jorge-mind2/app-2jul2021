@@ -161,18 +161,21 @@ ion-content {
   font-size: 12px;
   position: relative;
   height: 6vw;
+
 }
 
 .name-row-parent-left {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 
 .name-row-parent-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  width: 100%;
 }
 
 .message-row-left {
@@ -186,6 +189,7 @@ ion-content {
   border-bottom-right-radius: 5vw;
   color: var(--ion-color-dark);
   position: relative;
+  max-width: 80%;
 }
 
 .message-row-right {
@@ -199,6 +203,7 @@ ion-content {
   border-bottom-left-radius: 5vw;
   color: white;
   position: relative;
+  max-width: 80%;
 }
 
 .avatar-parent {

@@ -24,6 +24,7 @@ export class ChatPage implements OnInit {
   receiver: any
   sender: any
   chatId: string
+  callInProgress: boolean = false
 
   defaultBackHref: string = 'home'
   constructor(
@@ -109,12 +110,15 @@ export class ChatPage implements OnInit {
    * Init twilio video Call
   */
   async openVideoCallScreen() {
+    if (this.callInProgress) return
     const modal = await this.modalCtrl.create({
       component: VideoCallComponent,
       componentProps: {
         isHost: true
       }
     });
+    this.callInProgress = true
+    modal.onDidDismiss().finally(() => this.callInProgress = false)
     return await modal.present()
   }
 

@@ -28,7 +28,8 @@ export class LoginPage implements OnInit {
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private auth: AuthService,
-    private notificationsServcie: PushNotificationsService
+    private notificationsServcie: PushNotificationsService,
+    private twilioService: TwilioService
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -56,9 +57,12 @@ export class LoginPage implements OnInit {
 
       const newSession = await this.auth.loginUser(loginData)
       console.log({ newSession })
-      this.loadingCtrl.dismiss()
-      let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
-      this.navCtrl.navigateRoot(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
+      this.twilioService.onTwilioConnected.subscribe(async (connected: boolean) => {
+        if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
+        let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
+        this.navCtrl.navigateRoot(nextPage).then(() => this.presentToast('¡Bienvenido a Mind2!'))
+        this.twilioService.onTwilioConnected.unsubscribe()
+      })
 
     } catch (e) {
       this.loadingCtrl.dismiss()

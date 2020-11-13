@@ -71,7 +71,7 @@ export class AuthService {
     return this.helper.isTokenExpired(token)
   }
 
-  public async getServerCurrentUser() {
+  public async getServerCurrentUser(): Promise<any> {
     return await this.http.get('/me').toPromise()
   }
 

@@ -30,16 +30,7 @@ export class SupportPage implements OnInit {
   async ngOnInit() {
     this.currentUser = await this.storageService.getCurrentUser()
     this.receiver = await this.storageService.getCurrentReceiver()
-    this.notifications.onAssignedTherapist.subscribe(notification => this.getMyTherapist())
     console.log('this.receiver', this.receiver);
-  }
-
-  async getMyTherapist() {
-    const therapist = await this.api.getMyTherapist()
-    this.currentUser.therapist = therapist
-    await this.storageService.setCurrentUser(this.currentUser).then(() => this.presentAlert(`Ahora tu terapeuta es: ${therapist.name} ${therapist.last_name}`))
-    this.showAssignmentBtn = false
-    await this.storageService.getCurrentUser()
   }
 
   async presentAlert(message: string): Promise<void> {

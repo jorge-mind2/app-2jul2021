@@ -85,17 +85,11 @@
           <ion-card-title>
             Próxima cita
           </ion-card-title>
-          <!-- <div class="avatar-wrapper">
-              <ion-avatar *ngIf="user.therapist?.photo">
-                <img [src]="user.therapist?.photo">
-              </ion-avatar>
-              <h2>{{user.therapist?.name}} {{user.therapist?.last_name}}</h2>
-            </div> -->
           <ion-label>
-            <h3 class="date">{{user.nextAppointment?.date}}</h3>
+            <h3 class="date">{{user.nextAppointment.date}}</h3>
             <span class="am-pm">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span
-                  class="hour">{{user.nextAppointment?.start_time}}</span> <span
-                  class="am-pm">{{user.nextAppointment?.am_pm}}</span>
+                  class="hour">{{user.nextAppointment.start_time}}</span> <span
+                  class="am-pm">{{user.nextAppointment.am_pm}}</span>
           </ion-label>
 
         </ion-card-content>
