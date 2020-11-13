@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Platform, AlertController, ModalController, NavController, ToastController, PopoverController, Events } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
@@ -16,7 +16,7 @@ import { ViewProfileComponent } from '../common/view-profile/view-profile.compon
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit {
+export class ChatPage implements OnInit, OnDestroy {
   receiverUID: string
   loginType: string = '';
   therapist: any
@@ -104,6 +104,10 @@ export class ChatPage implements OnInit {
       await this.twilioService.dismissOutcomingCallModal()
       await this.openVideoCallScreen()
     })
+  }
+
+  ngOnDestroy() {
+    this.notification.onAcceptedCall.unsubscribe()
   }
 
   /**

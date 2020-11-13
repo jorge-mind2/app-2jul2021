@@ -41,7 +41,6 @@ export class AppComponent {
     this.platform.ready().then(async () => {
       console.log('Platform ready');
       this.statusBar.backgroundColorByHexString('#006675')
-      this.statusBar.hide()
       this.subscribeToGeneralEvents()
       await this.auth.checkToken()
       if (this.platform.is('cordova')) this.notifications.initFirebase()
