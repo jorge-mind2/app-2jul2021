@@ -56,19 +56,6 @@ export class HomeTherapistPage implements OnInit {
       if (!user) return this.auth.logout()
       this.getMyPatients(user.id);
       this.user = user;
-      const groupedAppointments = await this.api.getUserAppointments(user.id)
-      // this.user.groupedAppointments = groupedAppointments.data
-      console.log(groupedAppointments.data);
-
-      const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
-      const nextAppointment = nextAppointments.appointments[0]
-      const date = `${nextAppointment.date} ${nextAppointment.start_time}`
-      this.user.nextAppointment = nextAppointment ? {
-        date: moment(date).format('DD [de] MMMM, YYYY'),
-        start_time: moment(date).format('hh:mm'),
-        am_pm: moment(date).format('a')
-      } : undefined
-      console.log(this.user.nextAppointment);
       if (event) event.target.complete()
     }).catch(error => {
       if (event) event.target.complete()

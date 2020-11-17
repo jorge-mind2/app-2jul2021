@@ -39,6 +39,7 @@ export class VideoCallComponent implements OnInit {
     /* this.twilioService.msgSubject.subscribe(r => {
       this.message1 = r;
     }); */
+    this.twilioService.onParticipantConnected.subscribe(participant => this.startTimer())
 
   }
 
@@ -149,7 +150,7 @@ export class VideoCallComponent implements OnInit {
     }
   }
 
-  start(): void {
+  startTimer(): void {
     if (this.running) return;
 
     if (this.timeBegan === null) {

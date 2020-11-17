@@ -65,7 +65,6 @@ export class AppComponent {
       return this.navCtrl.navigateRoot(this.rootPage)
     })
     this.notifications.onAssignedTherapist.subscribe(notification => this.getMyTherapist())
-
     this.notifications.onMessageReceived.subscribe(async notification => {
       console.log('this.notifications.onMessageReceived', notification);
 
@@ -75,7 +74,8 @@ export class AppComponent {
       const currentRoute = this.router.url
       if (notificationData.type == 'call' && !this.callInProgress) {
         this.callInProgress = true;
-        return await this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
+        const incomingCallModall = await this.twilioService.presentIncomingCallScreen(notificationData.caller, notificationData.callerId)
+        if (incomingCallModall) incomingCallModall.onDidDismiss().finally(() => this.callInProgress = false)
       }
       if (notificationData.type == 'message' && currentRoute.includes('/chat') || currentRoute.includes('/support')) {
         notification.show_local_notification = false

@@ -38,15 +38,6 @@ export class HomePage implements OnInit {
         const dataServerUser = await this.auth.getServerCurrentUser()
         user = dataServerUser.data
       }
-      const groupedAppointments = await this.api.getUserAppointments(user.id)
-      const nextAppointments = groupedAppointments.data.find(data => data.group == 'next')
-      const nextAppointment = nextAppointments.appointments[0]
-      const date = nextAppointment ? `${nextAppointment.date} ${nextAppointment.start_time}` : undefined
-      user.nextAppointment = nextAppointment ? {
-        date: moment(date).format('DD [de] MMMM, YYYY'),
-        start_time: moment(date).format('hh:mm'),
-        am_pm: moment(date).format('a')
-      } : undefined
       await this.storageService.updateCurrentUser(user)
       this.user = user;
       this.setChannels()

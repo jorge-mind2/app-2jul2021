@@ -10,6 +10,7 @@ import { VideoCallComponent } from '../common/video-call/video-call.component';
 import { TwilioService } from '../api-services/twilio.service';
 import { PushNotificationsService } from '../api-services/push-notifications.service';
 import { ViewProfileComponent } from '../common/view-profile/view-profile.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -25,6 +26,7 @@ export class ChatPage implements OnInit, OnDestroy {
   sender: any
   chatId: string
   callInProgress: boolean = false
+  onAcceptedCallSubscriber: Subscription
 
   defaultBackHref: string = 'home'
   constructor(
@@ -54,6 +56,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    console.log('ngOnInit');
     this.receiver = await this.storage.getCurrentReceiver()
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
@@ -100,14 +103,16 @@ export class ChatPage implements OnInit, OnDestroy {
       ]);
     }
 
-    this.notification.onAcceptedCall.subscribe(async notification => {
+    this.onAcceptedCallSubscriber = this.notification.onAcceptedCall.subscribe(async notification => {
       await this.twilioService.dismissOutcomingCallModal()
       await this.openVideoCallScreen()
     })
   }
 
   ngOnDestroy() {
-    this.notification.onAcceptedCall.unsubscribe()
+    console.log('ngOnDestroy');
+
+    this.onAcceptedCallSubscriber.unsubscribe()
   }
 
   /**
@@ -118,7 +123,7 @@ export class ChatPage implements OnInit, OnDestroy {
     const modal = await this.modalCtrl.create({
       component: VideoCallComponent,
       componentProps: {
-        isHost: true
+        isHost: this.loginType == 'therapist'
       }
     });
     this.callInProgress = true

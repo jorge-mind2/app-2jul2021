@@ -20,6 +20,7 @@ export class TwilioService {
   onUserConnect = new BehaviorSubject(null)
   onCallAccepted: EventEmitter<boolean> = new EventEmitter()
   onChannelUpdated: EventEmitter<any> = new EventEmitter()
+  onParticipantConnected: EventEmitter<any> = new EventEmitter()
   remoteVideo: ElementRef<HTMLDivElement>
   localVideo: ElementRef<HTMLDivElement>
   loading: HTMLIonLoadingElement
@@ -327,6 +328,7 @@ export class TwilioService {
       if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
       if (!this.previewing && options['video']) {
         this.startLocalVideo();
+        if (this.room.participants.size) this.onParticipantConnected.emit(this.room.participants[0])
         this.previewing = true;
       }
 
@@ -359,6 +361,7 @@ export class TwilioService {
       room.on('participantConnected', participant => {
         console.log(`Participant "${participant.identity}" has connected to the Room`);
         this.participantConnected(participant)
+        this.onParticipantConnected.emit(participant)
       });
 
       // Log Participants as they disconnect from the Room
@@ -470,7 +473,7 @@ export class TwilioService {
     this.incomingCallModal = null
   }
 
-  async presentIncomingCallScreen(name: string, id: number): Promise<void> {
+  async presentIncomingCallScreen(name: string, id: number): Promise<HTMLIonModalElement> {
     if (this.incomingCallModal) return
     console.log('PRESENT INCOMING CALL');
 
@@ -489,7 +492,10 @@ export class TwilioService {
     const { data } = await this.incomingCallModal.onDidDismiss();
     if (data.answered) {
       this.acceptCall()
+    } else {
+      this.incomingCallModal = null
     }
+    return this.incomingCallModal
   }
 
   async dismissOutcomingCallModal(): Promise<any> {
