@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
-import { AlertController, LoadingController, NavController, Platform } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavController, Platform } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../api-services/api.service';
 import { CurrencyPipe } from '@angular/common';
 import { appConstants } from '../constants.local'
 import * as moment from "moment";
+import { StorageService } from '../api-services/storage.service';
+import { AddCouponComponent } from './add-coupon/add-coupon.component';
 
 @Component({
   selector: 'app-checkout',
@@ -27,15 +29,22 @@ export class CheckoutPage implements OnInit {
     expired: true,
     expiration_date: null
   }
+  discount_percent: number = 0
+  coupon: any = {
+    id: null,
+    active: false
+  }
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private navCtrl: NavController,
+    private modalCtrl: ModalController,
     private currencyPipe: CurrencyPipe,
     private file: File,
     private fileTransfer: FileTransfer,
     private platform: Platform,
+    private storage: StorageService,
     private api: ApiService
   ) {
     this.activatedRoute.queryParams.subscribe(params => this.plan_id = +params.plan)
@@ -43,9 +52,12 @@ export class CheckoutPage implements OnInit {
 
   async ngOnInit() {
     await this.presentPaymentLoading('Cargando...')
+    const user = await this.storage.getCurrentUser()
+    if (user.discount_percent && +user.discount_percent > 0) this.discount_percent = +user.discount_percent
     const getPlans = await this.api.getPackages()
     const plans = getPlans.data
     this.plan = plans.find(plan => this.plan_id == plan.id)
+    this.plan.final_price = this.plan.amount - (this.plan.amount * (this.discount_percent / 100))
     const dataCards = await this.api.getCards()
     console.log(dataCards);
     if (dataCards.data) {
@@ -80,15 +92,48 @@ export class CheckoutPage implements OnInit {
     this.selectedCard = selectedCard
   }
 
+  async addCoupon() {
+    const modal = await this.modalCtrl.create({
+      component: AddCouponComponent,
+      componentProps: {
+        packageId: this.plan.id
+      }
+    })
+    await modal.present()
+    const { data } = await modal.onDidDismiss()
+    if (data.updated) {
+      console.log('data', data);
+
+      this.plan.final_price = data.finalPackagePice
+      this.coupon = data
+      this.coupon.id = data.couponId
+      this.coupon.active = true
+      console.log('this.coupon', this.coupon);
+
+    }
+  }
+
+  async removeCoupon() {
+    this.plan.final_price = this.coupon.userPackagePrice
+    this.coupon = {
+      active: false,
+      id: null
+    }
+  }
+
   private async payPlan() {
+    console.log('this.coupon', this.coupon);
+
     await this.presentPaymentLoading('Procesando pago...')
     try {
       const paymentData = {
         token: this.selectedCard.token,
         type: 1,
         ip: "127.0.0.0",
-        packageId: this.plan.id
+        packageId: this.plan.id,
+        couponId: this.coupon.id
       }
+      console.log('paymentData', paymentData);
       const postPayment = await this.api.payPlan(paymentData)
       console.log(postPayment)
       this.loadingCtrl.dismiss().finally(() => {
@@ -110,7 +155,8 @@ export class CheckoutPage implements OnInit {
         token: null,
         type: 2,
         ip: "127.0.0.0",
-        packageId: this.plan.id
+        packageId: this.plan.id,
+        couponId: this.coupon.id
       }
       const postPayment = await this.api.payPlan(paymentData)
       console.log(postPayment)
@@ -212,7 +258,7 @@ export class CheckoutPage implements OnInit {
   async presentPaymentAlert() {
     const alert = await this.alertCtrl.create({
       header: 'Pagar ahora',
-      message: `Se hará el cargo de ${this.currencyPipe.transform(this.plan.amount)}MXN a tu tarjeta con terminación ${this.selectedCard.number}. ¿Deseas continuar?`,
+      message: `Se hará el cargo de ${this.currencyPipe.transform(this.plan.final_price)}MXN a tu tarjeta con terminación ${this.selectedCard.number}. ¿Deseas continuar?`,
       backdropDismiss: false,
       buttons: [{
         text: 'Aceptar',

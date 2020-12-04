@@ -34,10 +34,8 @@ export class HomePage implements OnInit {
   getUser(event?) {
     this.storageService.getCurrentUser().then(async (user: any) => {
       if (!user) return await this.auth.logout()
-      if (event) {
-        const dataServerUser = await this.auth.getServerCurrentUser()
-        user = dataServerUser.data
-      }
+      const dataServerUser = await this.auth.getServerCurrentUser()
+      user = dataServerUser.data
       await this.storageService.updateCurrentUser(user)
       this.user = user;
       this.setChannels()
@@ -97,7 +95,11 @@ export class HomePage implements OnInit {
         therapist: this.user.therapist
       }
     });
-    return await modal.present()
+    await modal.present()
+    const { data } = await modal.onDidDismiss()
+    if (data.updated) {
+      await this.getUser({ target: { complete: () => null } })
+    }
   }
 
   async presentErrorAlert(header: string, message: string): Promise<void> {

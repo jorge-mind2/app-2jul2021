@@ -87,13 +87,6 @@ export class ApiService {
     return await this.http.get('/schedules', { params }).toPromise()
   }
 
-  public async getSupport(): Promise<any> {
-    let params: HttpParams = new HttpParams()
-      .set('join', 'role')
-      .set('filter', `role.name||$eq||support`)
-    return await this.http.get('/users', { params }).toPromise()
-  }
-
   public async uploadUserPhoto(id: number, photo: any): Promise<any> {
     return await this.http.post(`/users/${id}/photo`, photo).toPromise()
   }
@@ -161,5 +154,13 @@ export class ApiService {
 
   public async requestRecoveryPassword(email) {
     return await this.http.post('/users/password-recovery', { email }).toPromise()
+  }
+
+  public async cancelAppointment(id: number) {
+    return await this.http.post(`/appointments/${id}/cancel`, '').toPromise()
+  }
+
+  public async validateCoupon({ code, packageId }: { code: string, packageId: number }): Promise<any> {
+    return await this.http.post('/payments/use-coupon', { code, packageId }).toPromise()
   }
 }

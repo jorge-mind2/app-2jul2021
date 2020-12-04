@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { CheckoutPage } from './checkout.page';
+import { AddCouponComponent } from './add-coupon/add-coupon.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
     RouterModule.forChild(routes)
   ],
   providers: [CurrencyPipe],
-  declarations: [CheckoutPage]
+  declarations: [
+    CheckoutPage,
+    AddCouponComponent
+  ],
+  entryComponents: [AddCouponComponent]
 })
 export class CheckoutPageModule { }

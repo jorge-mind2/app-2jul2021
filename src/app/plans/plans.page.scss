@@ -1,8 +1,15 @@
-ion-content,
-.plan-backgroud {
+ion-contnet,
+.plans-content {
   background: rgb(47, 9, 70);
   background: linear-gradient(0deg, rgba(60,39,85,1) 0%, rgba(55,16,96,1) 100%);
   --background: linear-gradient(0deg, rgba(60,39,85,1) 0%, rgba(55,16,96,1) 100%);
+}
+
+
+ion-card, .plan-backgroud {
+  background:#008982;
+  background: linear-gradient(0deg, #008982 0%, #00a39b 100%);
+  --background: linear-gradient(0deg, #008982 0%, #00a39b 100%);
 }
 
 
@@ -10,4 +17,14 @@ ion-toolbar,
 ion-item {
   --background: transparent;
   --ion-color-base: transparent !important;
+}
+
+small {
+  font-size: 55%;
+}
+
+.with-discount {
+  h1 {
+    text-decoration: line-through;
+  }
 }

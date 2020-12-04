@@ -2,7 +2,7 @@
   <div class="background-1"></div>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="closeModal()"
+      <ion-button (click)="closeModal(appointmentsUpdated)"
                   color="light">
         <ion-icon name="close"></ion-icon>
       </ion-button>
@@ -37,20 +37,42 @@
   <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
        *ngIf="view == 'schedule'">
     <ion-item class="ion-padding-horizontal"
-              lines="none">
+              lines="none"
+              color="primary">
       <ion-text color="light">
-        <p>Agendar cita para {{patient?.name}} {{patient?.last_name}}</p>
-        <p *ngIf="packageAvailability.availability">Tienes {{packageAvailability.availability}}
-          {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
-          tu plan activo</p>
-        <p *ngIf="!packageAvailability.availability && loginType=='therapist'">{{patient?.name}} {{patient?.last_name}}
-          no tiene citas disponibles para agendar.</p>
+        <h3 class="ion-no-margin">Nueva cita para {{patient?.name}} {{patient?.last_name}}</h3>
       </ion-text>
     </ion-item>
 
     <ion-card color="tertiary"
+              *ngIf="packageAvailability.availability">
+      <ion-card-content>
+        <ion-text>
+          <p *ngIf="loginType=='patient'">Tienes {{packageAvailability.availability}}
+            {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
+            tu plan activo</p>
+          <p *ngIf="loginType=='therapist'">
+            Hay {{packageAvailability.availability}}
+            {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
+            el plan activo de {{patient?.name}} {{patient?.last_name}}
+          </p>
+        </ion-text>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card color="tertiary"
+              *ngIf="packageAvailability.availability==0 && loginType=='therapist'">
+      <ion-card-content>
+        <ion-text class="ion-text-center">
+          <p>{{patient?.name}} {{patient?.last_name}}
+            no tiene citas disponibles para agendar.</p>
+        </ion-text>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card color="tertiary"
               class="ion-margin-bottom"
-              *ngIf="!packageAvailability.availability && loginType=='patient'">
+              *ngIf="packageAvailability.availability==0 && loginType=='patient'">
       <ion-card-header>
         <ion-card-title class="ion-text-center">
           No tienes citas disponibles para agendar
@@ -81,7 +103,7 @@
     <ion-card color="secondary">
       <ion-card-header>
         <ion-card-subtitle>
-          Disponibilidad de {{therapist?.name}} {{therapist?.last_name}}
+          Horarios Disponibles de {{therapist?.name}} {{therapist?.last_name}}
         </ion-card-subtitle>
       </ion-card-header>
       <ion-calendar [(ngModel)]="appointmentDateDate"
@@ -93,7 +115,7 @@
       </ion-calendar>
     </ion-card>
 
-    <ion-grid>
+    <ion-grid *ngIf="therapist.availability.length || hoursAvailability.length">
       <ion-row>
         <ion-col>
           <ion-text color="light">
@@ -114,6 +136,27 @@
       </ion-row>
     </ion-grid>
 
+    <ion-card *ngIf="existingAppointment"
+              color="light"
+              style="margin-bottom: 100px;">
+      <ion-card-header color="primary">
+        <ion-card-subtitle>
+          Cita agendada para este día
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-text class="ion-text-center ion-margin-vertical">
+          <p>{{existingAppointment.date}}, {{existingAppointment.start_time}} hrs
+            <small>(Hora de
+              la ciudad de México)</small></p>
+        </ion-text>
+        <ion-button shape="round"
+                    expand="full"
+                    class="ion-margin-top"
+                    (click)="alertCancelAppointment(existingAppointment)"
+                    color="danger">Cancelar cita</ion-button>
+      </ion-card-content>
+    </ion-card>
 
 
     <ion-item [hidden]="!appointment.start_time">
@@ -129,6 +172,7 @@
                 expand="full"
                 size="large"
                 primary
+                [hidden]="existingAppointment"
                 [disabled]="!appointment.date || !appointment.start_time"
                 (click)="createAppointment()">Guardar</ion-button>
   </div>
@@ -142,7 +186,8 @@
         </ion-item-divider>
 
         <ion-item style="background: rgba(255, 255, 255, 0.13)"
-                  *ngFor="let appointment of appointmentsGroup.appointments">
+                  *ngFor="let appointment of appointmentsGroup.appointments"
+                  [hidden]="appointment.status==2">
           <ion-grid class="ion-padding-bottom">
             <ion-row class="ion-padding-top">
               <ion-icon color="light"
@@ -167,6 +212,13 @@
                         class="ion-padding-start">
                 {{appointment.user.name}} {{appointment.user.last_name}}
               </ion-text>
+            </ion-row>
+            <ion-row class="ion-justify-content-end">
+              <ion-button shape="round"
+                          size="small"
+                          *ngIf="appointment.cancellable"
+                          (click)="alertCancelAppointment(appointment, true)"
+                          color="danger">Cancelar cita</ion-button>
             </ion-row>
           </ion-grid>
         </ion-item>

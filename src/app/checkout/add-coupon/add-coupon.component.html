@@ -1,0 +1,38 @@
+<div class="background-1"></div>
+<div class="background-translucent"></div>
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModal(appointmentsUpdated)"
+                  color="light">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="light">
+      Agregar cupón de descuento
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <ion-card class="ion-padding-horizontal">
+    <ion-card-content class="ion-padding-horizontal">
+      <ion-text color="light">
+        <h1>
+          Ingresa tu código de descuento:
+        </h1>
+      </ion-text>
+      <ion-item class="ion-margin-horizontal">
+        <ion-input type="text"
+                   [(ngModel)]="code"
+                   placeholder="XXX000"></ion-input>
+      </ion-item>
+      <ion-button class="ion-margin-horizontal"
+                  expand="block"
+                  size="large"
+                  fill="outline"
+                  color="light"
+                  [disabled]="!code"
+                  (click)="validateCoupon()">Validar</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

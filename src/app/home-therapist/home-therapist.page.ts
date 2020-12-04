@@ -52,10 +52,15 @@ export class HomeTherapistPage implements OnInit {
 
   public getCurrrentUSer(event?) {
     this.storageService.getCurrentUser().then(async (user: any) => {
-      console.log('Mind2 user logged', user);
       if (!user) return this.auth.logout()
-      this.getMyPatients(user.id);
+      if (event) {
+        const dataServerUser = await this.auth.getServerCurrentUser()
+        user = dataServerUser.data
+      }
+      await this.getMyPatients(user.id);
+      console.log('Mind2 user logged', user);
       this.user = user;
+      await this.storageService.updateCurrentUser(this.user)
       if (event) event.target.complete()
     }).catch(error => {
       if (event) event.target.complete()

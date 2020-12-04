@@ -112,16 +112,18 @@
        *ngIf="view == 'store'">
     <ion-card color="light"
               *ngIf="paymentPending.status && paymentPending.status==2">
+      <ion-card-header>
+        Realiza tu pago en cualquier tienda OXXO
+      </ion-card-header>
       <ion-card-content>
         <ion-grid>
-          <h4>Realiza tu pago en cualquier tienda OXXO</h4>
           <ion-row>
             <ion-col size="3">
               <p>Monto: </p>
             </ion-col>
             <ion-col>
-              <p>${{paymentPending.total?.amount}}</p>
-              <p><small>la tienda puede aplicar cargos por comisión</small></p>
+              <h2>${{paymentPending.total?.amount}}</h2>
+              <h2><small>la tienda puede aplicar cargos por comisión</small></h2>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -162,23 +164,52 @@
         <ion-col>
           <ion-text style="color: #5f5f5f;">
             <h2 class="ion-margin-bottom"><b>Plan a pagar:</b> </h2>
-            <h1 class="ion-margin-bottom"><b>Total:</b> </h1>
+            <h2 class="ion-margin-bottom"
+                *ngIf="coupon.active">Subtotal:</h2>
+            <h2 class="ion-margin-bottom text-danger"
+                *ngIf="coupon.active">Descuento:</h2>
+            <h1 class="ion-margin-vertical"><b>Total:</b> </h1>
           </ion-text>
         </ion-col>
         <ion-col>
           <ion-text style="color: #5f5f5f;"
                     class="ion-text-right">
             <h2 class="ion-margin-bottom">{{plan?.name}}</h2>
-            <h1 class="ion-margin-bottom">{{plan?.amount | currency}}<small>MXN</small></h1>
+            <h2 class="ion-margin-bottom"
+                *ngIf="coupon.active">{{coupon?.userPackagePrice | currency}}</h2>
+            <h2 class="ion-margin-bottom text-danger"
+                *ngIf="coupon.active && coupon.percentage">{{(coupon?.discount/100) | percent}}</h2>
+            <h2 class="ion-margin-bottom text-danger"
+                *ngIf="coupon.active && !coupon.percentage">{{coupon?.discount | currency}}</h2>
+            <h1 class="ion-margin-vertical">{{plan?.final_price | currency}}<small style="font-size: 55%;">MXN</small>
+            </h1>
           </ion-text>
         </ion-col>
-        <hr>
-        <ion-text style="color: #5f5f5f;"
-                  class="ion-text-right">
-          <h3 *ngIf="view=='card'"><b>Pagar con tarjeta:</b>
-            {{selectedCard.number ? selectedCard.number : 'Selecciona una tarjeta'}}</h3>
-          <h3 *ngIf="view=='store'"><b>Pagar recibo en sucursales OXXO</b></h3>
-        </ion-text>
+        <ion-col size="12"
+                 *ngIf="!coupon.active">
+          <ion-button size="small"
+                      expand="block"
+                      color="tertiary"
+                      (click)="addCoupon()">Agregar cupón de descuento</ion-button>
+        </ion-col>
+
+        <ion-col size="12"
+                 *ngIf="coupon.active">
+          <ion-button fill="outline"
+                      size="small"
+                      expand="block"
+                      color="danger"
+                      (click)="removeCoupon()">No usar cupón</ion-button>
+        </ion-col>
+
+        <ion-col size="12">
+          <ion-text style="color: #5f5f5f;"
+                    class="ion-text-right">
+            <h3 *ngIf="view=='card'"><b>Pagar con tarjeta:</b>
+              {{selectedCard.number ? selectedCard.number : 'Selecciona una tarjeta'}}</h3>
+            <h3 *ngIf="view=='store'"><b>Pagar recibo en sucursales OXXO</b></h3>
+          </ion-text>
+        </ion-col>
       </ion-row>
     </ion-card-content>
   </ion-card>

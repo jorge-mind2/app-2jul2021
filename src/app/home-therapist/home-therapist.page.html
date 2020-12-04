@@ -28,11 +28,17 @@
                 *ngIf="user?.nextAppointment"
                 (click)="showSchedule()"
                 button>
+        <ion-card-header>
+          <ion-card-subtitle class="ion-text-center">
+            Próxima Cita
+          </ion-card-subtitle>
+        </ion-card-header>
         <ion-card-content class="ion-text-center">
           <ion-label>
-            <h2>Próxima cita</h2>
+            <p>Paciente: {{user?.nextAppointment?.user}}</p>
             <span class="am_pm">{{user?.nextAppointment?.date}} - {{user?.nextAppointment?.start_time}}
               {{user?.nextAppointment?.am_pm}}</span>
+            <p><small>(Hora de la Ciudad de México)</small></p>
           </ion-label>
 
         </ion-card-content>

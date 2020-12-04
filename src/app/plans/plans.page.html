@@ -1,37 +1,53 @@
-<ion-content fullscreen
-             class="plan-background">
+<ion-header color="secondary">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="home"
                        color="light"></ion-back-button>
     </ion-buttons>
+    <ion-title color="light">
+      Elige tu Plan
+    </ion-title>
   </ion-toolbar>
+</ion-header>
 
-  <ion-item class="ion-padding-horizontal"
+<ion-content fullscreen
+             class="plans-content ion-padding-top">
+
+  <!-- <ion-item class="ion-padding-horizontal"
             lines="none">
     <ion-text color="light">
       <h1>Elegir Plan</h1>
     </ion-text>
-  </ion-item>
+  </ion-item> -->
 
-  <ion-card color="light"
+  <ion-card class="plan-background"
             margin
             *ngFor="let plan of plans">
     <ion-card-content>
       <ion-grid>
         <ion-row>
           <ion-col size="6">
-            <h2 style="font-size: 1.2em;">{{plan.name}}</h2>
+            <ion-text color="light">
+              <h2 style="font-size: 1.6em;">{{plan.name}}</h2>
+            </ion-text>
           </ion-col>
           <ion-col>
             <ion-button expand="full"
-                        fill="outline"
                         color="tertiary"
                         shape="round"
                         [routerLink]="['/checkout']"
                         [queryParams]="{plan: plan.id}">Comprar</ion-button>
-            <h1 class="ion-text-center"
-                style="margin-top: 1em; font-size: 1.3em;">{{plan.amount | currency}} MXN</h1>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-text color="light"
+                      class="ion-text-right"
+                      [ngClass]="{'with-discount': discount_percent>0}">
+              <h1 class="ion-text-right"
+                  style="margin-top: 1.3em; margin-bottom: 0;">{{plan.amount | currency}} <small>MXN</small></h1>
+              <h2 *ngIf="discount_percent>0">{{plan.amount_discount | currency}} <small>MXN</small></h2>
+            </ion-text>
           </ion-col>
         </ion-row>
       </ion-grid>

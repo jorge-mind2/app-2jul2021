@@ -210,7 +210,6 @@ export class TwilioService {
         items: messagesArray
       }
     }
-    console.log('messagesToSave', messagesToSave);
 
     await this.storage.setChatMessages(messagesToSave)
   }
