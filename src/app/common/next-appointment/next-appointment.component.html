@@ -48,12 +48,16 @@
               *ngIf="packageAvailability.availability">
       <ion-card-content>
         <ion-text>
-          <p *ngIf="loginType=='patient'">Tienes {{packageAvailability.availability}}
-            {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
+          <p *ngIf="loginType=='patient'">Tienes <b>
+              {{packageAvailability.availability}}
+              {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}}
+            </b> en
             tu plan activo</p>
           <p *ngIf="loginType=='therapist'">
-            Hay {{packageAvailability.availability}}
-            {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}} en
+            Hay <b>
+              {{packageAvailability.availability}}
+              {{packageAvailability.availability>1 ? 'sesiones disponibles' : 'sesión disponible'}}
+            </b> en
             el plan activo de {{patient?.name}} {{patient?.last_name}}
           </p>
         </ion-text>

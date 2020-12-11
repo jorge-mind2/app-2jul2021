@@ -44,7 +44,6 @@ export class TwilioService {
 
   async login(pushChannel?) {
     if (this.twilioConnected) {
-      console.log('Twilio is connected');
       return
     }
     try {
@@ -52,16 +51,13 @@ export class TwilioService {
       this.client = await TwilioChat.Client.create(token, { 'logLevel': 'info' })
       const loggedUser = await this.client.user
       this.twilioConnected = true
-      console.log(loggedUser);
       this.onTwilioConnected.emit(true)
 
       this.client.on('tokenAboutToExpire', () => {
-        // console.log('Twilio tokenAboutToExpire');
         return this.getChatToken(true)
           .then(newToken => this.storage.setChatToken(newToken))
       });
       this.client.on('tokenExpired', () => {
-        // console.log('Twilio onTokenExpired');
         this.twilioConnected = false
         this.login(pushChannel);
       });
@@ -93,7 +89,7 @@ export class TwilioService {
 
   subscribeToAllChatClientEvents() {
     this.client.on('userSubscribed', user => {
-      console.log('userSubscribed', user)
+      // console.log('userSubscribed', user)
     })
     this.client.on('userUpdated', () => {
       console.log('userUpdated')
@@ -102,7 +98,7 @@ export class TwilioService {
       console.log('userUnsubscribed')
     })
     this.client.on('channelAdded', channel => {
-      console.log('channelAdded', channel.uniqueName)
+      // console.log('channelAdded', channel.uniqueName)
     })
     this.client.on('channelRemoved', () => {
       console.log('channelRemoved')
@@ -111,7 +107,7 @@ export class TwilioService {
       console.log('channelInvited')
     })
     this.client.on('channelJoined', async channel => {
-      console.log('channelJoined', channel.uniqueName)
+      // console.log('channelJoined', channel.uniqueName)
       const messages = await channel.getMessages(80)
       await this.saveMessagesOnStorage(messages.items, channel)
     })
@@ -119,7 +115,7 @@ export class TwilioService {
       console.log('channelLeft', channel.uniqueName)
     })
     this.client.on('channelUpdated', updateData => {
-      console.log('channelUpdated', updateData)
+      // console.log('channelUpdated', updateData)
       if (updateData.updateReasons.includes('lastMessage')) {
         const channel = updateData.channel.uniqueName
         const data = {

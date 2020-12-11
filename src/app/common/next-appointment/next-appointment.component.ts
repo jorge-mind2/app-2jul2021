@@ -69,7 +69,6 @@ export class NextAppointmentComponent implements OnInit {
     this.prepareCalendar()
     this.view = 'schedule'
     this.api.getPackagesAvailability(this.patient.id).then(response => {
-      // console.log('getPackasAvailability', response)
       if (response.data) {
         this.packageAvailability = response.data
         this.packageAvailability.availability = +response.data.package_product_quantity - +response.data.count_appointment
@@ -86,8 +85,6 @@ export class NextAppointmentComponent implements OnInit {
   }
 
   private prepareCalendar() {
-    console.log('this.patient.appointments', this.patient.appointments);
-
     this.calendarOptions.to = moment().add('week', 4).toDate()
     const daysArray: number[] = [0, 1, 2, 3, 4, 5, 6, 7]
     this.calendarOptions.daysConfig = []
@@ -159,21 +156,27 @@ export class NextAppointmentComponent implements OnInit {
       this.appointment.date = selectedDate.toISOString()
       let hours = this.therapist.availability.find(s => s.day == selectedDate.getDay()).hours
       let schedulesOfDay = this.therapist.appointments.filter(a => moment(selectedDate).isSame(a.date, 'date') && [AppointmentStatus.ENABLED].includes(a.status))
-      this.hoursAvailability = hours.map(hour => {
+      this.hoursAvailability = hours.sort((a, b) => a.start_time - b.start_time).reduce((currentValue, newItem) => currentValue.length && currentValue[currentValue.length - 1].start_time == newItem.start_time ? currentValue : [...currentValue, newItem], []).map(hour => {
         const available = !schedulesOfDay.some(a => +a.start_time.split(':')[0] == hour.start_time)
         const appointment = schedulesOfDay.find(a => a.start_time.split(':')[0] == hour.start_time)
         const color = available ? 'tertiary' : 'medium'
         return { ...hour, available, appointment, color }
-      }).sort((a, b) => a.start_time - b.start_time)
+      })
+
       const todayMexico = new Date().toLocaleString('es-MX')
       const isSameDay = moment(selectedDate).isSame(moment(todayMexico, 'DD/MM/YYYY'), 'date')
 
       if (isSameDay) {
         const currentTime = moment(todayMexico, 'DD/MM/YYYY HH:mm:ss').format('HH')
         const offsetHours = 2
-        this.hoursAvailability = this.hoursAvailability.filter(hour => {
+        /* this.hoursAvailability = this.hoursAvailability.filter(hour => {
           return +currentTime + offsetHours < hour.start_time
-        })
+        }) */
+        this.hoursAvailability = this.hoursAvailability.map(hour => ({
+          ...hour,
+          available: +currentTime + offsetHours >= hour.start_time ? false : hour.available,
+          color: +currentTime + offsetHours >= hour.start_time ? 'medium' : hour.color,
+        }))
       }
     }
   }
@@ -184,7 +187,6 @@ export class NextAppointmentComponent implements OnInit {
       // this.appointment.date = moment(this.appointmentDateStr).format('YYYY-MM-DD')
       // return consol
       const newAppointment = await this.api.createAppointment(this.appointment)
-      console.log(newAppointment);
       this.patient.appointments.push(newAppointment.data)
       if (this.patient.id == await this.auth.getCurrentId()) {
         await this.storage.updateCurrentUser(this.patient)
@@ -220,7 +222,6 @@ export class NextAppointmentComponent implements OnInit {
     this.presentLoading('Cancelando cita...')
     try {
       const appointmentCanceled: any = await this.api.cancelAppointment(id)
-      console.log(appointmentCanceled);
       this.patient.appointments = this.patient.appointments.filter(appointment => appointment.id != appointmentCanceled.data.id)
       this.therapist.appointments = this.therapist.appointments.filter(appointment => appointment.id != appointmentCanceled.data.id)
       this.packageAvailability.availability = this.packageAvailability.availability + 1
