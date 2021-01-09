@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController, NavController, LoadingController, AlertController } from '@ionic/angular';
+import { ToastController, NavController, LoadingController, AlertController, ModalController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-
 import { AuthService } from '../api-services/auth.service';
 import { Device } from '@ionic-native/device/ngx';
 import { TwilioService } from '../api-services/twilio.service';
 import { PushNotificationsService } from '../api-services/push-notifications.service';
+import { StorageService } from '../api-services/storage.service';
+import { QuickstartComponent } from '../common/quickstart/quickstart.component';
 
 @Component({
   selector: 'page-login',
@@ -29,7 +30,9 @@ export class LoginPage implements OnInit {
     private navCtrl: NavController,
     private auth: AuthService,
     private notificationsServcie: PushNotificationsService,
-    private twilioService: TwilioService
+    private twilioService: TwilioService,
+    private storageService: StorageService,
+    private modalCtrl: ModalController
   ) {
     this.route.queryParams.subscribe(params => {
       this.loginType = params.type;
@@ -41,6 +44,14 @@ export class LoginPage implements OnInit {
   }
 
   public async loginUser() {
+    if (
+      !this.username
+      || this.username.trim() == ''
+      || !this.password
+      || this.password.trim() == ''
+    ) {
+      return await this.presentErrorAlert('Ingresa tu correo y tu contraseña para poder ingresar')
+    }
     await this.presentLoading()
     try {
       let loginData: any = {
@@ -57,6 +68,16 @@ export class LoginPage implements OnInit {
 
       const newSession = await this.auth.loginUser(loginData)
       console.log({ newSession })
+
+      if (!await this.storageService.getIsFirstLogin()) {
+        console.log('FIRST LOGIN');
+        const modal = await this.modalCtrl.create({
+          component: QuickstartComponent,
+          cssClass: 'my-custom-class'
+        });
+        modal.present().then(async () => await this.storageService.setIsFirstLogin());
+      }
+
       this.twilioService.onTwilioConnected.subscribe(async (connected: boolean) => {
         if (await this.loadingCtrl.getTop()) this.loadingCtrl.dismiss()
         let nextPage = this.loginType == 'therapist' ? 'home-therapist' : 'home';
@@ -73,19 +94,7 @@ export class LoginPage implements OnInit {
   }
 
   async changeInput(ev): Promise<void> {
-    console.log(ev);
-    if (ev.keyCode == 13 || ev.keyCode == '13' || ev.key == 'Enter') {
-      if (
-        !this.username
-        || this.username == ''
-        || !this.password
-        || this.password == ''
-      ) {
-        return await this.presentErrorAlert('Ingresa tu correo y tu contraseña para poder ingresar')
-      }
-      return await this.loginUser()
-    }
-
+    return ev.keyCode == 13 || ev.keyCode == '13' || ev.key == 'Enter' ? await this.loginUser() : null
   }
 
   async presentToast(text) {

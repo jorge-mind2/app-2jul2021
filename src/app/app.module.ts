@@ -27,6 +27,7 @@ import { IncomingCallComponent } from './incoming-call/incoming-call.component';
 import * as moment from 'moment'
 import { OutcomingCallComponent } from './outcoming-call/outcoming-call.component';
 import { VideoCallComponent } from './common/video-call/video-call.component';
+import { QuickstartComponent } from './common/quickstart/quickstart.component';
 moment.locale('es')
 
 export function jwtOptionsFactory(storage) {
@@ -43,7 +44,8 @@ export function jwtOptionsFactory(storage) {
   entryComponents: [
     IncomingCallComponent,
     OutcomingCallComponent,
-    VideoCallComponent
+    VideoCallComponent,
+    QuickstartComponent
   ],
   imports: [
     BrowserModule,

@@ -20,7 +20,7 @@ export class StorageService {
 
   async setNotificationsSchedule(notification: ILocalNotification): Promise<any> {
     const notificationSchedule = await this.storage.get('notification_schedule')
-    console.log('notification to Schedule', notification);
+    // console.log('notification to Schedule', notification);
 
     return await this.storage.set('notification_schedule', [notification].concat(notificationSchedule || []))
   }
@@ -28,6 +28,14 @@ export class StorageService {
   async getNotificationsSchedule(): Promise<ILocalNotification[]> {
     const notificationSchedule = await this.storage.get('notification_schedule')
     return [].concat(notificationSchedule || [])
+  }
+
+  public async setIsFirstLogin() {
+    return window.localStorage.setItem('firstLogin', 'false')
+  }
+
+  public async getIsFirstLogin() {
+    return window.localStorage.getItem('firstLogin')
   }
 
   public async setUserType(userType) {
@@ -80,12 +88,12 @@ export class StorageService {
     const room = await this.getCurrentRoom()
     const currentToken = await this.storage.get(`${room}_videoToken`)
     if (currentToken && !this.jwtHelper.isTokenExpired(currentToken)) {
-      console.log('token valido');
+      // console.log('token valido');
       return currentToken
     } else {
-      console.log('token invalido');
+      // console.log('token invalido');
       const response: any = await this.http.get(`/users/video-token`).toPromise()
-      console.log(response);
+      // console.log(response);
       // this.accessToken = response.data.token
       await this.setCurrentRoom(response.data.room)
       await this.setVideoToken(response.data.token, response.data.room)
@@ -96,10 +104,10 @@ export class StorageService {
   async getChatToken(newToken?) {
     const currentToken = await this.storage.get('chatToken')
     if (currentToken && !this.jwtHelper.isTokenExpired(currentToken) && !newToken) {
-      console.log('token valido');
+      // console.log('token valido');
       return currentToken
     } else {
-      console.log('token invalido');
+      // console.log('token invalido');
       const response: any = await this.http.get('/users/chat-token').toPromise()
       console.log(response);
       // this.accessToken = response.data.token

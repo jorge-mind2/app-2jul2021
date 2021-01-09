@@ -43,7 +43,7 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     const chatId = await this.storage.getCurrentChatId()
-    console.log('chatId', chatId);
+    // console.log('chatId', chatId);
     const messages = await this.twilioService.retrieveMessages(chatId)
     this.twilioService.connectToChannel(chatId).then(async (channel) => {
       await this.onChannelConnected(chatId, messages)
@@ -51,7 +51,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       console.log('error', error.message)
       if (error.message == 'Forbidden') {
         const response: any = await this.api.subscribeToChannel(chatId)
-        console.log('subscribe response', response);
+        // console.log('subscribe response', response);
         if (response.data.subscribed) await this.onChannelConnected(chatId, messages)
       }
     })
@@ -71,22 +71,22 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy() {
-    console.log('chat destroyed');
-    console.log(this.messages);
+    // console.log('chat destroyed');
+    // console.log(this.messages);
     if (this.twilioService.channel) await this.storage.setUnreadMessages(this.twilioService.channel.uniqueName, false)
     if (this.originalMessages && this.originalMessages.length) await this.twilioService.saveMessagesOnStorage(this.originalMessages)
     this.twilioService.removeChannelEvents()
     window.removeEventListener('resize', () => { })
   }
 
-  prepareChat(messages) {
+  async prepareChat(messages) {
     // console.log(this.loggedUser);
     if (this.loginType == 'patient') {
-      this.receiverPhoto = this.isSupportChat ? 'assets/support.png' : this.api.getPhotoProfile(this.loggedUser.therapist)
-      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
+      this.receiverPhoto = this.isSupportChat ? 'assets/support.png' : await this.api.getPhotoProfile(this.loggedUser.therapist)
+      this.senderPhoto = await this.api.getPhotoProfile(this.loggedUser)
     } else if (this.loginType == 'therapist') {
-      this.receiverPhoto = this.api.getPhotoProfile(this.receiver)
-      this.senderPhoto = this.api.getPhotoProfile(this.loggedUser)
+      this.receiverPhoto = await this.api.getPhotoProfile(this.receiver)
+      this.senderPhoto = await this.api.getPhotoProfile(this.loggedUser)
     }
 
     this.messages = messages.items.map(message => this.parseMessage(message))
@@ -102,7 +102,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       } else {
         typingBox.classList.add('hide')
       }
-      console.log('chat member typing', this.isTyping);
+      // console.log('chat member typing', this.isTyping);
     })
     this.twilioService.onUserConnect.subscribe(async connected => this.onReceiverConnectionChange(connected))
     setTimeout(() => {
@@ -129,7 +129,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   onReceiverConnectionChange(connected) {
-    console.log(this.receiverConnected);
+    // console.log(this.receiverConnected);
     this.setRecieverStatus(connected)
   }
 
@@ -154,7 +154,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   sendTyping() {
-    console.log('send typing...');
+    // console.log('send typing...');
     return this.twilioService.sendTyping()
   }
 
@@ -169,7 +169,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         receiverId: this.receiver.id
       }
       const newnotification = await this.api.sendChatMessagePush(notif, this.loginType)
-      console.log('newnotification', newnotification);
+      // console.log('newnotification', newnotification);
 
     } else {
       //handleError

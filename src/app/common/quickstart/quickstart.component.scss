@@ -1,0 +1,27 @@
+ion-slides {
+  height: 100%;
+  overflow: hidden;
+
+  h1, h2 {
+    position: absolute;
+    color: white;
+  }
+
+  h2 {
+    transform: translateY(110%);
+  }
+
+   img {
+    width: 100vw;
+    max-width: 100vh;
+    height: 100vh;
+    max-height: 100vh;
+    zoom: 1.1;
+   }
+
+   ion-button {
+     position: absolute;
+     width: 90%;
+     bottom: 50px;
+   }
+}

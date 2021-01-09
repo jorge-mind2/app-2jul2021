@@ -7,13 +7,15 @@ import { FormsModule } from '@angular/forms';
 import { ChatComponent } from './chat/chat.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
+import { QuickstartComponent } from './quickstart/quickstart.component';
 
 @NgModule({
   declarations: [
     NextAppointmentComponent,
     ChatComponent,
     VideoCallComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    QuickstartComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +26,8 @@ import { ViewProfileComponent } from './view-profile/view-profile.component';
   exports: [
     ChatComponent,
     VideoCallComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    QuickstartComponent
   ]
 })
 export class CommonPagesModule { }

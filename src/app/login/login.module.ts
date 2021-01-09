@@ -12,6 +12,6 @@ import { LoginPage } from './login.page';
     FormsModule,
     RouterModule.forChild([{ path: '', component: LoginPage }])
   ],
-  declarations: [LoginPage]
+  declarations: [LoginPage],
 })
 export class LoginModule { }

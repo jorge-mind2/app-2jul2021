@@ -1,0 +1,46 @@
+<div class="ion-page">
+  <ion-content>
+    <ion-slides pager="false"
+                [options]="slideOpts"
+                #welcomeSlide>
+      <ion-slide>
+        <h1>Slide 1</h1>
+        <h2>¡Bienvenid@ a Mind<sup>2</sup>!</h2>
+        <img src="assets/back_1.png"
+             alt="">
+        <ion-button expand="full"
+                    size="large"
+                    color="tertiary"
+                    (click)="swipeNext()">
+          Siguiente <ion-icon slot="end"
+                    name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ion-slide>
+      <ion-slide>
+        <h1>Slide 2</h1>
+        <h2>Esto es Mind<sup>2</sup></h2>
+        <img src="assets/back_2.png"
+             alt="">
+        <ion-button expand="full"
+                    size="large"
+                    color="tertiary"
+                    (click)="swipeNext()">
+          Siguiente <ion-icon slot="end"
+                    name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ion-slide>
+      <ion-slide>
+        <h1>Slide 3</h1>
+        <h2>¡Comienza ahora!</h2>
+        <img src="assets/back_1.png"
+             alt="">
+        <ion-button expand="full"
+                    size="large"
+                    color="tertiary"
+                    (click)="closeSlides()">
+          Iniciar
+        </ion-button>
+      </ion-slide>
+    </ion-slides>
+  </ion-content>
+</div>

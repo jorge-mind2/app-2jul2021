@@ -56,7 +56,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    console.log('ngOnInit');
+    // console.log('ngOnInit');
     this.receiver = await this.storage.getCurrentReceiver()
     if (this.platform.is('cordova') && this.platform.is('android')) {
       this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
@@ -110,8 +110,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy');
-
+    // console.log('ngOnDestroy');
     this.onAcceptedCallSubscriber.unsubscribe()
   }
 
@@ -159,7 +158,7 @@ export class ChatPage implements OnInit, OnDestroy {
   async initCall() {
     const receiverId = +this.receiver.id
     this.api.callTo(receiverId).then((response: any) => {
-      console.log('response callTo', response);
+      // console.log('response callTo', response);
       const call = response.data
       this.twilioService.presentOutcomingCallScreen(this.receiver.name, receiverId)
     })
@@ -201,12 +200,12 @@ export class ChatPage implements OnInit, OnDestroy {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+            // console.log('Confirm Cancel');
           }
         }, {
           text: 'Aceptar',
           handler: (promptData) => {
-            console.log('Confirm Ok');
+            // console.log('Confirm Ok');
             this.saveSessionPrice(promptData.price)
           }
         }
@@ -221,7 +220,7 @@ export class ChatPage implements OnInit, OnDestroy {
     try {
       const setedPrice = await this.api.setUserSessionPrice(this.patient.id, newPrice)
       this.patient.session_price = newPrice
-      console.log('setedPrice', setedPrice);
+      // console.log('setedPrice', setedPrice);
       this.presentToast('Guardado')
     } catch (error) {
       console.log(error);
@@ -229,7 +228,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async showProfile() {
-    console.log(this.receiver.id)
+    // console.log(this.receiver.id)
     const modal = await this.modalCtrl.create({
       component: ViewProfileComponent,
       componentProps: {

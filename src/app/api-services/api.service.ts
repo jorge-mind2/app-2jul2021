@@ -95,7 +95,7 @@ export class ApiService {
     return environment.API_BASE_URL;
   }
 
-  public getPhotoProfile(user: any): string {
+  public async getPhotoProfile(user: any): Promise<any> {
     return user.photo ? `${this.getBaseURL()}/users/photo/${user.photo}` : `https://avatar.oxro.io/avatar.svg?size=128&background=006675&color=fff&name=${user.name.substring(0, 1)}+${user.last_name.substring(0, 1)}`
   }
 

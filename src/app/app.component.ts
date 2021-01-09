@@ -10,6 +10,7 @@ import { TwilioService } from './api-services/twilio.service';
 import { Router } from '@angular/router';
 import { VideoCallComponent } from './common/video-call/video-call.component';
 import { ApiService } from './api-services/api.service';
+import { QuickstartComponent } from './common/quickstart/quickstart.component';
 
 @Component({
   selector: 'app-root',
