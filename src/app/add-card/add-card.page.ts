@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-
-import { appConstants } from '../constants.local'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-import { SR_PAGO } from "../keys";
 import { AlertController, LoadingController, ToastController, NavController } from '@ionic/angular';
 import { ApiService } from '../api-services/api.service';
 import { environment } from "../../environments/environment";
 import { StorageService } from '../api-services/storage.service';
+import { appConstants } from '../constants.local'
 
 declare var SrPago: any
 declare var $: any
@@ -64,10 +61,8 @@ export class AddCardPage implements OnInit {
       })
     })
     const isProd = environment.production
-    // TODO
-    // Cambiar A producción
-    SrPago.setLiveMode(false)
-    SrPago.setPublishableKey(SR_PAGO.APIKEY)
+    SrPago.setLiveMode(isProd)
+    SrPago.setPublishableKey(environment.SR_PAGO_PUBLIC_KEY)
     this.storage.getCurrentUser().then(usr => {
       this.user = usr
       this.cardForm.patchValue({
