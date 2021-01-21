@@ -13,6 +13,7 @@ import { Crop } from '@ionic-native/crop/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { CardIO } from '@ionic-native/card-io/ngx';
 
 import { IonicStorageModule, Storage } from '@ionic/storage';
 import { AppRoutingModule } from './app-routing.module';
@@ -77,6 +78,7 @@ export function jwtOptionsFactory(storage) {
     File,
     Crop,
     FileTransfer,
+    CardIO,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: HTTP_INTERCEPTORS,

@@ -24,6 +24,7 @@
                  color="light">Nombre de Tarjetahabiente</ion-label>
       <ion-input color="light"
                  formControlName="holder_name"
+                 required
                  rounded></ion-input>
     </ion-item>
     <ion-item color="light"
@@ -31,8 +32,17 @@
       <ion-label position="floating"
                  color="light">Número de Tarjeta</ion-label>
       <ion-input color="light"
-                 type="text"
+                 type="number"
+                 required
                  formControlName="number"></ion-input>
+      <ion-button slot="end"
+                  fill="clear"
+                  size="default"
+                  color="light"
+                  (click)="scanCard()">
+        <ion-icon slot="icon-only"
+                  name="camera"></ion-icon>
+      </ion-button>
     </ion-item>
     <!-- <ion-item color="light"
               lines="none"
@@ -48,6 +58,7 @@
             <ion-label color="light"
                        position="floating">Mes</ion-label>
             <ion-select formControlName="exp_month"
+                        required
                         okText="Aceptar"
                         cancelText="Cancelar">
               <ion-select-option *ngFor="let month of months"
@@ -62,10 +73,11 @@
             <ion-label color="light"
                        position="floating">Año</ion-label>
             <ion-select formControlName="exp_year"
+                        required
                         okText="Aceptar"
                         cancelText="Cancelar">
               <ion-select-option *ngFor="let year of years"
-                                 [value]="year">{{year}}</ion-select-option>
+                                 [value]="year.value">{{year.label}}</ion-select-option>
             </ion-select>
           </ion-item>
         </ion-col>
@@ -76,6 +88,7 @@
             <ion-label color="light"
                        position="floating">CVV</ion-label>
             <ion-input formControlName="cvv"
+                       required
                        type="text"
                        color="light">
             </ion-input>
@@ -102,7 +115,7 @@
     <ion-item class="ion-padding-horizontal"
               lines="none">
       <ion-text color="light">
-        <h2>Datos antifraude</h2>
+        <h2>Información antifraude</h2>
       </ion-text>
     </ion-item>
 
@@ -160,7 +173,7 @@
               class="ion-padding-horizontal"
               formGroupName="billing">
       <ion-label position="floating"
-                 color="light">Alcandía, municipio, colonia</ion-label>
+                 color="light">Alcaldía, municipio, colonia</ion-label>
       <ion-input color="light"
                  type="text"
                  formControlName="billingAddress2_D"></ion-input>
@@ -213,7 +226,7 @@
             <ion-label position="floating"
                        color="light">Código Postal</ion-label>
             <ion-input color="light"
-                       type="text"
+                       type="number"
                        formControlName="billingPostalCode_D"></ion-input>
           </ion-item>
         </ion-col>
@@ -224,24 +237,31 @@
               class="ion-padding-horizontal"
               formGroupName="billing">
       <ion-label position="floating"
-                 color="light">Número de Telefono</ion-label>
+                 color="light">Número de Teléfono</ion-label>
       <ion-input color="light"
-                 type="text"
+                 type="number"
                  formControlName="billingPhoneNumber_D"></ion-input>
     </ion-item>
-
-
-
     <br>
     <ion-item class="ion-text-center">
       <ion-text color="light">
-        Se hará un cargo por $10.00 MXN para verificar tu método de pago el cual será reembolsado.
+        Se hará un cargo por $10.00 MXN para verificar tu tarjeta el cual será reembolsado.
       </ion-text>
     </ion-item>
-    <br><br>
+    <br>
+    <ion-item>
+      <ion-text color="danger"
+                *ngIf="cardForm.invalid">
+        <h5 class="ion-no-margin">
+          Por favor llene todos los campos requeridos.
+        </h5>
+      </ion-text>
+    </ion-item>
+    <br>
     <ion-button expand="full"
                 size="large"
                 shape="round"
+                [disabled]="cardForm.invalid"
                 type="submit">
       Registrar
     </ion-button>

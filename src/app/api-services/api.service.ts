@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { StorageService } from './storage.service';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
+  onCardRegister: Subject<any> = new Subject<any>();
   constructor(
     private http: HttpClient,
     private storage: StorageService
@@ -58,6 +60,14 @@ export class ApiService {
 
   public async createCard(card: any): Promise<any> {
     return await this.http.post('/users/addCard', card).toPromise()
+  }
+
+  public getOnCardRegister(): Observable<any> {
+    return this.onCardRegister.asObservable();
+  }
+
+  public setCardRegister(newCard: boolean) {
+    this.onCardRegister.next({ newCard });
   }
 
   public async getCards(): Promise<any> {
