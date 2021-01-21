@@ -2,7 +2,7 @@
 <widget id="me.mind2.app" version="0.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Mind2</name>
     <description>Psicoterapia online v1</description>
-    <author email="hola@mind2.me" href="https://mind2.me">Mind2. Copyright 2020</author>
+    <author email="hola@mind2.me" href="https://mind2.me">Mind2. Copyright 2021</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

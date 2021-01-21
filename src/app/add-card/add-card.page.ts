@@ -182,7 +182,7 @@ export class AddCardPage implements OnInit {
       // console.log('newCard', newCard);
       await this.loadingCtrl.dismiss();
       this.api.setCardRegister(true)
-      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.navigateBack('checkout', { queryParamsHandling: 'merge', preserveQueryParams: true }))
+      this.presentToast('Tarjeta agregada').then(() => this.navCtrl.back())
     } catch (error) {
       await this.loadingCtrl.dismiss();
       await this.presentErrorAlert(error.message ? error.message : JSON.stringify(error))

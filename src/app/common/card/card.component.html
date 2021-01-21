@@ -1,0 +1,54 @@
+<ion-card [color]="card.color"
+          [ngClass]="{'card-selected': card.selected}"
+          class="ion-margin-vertical card ion-text-nowrap ion-text-uppercase"
+          style="font-family: monospace;">
+  <ion-card-content style="padding: 0;">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div class="d-flex"
+               style="display: flex; justify-content: space-between; align-items:flex-start;">
+            <!-- <h2 style="font-size: 1.2em;; margin-top: 15;"
+        class="ion-padding-horizontal">Tarjeta <span *ngIf="card.funding=='DEBIT'">de débito</span><span
+            *ngIf="card.funding=='CREDIT'">de crédito</span></h2> -->
+            <div class="pw pw-mastercard branding-logo"
+                 [ngClass]="{
+                    'pw-mastercard':card.type=='MAST',
+                    'pw-visa':card.type=='VISA',
+                    'pw-american-express':card.type=='AMEX'
+                  }"></div>
+            <ion-button fill="clear"
+                        color="light"
+                        *ngIf="showDeleteBtn"
+                        (click)="removeCard(card)">
+
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </div>
+          <h2 class="card-number ion-padding">
+            <span>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+            </span> <span>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+            </span> <span>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+              <ion-icon name="medical"></ion-icon>
+            </span>
+            <b>{{card.number}}</b>
+          </h2>
+          <h3 class="ion-padding-horizontal card-expiration">Expiration
+            {{ card.expiration.slice(0, 2) + '/' + card.expiration.slice(2)}}</h3>
+          <h2 class="ion-padding-horizontal card-holder-name">{{card.holder_name}}</h2>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>

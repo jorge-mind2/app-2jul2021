@@ -64,6 +64,7 @@
       </ion-col>
 
       <ion-col size="10"
+               class="ion-text-center"
                *ngIf="userType=='patient'">
         <ion-label color="light"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Correo
@@ -77,7 +78,14 @@
         <ion-label color="light"
                    style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Terapeuta:</b>
           {{user.therapist?.name || 'No'}} {{user.therapist?.last_name || 'Asignado'}}</ion-label>
-
+        <ion-button color="tertiary"
+                    shape="round"
+                    class="ion-margin-top"
+                    [routerLink]="['/my-cards']">
+          Mis Tarjetas
+          <ion-icon slot="end"
+                    name="card"></ion-icon>
+        </ion-button>
         <!-- <ion-label color="light"
                    style="font-size: .8em; text-align: center; margin-top: 1em; padding-top: .5em; display: block; width: 100%;">
           Código</ion-label>

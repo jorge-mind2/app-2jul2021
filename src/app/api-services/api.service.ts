@@ -62,6 +62,10 @@ export class ApiService {
     return await this.http.post('/users/addCard', card).toPromise()
   }
 
+  public async removeCard(id: any): Promise<any> {
+    return await this.http.delete(`/users/delete-card/${id}`).toPromise()
+  }
+
   public getOnCardRegister(): Observable<any> {
     return this.onCardRegister.asObservable();
   }

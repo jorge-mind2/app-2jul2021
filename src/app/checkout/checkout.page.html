@@ -1,5 +1,5 @@
-<ion-content fullscreen>
-  <div class="background-1"></div>
+<div class="background-1"></div>
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="plans"
@@ -17,6 +17,9 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
   <ion-toolbar>
     <ion-segment (ionChange)="setView($event)"
                  color="light"
@@ -40,8 +43,13 @@
     </ion-segment>
   </ion-toolbar>
 
-  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+  <div class="ion-padding-top ion-margin-vertical"
        *ngIf="view == 'card'">
+    <ion-refresher slot="fixed"
+                   color="light"
+                   (ionRefresh)="getCards($event)">
+      <ion-refresher-content color="light"></ion-refresher-content>
+    </ion-refresher>
     <ion-grid *ngIf="cards.length<=0">
       <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-item lines="none">
@@ -60,50 +68,14 @@
         </ion-button>
       </ion-row>
     </ion-grid>
-    <ion-card [color]="card.color"
-              [ngClass]="{'card-selected': card.selected}"
-              class="ion-margin-vertical card"
-              margin
-              *ngFor="let card of cards"
-              (click)="selectThisCard(card)">
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <h2 style="font-size: 1.2em;; margin-top: 15;"
-                  class="ion-padding-horizontal">Tarjeta <span *ngIf="card.funding=='DEBIT'">de débito</span><span
-                      *ngIf="card.funding=='CREDIT'">de crédito</span></h2>
-              <h2
-                  style="font-size: 1.2em; margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: space-around;">
-                <span>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                </span> <span>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                </span> <span>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                  <ion-icon name="medical"></ion-icon>
-                </span>
-                <b>{{card.number}}</b>
-              </h2>
-              <h2 style="font-size: 1.2em; margin-bottom: 15px;"
-                  class="ion-padding-horizontal">{{card.holder_name}}</h2>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-content>
-    </ion-card>
+    <credit-card *ngFor="let card of cards"
+                 [card]="card"
+                 (click)="selectThisCard(card)"></credit-card>
     <ion-button expand="full"
                 size="large"
                 shape="round"
                 type="button"
+                class="ion-margin-horizontal"
                 (click)="presentPaymentAlert()"
                 [disabled]="!selectedCard.token"
                 *ngIf="cards.length>0">PAGAR</ion-button>

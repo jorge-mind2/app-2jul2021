@@ -8,6 +8,7 @@ import { ChatComponent } from './chat/chat.component';
 import { VideoCallComponent } from './video-call/video-call.component';
 import { ViewProfileComponent } from './view-profile/view-profile.component';
 import { QuickstartComponent } from './quickstart/quickstart.component';
+import { CardComponent } from './card/card.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { QuickstartComponent } from './quickstart/quickstart.component';
     ChatComponent,
     VideoCallComponent,
     ViewProfileComponent,
-    QuickstartComponent
+    QuickstartComponent,
+    CardComponent
   ],
   imports: [
     CommonModule,
@@ -27,7 +29,8 @@ import { QuickstartComponent } from './quickstart/quickstart.component';
     ChatComponent,
     VideoCallComponent,
     ViewProfileComponent,
-    QuickstartComponent
+    QuickstartComponent,
+    CardComponent
   ]
 })
 export class CommonPagesModule { }

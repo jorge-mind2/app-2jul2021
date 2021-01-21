@@ -58,20 +58,30 @@ export class CheckoutPage implements OnInit {
     const plans = getPlans.data
     this.plan = plans.find(plan => this.plan_id == plan.id)
     this.plan.final_price = this.plan.amount - (this.plan.amount * (this.discount_percent / 100))
-    const dataCards = await this.api.getCards()
-    console.log(dataCards);
-    if (dataCards.data) {
-      this.cards = dataCards.data.result.cards
-      console.log('this.cards', this.cards);
-      if (dataCards.data.result.pending_payment && dataCards.data.result.pending_payment.status == 2) {
-        this.paymentPending = dataCards.data.result.pending_payment
-        this.paymentPending.expired = moment(this.paymentPending.expiration_date).isBefore(moment(), 'day')
-      }
-      console.log(this.paymentPending);
-
-      this.selectThisCard(this.cards[0])
-    }
+    await this.getCards()
     this.loadingCtrl.dismiss()
+    this.api.getOnCardRegister().subscribe(newCard => this.getCards())
+  }
+
+  async getCards(event?) {
+    try {
+      const dataCards = await this.api.getCards()
+      // console.log(dataCards);
+      if (dataCards.data) {
+        this.cards = dataCards.data.result.cards
+        console.log('this.cards', this.cards);
+        if (dataCards.data.result.pending_payment && dataCards.data.result.pending_payment.status == 2) {
+          this.paymentPending = dataCards.data.result.pending_payment
+          this.paymentPending.expired = moment(this.paymentPending.expiration_date).isBefore(moment(), 'day')
+        }
+        // console.log(this.paymentPending);
+
+        this.selectThisCard(this.cards[0])
+      }
+      if (event) event.target.complete()
+    } catch (error) {
+      if (event) event.target.complete()
+    }
   }
 
   public setView(e) {
@@ -108,7 +118,7 @@ export class CheckoutPage implements OnInit {
       this.coupon = data
       this.coupon.id = data.couponId
       this.coupon.active = true
-      console.log('this.coupon', this.coupon);
+      // console.log('this.coupon', this.coupon);
 
     }
   }
@@ -122,7 +132,7 @@ export class CheckoutPage implements OnInit {
   }
 
   private async payPlan() {
-    console.log('this.coupon', this.coupon);
+    // console.log('this.coupon', this.coupon);
 
     await this.presentPaymentLoading('Procesando pago...')
     try {
@@ -133,9 +143,9 @@ export class CheckoutPage implements OnInit {
         packageId: this.plan.id,
         couponId: this.coupon.id
       }
-      console.log('paymentData', paymentData);
+      // console.log('paymentData', paymentData);
       const postPayment = await this.api.payPlan(paymentData)
-      console.log(postPayment)
+      // console.log(postPayment)
       this.loadingCtrl.dismiss().finally(() => {
         this.presentSuccessAlert('Tu pago ha sido exitoso, ahora ya pudes agendar tus citas.', '¡Pago hecho!').finally(() => this.navCtrl.navigateRoot('/home'))
       })
@@ -159,7 +169,7 @@ export class CheckoutPage implements OnInit {
         couponId: this.coupon.id
       }
       const postPayment = await this.api.payPlan(paymentData)
-      console.log(postPayment)
+      // console.log(postPayment)
       const ticketURL = postPayment.data.result.url;
       const expirationDate = moment(postPayment.data.result.expiration_date).toLocaleString();
       const amount = postPayment.data.result.total.amount;
@@ -194,7 +204,7 @@ export class CheckoutPage implements OnInit {
       }
       */
       this.paymentPending = postPayment.data.result
-      console.log('this.paymentPending', this.paymentPending);
+      // console.log('this.paymentPending', this.paymentPending);
 
       this.loadingCtrl.dismiss().finally(() => {
         this.presentSuccessAlert('Recibo generado exitosamente.', 'Pago Pendiente')

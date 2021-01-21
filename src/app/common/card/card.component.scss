@@ -1,0 +1,31 @@
+.card {
+  background: rgb(69, 64, 116);
+  background: linear-gradient(-15deg, #341d5e 0%, #281f7f 120%);
+  border-radius: 10px;
+
+  .branding-logo {
+    font-size: 3.5em;
+    margin-top: 8px;
+  }
+
+  &-selected {
+    border: 4px solid var(--ion-color-tertiary);
+  }
+
+  &-number {
+    margin-top: 20px;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+    font-family: monospace, sans-serif;
+  }
+
+  &-expiration {
+    margin-bottom: 15px;
+  }
+
+  &-holder-name {
+    margin-bottom: 15px;
+    text-shadow: 2px 2px #424242;
+  }
+}

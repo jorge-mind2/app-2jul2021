@@ -20,7 +20,8 @@ const routes: Routes = [
   { path: 'password-recovery', loadChildren: './password-recovery/password-recovery.module#PasswordRecoveryPageModule', canActivate: [AuthGuard] },
   { path: 'checkout', loadChildren: './checkout/checkout.module#CheckoutPageModule', canActivate: [AuthGuard] },
   { path: 'edit-profile', loadChildren: './edit-profile/edit-profile.module#EditProfilePageModule', canActivate: [AuthGuard] },
-  { path: 'schedule', loadChildren: './schedule/schedule.module#SchedulePageModule', canActivate: [AuthGuard] }
+  { path: 'schedule', loadChildren: './schedule/schedule.module#SchedulePageModule', canActivate: [AuthGuard] },
+  { path: 'my-cards', loadChildren: './my-cards/my-cards.module#MyCardsPageModule' }
 ];
 @NgModule({
   imports: [

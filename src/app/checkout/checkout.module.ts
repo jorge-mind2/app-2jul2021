@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { CheckoutPage } from './checkout.page';
 import { AddCouponComponent } from './add-coupon/add-coupon.component';
+import { CommonPagesModule } from '../common/common-pages.module';
 
 const routes: Routes = [
   {
@@ -21,13 +22,15 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    CommonPagesModule
   ],
   providers: [CurrencyPipe],
   declarations: [
     CheckoutPage,
     AddCouponComponent
   ],
-  entryComponents: [AddCouponComponent]
+  entryComponents: [AddCouponComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CheckoutPageModule { }
