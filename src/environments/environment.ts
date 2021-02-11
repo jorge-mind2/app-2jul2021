@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_BASE_URL: 'https://7d02094974e8.ngrok.io',
+  API_BASE_URL: 'https://4a916f4d94df.ngrok.io',
   // API_BASE_URL: 'http://ec2-54-241-76-34.us-west-1.compute.amazonaws.com:3000',
   SR_PAGO_PUBLIC_KEY: 'pk_dev_5ed52ab0e1fd6ViMPW'
 };

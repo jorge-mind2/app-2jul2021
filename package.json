@@ -23,6 +23,7 @@
     "@auth0/angular-jwt": "^4.2.0",
     "@ionic-native/android-permissions": "^5.28.0",
     "@ionic-native/camera": "^5.27.0",
+    "@ionic-native/card-io": "^5.30.0",
     "@ionic-native/core": "^5.8.0",
     "@ionic-native/crop": "^5.27.0",
     "@ionic-native/device": "^5.28.0",
@@ -37,7 +38,9 @@
     "@ionic/angular": "^4.1.0",
     "@ionic/storage": "^2.3.1",
     "@types/twilio-video": "^2.7.1",
+    "card.io.cordova.mobilesdk": "^2.1.0",
     "cordova-android": "^8.1.0",
+    "cordova-ios": "^5.1.1",
     "cordova-plugin-android-permissions": "^1.1.0",
     "cordova-plugin-androidx": "^2.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.1",
@@ -127,7 +130,8 @@
         "ANDROID_FIREBASE_CRASHLYTICS_NDK_VERSION": "17.0.1",
         "ANDROID_GSON_VERSION": "2.8.6"
       },
-      "cordova-plugin-ionic-webview": {}
+      "cordova-plugin-ionic-webview": {},
+      "card.io.cordova.mobilesdk": {}
     },
     "cordova-plugin-advanced-http": {
       "OKHTTP_VERSION": "3.10.0"
