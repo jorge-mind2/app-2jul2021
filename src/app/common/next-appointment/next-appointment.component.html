@@ -1,16 +1,18 @@
 <ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="closeModal(appointmentsUpdated)"
+                    color="light">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <!-- <ion-title color="light">
+        {{today}}
+      </ion-title> -->
+    </ion-toolbar>
+  </ion-header>
   <div class="background-1"></div>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="closeModal(appointmentsUpdated)"
-                  color="light">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <!-- <ion-title color="light">
-      {{today}}
-    </ion-title> -->
-  </ion-toolbar>
   <ion-toolbar>
     <ion-segment (ionChange)="setView($event)"
                  color="light"
@@ -18,12 +20,14 @@
                  [value]="view">
       <ion-segment-button value="schedule"
                           color="light"
+                          mode="md"
                           *ngIf="!onlySchedule">
         <ion-label color="light">
           <ion-icon name="calendar"></ion-icon> Agendar
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="appointments"
+                          mode="md"
                           color="light">
         <ion-label color="light">
           <p class="notification-wrapper">
@@ -34,7 +38,7 @@
     </ion-segment>
   </ion-toolbar>
 
-  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+  <div class="ion-padding-top ion-margin-vertical"
        *ngIf="view == 'schedule'">
     <ion-item class="ion-padding-horizontal"
               lines="none"

@@ -109,6 +109,16 @@ ion-refresher-content {
   }
 }
 
+.header-ios ion-toolbar:last-child {
+    border: 0;
+    --border-width: 0 !important;
+}
+
+ion-header:after,
+  .header-md:after {
+  display: none !important;
+}
+
 @keyframes custom-loader {
   0% {
     background-position: 0% 50%

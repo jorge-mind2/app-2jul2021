@@ -1,25 +1,25 @@
-<div class="background-1"></div>
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="plans"
-                       color="light"></ion-back-button>
-    </ion-buttons>
-    <ion-title color="light">Mis tarjetas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button defaultHref="plans"
-                  [routerLink]="['/add-card']"
-                  queryParamsHandling="merge"
-                  color="light"
-                  iconOnly>
-        <ion-icon name="add"
-                  size="large"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="plans"
+                         text="Volver"
+                         color="light"></ion-back-button>
+      </ion-buttons>
+      <ion-title color="light">Mis tarjetas</ion-title>
+      <ion-buttons slot="end">
+        <ion-button defaultHref="plans"
+                    [routerLink]="['/add-card']"
+                    queryParamsHandling="merge"
+                    color="light"
+                    iconOnly>
+          <ion-icon name="add"
+                    size="large"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  <div class="background-1"></div>
 
   <ion-refresher slot="fixed"
                  color="light"

@@ -1,5 +1,5 @@
 <div class="background-1"></div>
-<ion-header translucent>
+<ion-header>
   <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="presentLogoutAlert()"
@@ -40,7 +40,8 @@
           <div class="notification-badge-wrapper">
             <span *ngIf="therapistMessagesUnread"
                   class="notification-badge">1</span>
-            <ion-icon name="chatboxes"></ion-icon>
+            <ion-icon name="chatboxes"
+                      mode="md"></ion-icon>
             Mi Sesión <br> &nbsp;
           </div>
         </ion-button>
@@ -52,7 +53,8 @@
           <div class="notification-badge-wrapper">
             <span *ngIf="supportMessagesUnread"
                   class="notification-badge">1</span>
-            <ion-icon name="headset"></ion-icon>
+            <ion-icon name="headset"
+                      mode="md"></ion-icon>
             Chat de <br>Servicio
           </div>
         </ion-button>
@@ -62,7 +64,8 @@
                     expand="full"
                     [routerLink]="['/plans']">
           <div>
-            <ion-icon name="card"></ion-icon>
+            <ion-icon name="card"
+                      mode="md"></ion-icon>
             Pagar <br> &nbsp;
           </div>
         </ion-button>

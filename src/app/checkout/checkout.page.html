@@ -1,37 +1,39 @@
 <div class="background-1"></div>
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="plans"
-                       color="light"></ion-back-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button defaultHref="plans"
-                  [routerLink]="['/add-card']"
-                  queryParamsHandling="merge"
-                  color="light"
-                  iconOnly
-                  *ngIf="view == 'card'">
-        <ion-icon name="add"
-                  size="large"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="plans"
+                         text="Volver"
+                         color="light"></ion-back-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <ion-button defaultHref="plans"
+                    [routerLink]="['/add-card']"
+                    queryParamsHandling="merge"
+                    color="light"
+                    iconOnly
+                    *ngIf="view == 'card'">
+          <ion-icon name="add"
+                    size="large"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
   <ion-toolbar>
     <ion-segment (ionChange)="setView($event)"
                  color="light"
                  mode="md"
                  value="card">
       <ion-segment-button value="card"
+                          mode="md"
                           color="light">
         <ion-label color="light">
           <ion-icon name="card"></ion-icon> Tarjeta
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="store"
+                          mode="md"
                           color="light">
         <ion-label color="light">
           <p class="notification-wrapper">
@@ -80,7 +82,7 @@
                 [disabled]="!selectedCard.token"
                 *ngIf="cards.length>0">PAGAR</ion-button>
   </div>
-  <div class="ion-padding-horizontal ion-padding-top ion-margin-vertical"
+  <div class="ion-padding-top ion-margin-vertical"
        *ngIf="view == 'store'">
     <ion-card color="light"
               *ngIf="paymentPending.status && paymentPending.status==2">
