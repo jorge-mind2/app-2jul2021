@@ -1,30 +1,37 @@
 {
   "project_info": {
-    "project_number": "378566212104",
-    "firebase_url": "https://mind2dev-5ddb1.firebaseio.com",
-    "project_id": "mind2dev-5ddb1",
-    "storage_bucket": "mind2dev-5ddb1.appspot.com"
+    "project_number": "400174742507",
+    "project_id": "mind2-cb107",
+    "storage_bucket": "mind2-cb107.appspot.com"
   },
   "client": [{
     "client_info": {
-      "mobilesdk_app_id": "1:378566212104:android:d9969489d7fca1f5d7efbd",
+      "mobilesdk_app_id": "1:400174742507:android:8b183a87ee870e86cf37ae",
       "android_client_info": {
         "package_name": "me.mind2.app"
       }
     },
     "oauth_client": [{
-      "client_id": "378566212104-6tk7544sksndgahjsidcmj2e8aip5ukg.apps.googleusercontent.com",
+      "client_id": "400174742507-t88ghn22s8n5v5ap6p7p6ilhjvjo7opi.apps.googleusercontent.com",
       "client_type": 3
     }],
     "api_key": [{
-      "current_key": "AIzaSyCwSwcyS-x-XsMYM35aoMOaklIlkuPnGCI"
+      "current_key": "AIzaSyBzGJmiUP3kT8PSwVgBY_SU9vgMaCVxtRE"
     }],
     "services": {
       "appinvite_service": {
         "other_platform_oauth_client": [{
-          "client_id": "378566212104-6tk7544sksndgahjsidcmj2e8aip5ukg.apps.googleusercontent.com",
-          "client_type": 3
-        }]
+            "client_id": "400174742507-t88ghn22s8n5v5ap6p7p6ilhjvjo7opi.apps.googleusercontent.com",
+            "client_type": 3
+          },
+          {
+            "client_id": "400174742507-tjao8lhq04q26rtjhh9eeqoaamod7qk9.apps.googleusercontent.com",
+            "client_type": 2,
+            "ios_info": {
+              "bundle_id": "me.mind2.app"
+            }
+          }
+        ]
       }
     }
   }],

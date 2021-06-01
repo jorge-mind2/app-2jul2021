@@ -29,12 +29,11 @@ export class PushNotificationsService implements OnInit {
   public async initFirebase(): Promise<any> {
     console.log('init FCM service');
     // return await this.fcm.getToken();
-    const perms = await this.fcm.hasPermission().then(granted => {
-      if (!granted) {
-        this.fcm.grantPermission()
-      }
-    })
-    console.log(perms);
+    const perms = await this.fcm.hasPermission()
+    if (!perms) {
+      this.fcm.grantPermission()
+    }
+    console.log('Notifications perms', perms);
     this.subscribeToNotificationEvents()
     return this.fcm.onMessageReceived().subscribe(async notification => {
       console.log("here you receive the message", notification);
