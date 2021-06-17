@@ -115,7 +115,8 @@
       "card.io.cordova.mobilesdk": {},
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-androidx": {},
-      "cordova-plugin-androidx-adapter": {}
+      "cordova-plugin-androidx-adapter": {},
+      "cordova-plugin-firebasex": {}
     },
     "cordova-plugin-advanced-http": {
       "OKHTTP_VERSION": "3.10.0"
