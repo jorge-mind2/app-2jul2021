@@ -1,11 +1,14 @@
 <ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="welcome"
+                         text="Volver"
+                         color="light"></ion-back-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
   <div class="background"></div>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="welcome"
-                       color="light"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
 
   <ion-item class="ion-padding-horizontal"
             lines="none">
@@ -68,7 +71,7 @@
   <ion-button color="light"
               fill="clear"
               expand="full"
-              margin
+              class="ion-margin"
               *ngIf="loginType=='patient'"
               (click)="loginType='therapist'">Soy Terapeuta</ion-button>
 </ion-content>

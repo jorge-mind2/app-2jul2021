@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain>192.168.0.109</domain>
-        <domain>64.227.106.95</domain>
-        <domain>192.168.1.196</domain>
         <domain includeSubdomains="true">mind2.me</domain>
         <domain includeSubdomains="true">ec2-54-241-76-34.us-west-1.compute.amazonaws.com</domain>
         <domain includeSubdomains="true">localhost</domain>

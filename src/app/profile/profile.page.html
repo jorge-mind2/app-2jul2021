@@ -1,25 +1,27 @@
 <ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button defaultHref="home"
+                    [routerLink]="['/edit-profile']"
+                    color="light"
+                    *ngIf="userType=='therapist'"
+                    iconOnly>
+          <ion-icon name="cog"
+                    size="large"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-buttons slot="end">
+        <ion-button (click)="presentLogoutAlert()"
+                    color="light"
+                    iconOnly>
+          <ion-icon name="power"
+                    size="large"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
   <div class="background-1"></div>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button defaultHref="home"
-                  [routerLink]="['/edit-profile']"
-                  color="light"
-                  *ngIf="userType=='therapist'"
-                  iconOnly>
-        <ion-icon name="cog"
-                  size="large"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="presentLogoutAlert()"
-                  color="light"
-                  iconOnly>
-        <ion-icon name="power"
-                  size="large"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
 
   <ion-grid style="margin-top: 1em;">
     <ion-row class="ion-justify-content-center ion-align-items-center">

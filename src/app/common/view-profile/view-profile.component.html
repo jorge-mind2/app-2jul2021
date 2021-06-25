@@ -1,16 +1,16 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-button (click)="dismiss()">
-        <ion-icon name="close"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>
-      <ion-text class="title-text">{{profile?.name}} {{profile?.last_name}}</ion-text>
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content>
+<ion-content fullscreen>
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-button (click)="dismiss()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title>
+        <ion-text class="title-text">{{profile?.name}} {{profile?.last_name}}</ion-text>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
 
   <ion-grid style="margin-top: 1em;">
     <ion-row class="ion-justify-content-center ion-align-items-center">
@@ -27,7 +27,9 @@
     <ion-row class="ion-justify-content-center ion-align-items-center">
       <ion-col size="6"
                *ngIf="profile?.detail">
-        <ion-label style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Especialidades:</b>
+        <ion-label
+                   style="text-align: center; padding-top: .5em; display: block; width: 100%; flex-wrap: nowrap; overflow-wrap: normal;">
+          <b>Especialidades: </b>
           <span *ngFor="let sp of profile?.detail?.specialties">{{sp.name}}, </span></ion-label>
 
         <ion-label style="text-align: center; padding-top: .5em; display: block; width: 100%;"><b>Cédula
